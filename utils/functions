@@ -1,0 +1,15 @@
+#!/bin/bash
+
+cache() {
+  DEST=$CACHE/$(echo $1 | sed -e 's!.*://!!')
+  if ! [ -e $DEST ]; then
+    mkdir -p $(dirname $DEST)
+    curl -o $DEST $1
+  fi
+  echo $DEST
+}
+
+mkbuild() {
+  rm -rf build
+  mkdir -p build
+}
