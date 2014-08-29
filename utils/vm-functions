@@ -1,0 +1,28 @@
+#!/bin/bash
+
+export http_proxy=http://192.168.0.254:8080/
+
+register_channels() {
+  for CHANNEL in $*
+  do
+    curl -so /etc/yum.repos.d/$CHANNEL.repo http://10.33.11.10:8085/$CHANNEL.repo
+  done
+}
+
+update() {
+  yum -y update
+}
+
+install_packages() {
+  yum -y install $*
+}
+
+cleanup() {
+  yum clean all
+  rm /etc/yum.repos.d/*.repo
+
+  rm /etc/ssh/ssh_host_*
+  rm /etc/udev/rules.d/70-persistent-net.rules
+
+  fstrim /
+}

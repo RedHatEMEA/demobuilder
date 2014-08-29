@@ -1,7 +1,6 @@
 #!/bin/bash
 
 ROOT=$(realpath ../..)
-RELPATH=$(realpath . --relative-base=$ROOT)
 . $ROOT/config
 . $ROOT/utils/functions
 

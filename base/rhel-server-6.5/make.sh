@@ -1,7 +1,6 @@
 #!/bin/bash
 
 ROOT=$(realpath ../..)
-RELPATH=$(realpath . --relative-base=$ROOT)
 . $ROOT/config
 . $ROOT/utils/functions
 
@@ -14,8 +13,9 @@ for FILE in initrd.img vmlinuz; do
 done
 
 eval $($ROOT/utils/httpserver.py -r $ROOT -i $BRIDGE)
+RELPATH=$(realpath . --relative-base=$ROOT)
 
-qemu-img create -f qcow2 build/rhel-server-6.5.qcow2 10G
+qemu-img create -f qcow2 build/rhel-server-6.5-uncompressed.qcow2 10G
 qemu-kvm -nodefaults \
   -display none \
   -m 512 \
@@ -23,12 +23,16 @@ qemu-kvm -nodefaults \
   -initrd build/initrd.img \
   -append "ks=http://$LISTENER/$RELPATH/rhel-server-6.5.ks listener=$LISTENER" \
   -device virtio-scsi-pci \
-  -drive discard=unmap,file=build/rhel-server-6.5.qcow2,id=disk1,if=none \
+  -drive discard=unmap,file=build/rhel-server-6.5-uncompressed.qcow2,id=disk1,if=none \
   -device scsi-disk,drive=disk1 \
   -net bridge,br=$BRIDGE \
-  -net nic,model=virtio \
+  -net nic,model=virtio,macaddr=$($ROOT/utils/random-mac.py) \
   -cdrom $ISO
 
 rm build/vmlinuz build/initrd.img
 
 kill $HTTPSERVERPID
+
+qemu-img convert -cp -O qcow2 build/rhel-server-6.5-uncompressed.qcow2 build/rhel-server-6.5.qcow2
+
+rm build/rhel-server-6.5-uncompressed.qcow2

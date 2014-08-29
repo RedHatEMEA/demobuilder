@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<AutomatedInstallation langpack="eng">
+<com.jboss.jbds.installer.HTMLInfoPanelWithRootWarning id="introduction"/>
+<com.izforge.izpack.panels.HTMLLicencePanel id="licence"/>
+<com.jboss.jbds.installer.PathInputPanel id="target">
+<installpath>/usr/local/jbdevstudio</installpath>
+</com.jboss.jbds.installer.PathInputPanel>
+<com.jboss.jbds.installer.JREPathPanel id="jre"/>
+<com.jboss.jbds.installer.JBossAsSelectPanel id="as">
+<installgroup>jbds</installgroup>
+</com.jboss.jbds.installer.JBossAsSelectPanel>
+<com.jboss.jbds.installer.UpdatePacksPanel id="updatepacks"/>
+<com.jboss.jbds.installer.DiskSpaceCheckPanel id="diskspacecheck"/>
+<com.izforge.izpack.panels.SummaryPanel id="summary"/>
+<com.izforge.izpack.panels.InstallPanel id="install"/>
+<com.jboss.jbds.installer.CreateLinkPanel id="createlink">
+<jrelocation>/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.55.x86_64/bin/java</jrelocation>
+</com.jboss.jbds.installer.CreateLinkPanel>
+<com.izforge.izpack.panels.ShortcutPanel id="shortcut">
+<programGroup name=""/>
+<shortcut KdeSubstUID="false" categories="Applications;Development;" commandLine="" createForAll="true" description="Runs the Red Hat JBoss Developer Studio 7.1.1.GA" encoding="UTF-8" group="true" icon="/usr/local/jbdevstudio/studio/48-jbds_icon.png" iconIndex="0" initialState="1" mimetype="" name="Red Hat JBoss Developer Studio 7.1.1.GA" target="/usr/local/jbdevstudio/studio/jbdevstudio" terminal="false" terminalOptions="" tryexec="" type="Application" url="" usertype="0" workingDirectory="/usr/local/jbdevstudio/studio"/>
+<shortcut KdeSubstUID="false" categories="Applications;Development;" commandLine="-jar &quot;/usr/local/jbdevstudio/Uninstaller/uninstaller.jar&quot;" createForAll="true" description="Uninstall Red Hat JBoss Developer Studio 7.1.1.GA" encoding="UTF-8" group="true" icon="/usr/local/jbdevstudio/studio/48-jbds_uninstall_icon.png" iconIndex="0" initialState="1" mimetype="" name="Uninstall Red Hat JBoss Developer Studio 7.1.1.GA" target="java" terminal="false" terminalOptions="" tryexec="" type="Application" url="" usertype="0" workingDirectory="/usr/local/jbdevstudio/Uninstaller"/>
+</com.izforge.izpack.panels.ShortcutPanel>
+<com.jboss.jbds.installer.ShortcutPanelPatch id="shortcutpatch"/>
+<com.izforge.izpack.panels.SimpleFinishPanel id="finish"/>
+</AutomatedInstallation>
