@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 TMPDIR=$(mktemp -d)
 
@@ -9,7 +9,7 @@ qemu-kvm -nodefaults \
   -device virtio-scsi-pci \
   -device scsi-disk,drive=disk1 \
   -net bridge,br=virbr0 \
-  -net nic,model=virtio,macaddr=$(../../utils/random-mac.py) \
+  -net nic,model=virtio,macaddr=$(utils/random-mac.py) \
   -chardev socket,id=chan0,path=$TMPDIR/rhev.sock,server,nowait \
   -chardev socket,id=chan1,path=$TMPDIR/qemu.sock,server,nowait \
   -device virtio-serial-pci \
@@ -20,6 +20,6 @@ qemu-kvm -nodefaults \
   &>/dev/null &
 
 echo QEMUPID=$!
-../../utils/wait-ip.py $TMPDIR
+utils/wait-ip.py $TMPDIR
 
 rm -rf $TMPDIR

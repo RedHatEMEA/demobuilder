@@ -1,2 +1,1 @@
 BRIDGE=virbr0
-CACHE=$ROOT/cache

@@ -1,5 +1,6 @@
 #!/usr/bin/python -u
 
+import argparse
 import httplib
 import os
 import socket
@@ -101,14 +102,6 @@ class Request(IO):
         return urlparse.urlunparse(url)
 
 
-def netlocparse(netloc, default=80):
-    if ":" in netloc:
-        (host, port) = netloc.split(":", 1)
-        return (host, int(port))
-    else:
-        return (netloc, default)
-
-
 class UncachedResponse(IO):
     def __init__(self, _req):
         self.req = _req
@@ -177,7 +170,7 @@ class Cache(object):
     def filename(urlx):
         url = list(urlx)
         url[0] = None
-        return "../cache/" + urlparse.urlunparse(url)
+        return "cache/" + urlparse.urlunparse(url)
 
 
 class CacheWriter(IO):
@@ -193,7 +186,7 @@ class CacheWriter(IO):
         if self.resp.headers.get("Content-Range"):
             raise NotInCacheException()
 
-        (self.f, self.fname) = tempfile.mkstemp(dir="../cache")
+        (self.f, self.fname) = tempfile.mkstemp(dir="cache")
         self.f = os.fdopen(self.f, "w")
 
     def persist(self, filename):
@@ -264,15 +257,51 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     request_queue_size = 128
 
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("ip", nargs="?", help="IP to serve on",
+                        default="0.0.0.0")
+
+    return parser.parse_args()
+
+
+def netlocparse(netloc, default=80):
+    if ":" in netloc:
+        (host, port) = netloc.split(":", 1)
+        return (host, int(port))
+    else:
+        return (netloc, default)
+
+
 def main():
     try:
-        os.mkdir("../cache")
+        os.mkdir("cache")
     except OSError:
         pass
 
-    server = ThreadedTCPServer(("0.0.0.0", 8080), ThreadedTCPRequestHandler)
-    server.serve_forever()
+    for port in range(1024, 65536):
+        try:
+            handler = ThreadedTCPRequestHandler
+            server = ThreadedTCPServer((args.ip, port), handler)
+            break
+
+        except socket.error:
+            pass
+
+    pid = os.fork()
+    if not pid:
+        os.closerange(0, 3)
+        os.open("/dev/null", os.O_RDONLY)
+        os.open("/dev/null", os.O_WRONLY)
+        os.open("/dev/null", os.O_WRONLY)
+        server.serve_forever()
+
+    else:
+        print "PROXYLISTENER=%s:%u" % (args.ip, port)
+        print "PROXYPID=%u" % pid
 
 
 if __name__ == "__main__":
+    args = parse_args()
     main()

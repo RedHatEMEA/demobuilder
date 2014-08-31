@@ -1,44 +1,26 @@
 #!/bin/python
 
-import fcntl
-import optparse
+import argparse
 import os
 import SimpleHTTPServer
 import SocketServer
 import socket
-import struct
 
 
 def parse_args():
-    parser = optparse.OptionParser()
+    parser = argparse.ArgumentParser()
 
-    parser.add_option("-r", "--root",
-                      help="root directory to serve", metavar="DIR")
-    parser.add_option("-i", "--interface",
-                      help="interface to serve on")
+    parser.add_argument("ip", nargs="?", help="IP to serve on",
+                        default="0.0.0.0")
 
     return parser.parse_args()
 
 
-def get_ip(interface):
-    if not interface: return "0.0.0.0"
-
-    SIOCGIFADDR = 0x8915
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    ip = fcntl.ioctl(s.fileno(), SIOCGIFADDR,
-                     struct.pack('256s', interface[:15]))[20:24]
-    return socket.inet_ntoa(ip)
-
-
 def main():
-    if args.root:
-        os.chdir(args.root)
-
-    ip = get_ip(args.interface)
     for port in range(1024, 65536):
         try:
             handler = SimpleHTTPServer.SimpleHTTPRequestHandler
-            httpd = SocketServer.TCPServer((ip, port), handler)
+            httpd = SocketServer.TCPServer((args.ip, port), handler)
             break
 
         except socket.error:
@@ -53,9 +35,9 @@ def main():
         httpd.serve_forever()
 
     else:
-        print "LISTENER=%s:%u" % (ip, port)
-        print "HTTPSERVERPID=%u" % pid
+        print "HTTPLISTENER=%s:%u" % (args.ip, port)
+        print "HTTPPID=%u" % pid
 
 if __name__ == "__main__":
-    args = parse_args()[0]
+    args = parse_args()
     main()

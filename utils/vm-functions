@@ -1,7 +1,5 @@
 #!/bin/bash
 
-export http_proxy=http://192.168.0.254:8080/
-
 register_channels() {
   for CHANNEL in $*
   do
@@ -9,7 +7,7 @@ register_channels() {
   done
 }
 
-update() {
+yum_update() {
   yum -y update
 }
 
@@ -22,7 +20,6 @@ cleanup() {
   rm /etc/yum.repos.d/*.repo
 
   rm /etc/ssh/ssh_host_*
-  rm /etc/udev/rules.d/70-persistent-net.rules
 
   fstrim /
 }
