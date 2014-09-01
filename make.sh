@@ -2,6 +2,11 @@
 
 . utils/functions
 
+genkeys() {
+  mkdir -p keys
+  [ -e keys/demobuilder ] || ssh-keygen -f keys/demobuilder -N ""
+}
+
 base() {
   [ -e build/$1.qcow2 ] || base/$1/install
 }
@@ -16,6 +21,7 @@ target() {
 }
 
 mkdir -p build
+genkeys
 
 proxy_start
 httpserver_start
