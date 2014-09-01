@@ -18,4 +18,4 @@ utils/ssh.sh root@$IP "cd demobuilder; http_proxy=http://$PROXYLISTENER/ ./insta
 
 wait_pid $QEMUPID
 
-compress_qcow2 $3
+# compress_qcow2 $3

@@ -1,14 +1,14 @@
 #!/bin/bash
 
 register_channels() {
-  for CHANNEL in $*
-  do
+  for CHANNEL in $*; do
     curl -so /etc/yum.repos.d/$CHANNEL.repo http://10.33.11.10:8085/$CHANNEL.repo
   done
 }
 
 yum_update() {
   yum -y update
+  rpm -e $(rpm -q kernel --last | tail -n +2 | cut -d' ' -f1)
 }
 
 install_packages() {
@@ -22,4 +22,24 @@ cleanup() {
   rm /etc/ssh/ssh_host_*
 
   fstrim /
+}
+
+create_ca() {
+  echo 01 >/etc/pki/CA/serial
+  >/etc/pki/CA/index.txt
+
+  openssl genrsa -out /etc/pki/CA/private/ca.key
+  chmod 0400 /etc/pki/CA/private/ca.key
+  openssl req -new -x509 -days 3650 -key /etc/pki/CA/private/ca.key -extensions v3_ca -out /etc/pki/CA/certs/ca.crt -subj "/C=GB/ST=Hampshire/O=Red Hat UK Ltd/CN=CA certificate"
+
+  cp /etc/pki/CA/certs/ca.crt /etc/pki/ca-trust/source/anchors
+  update-ca-trust enable
+  update-ca-trust
+}
+
+sign_cert() {
+  TEMPFILE=$(mktemp)
+  openssl req -new -key $1 -out $TEMPFILE -subj "/C=GB/ST=Hampshire/O=Red Hat UK Ltd/CN=$2"
+  openssl ca -batch -keyfile /etc/pki/CA/private/ca.key -cert /etc/pki/CA/certs/ca.crt -extensions usr_cert -notext -md sha1 -in $TEMPFILE -out $3
+  rm $TEMPFILE
 }
