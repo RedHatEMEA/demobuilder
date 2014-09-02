@@ -17,6 +17,7 @@ qemu-kvm -nodefaults \
   -device virtserialport,chardev=chan1,name=org.qemu.guest_agent.0 \
   -device vmware-svga \
   -display sdl \
+  -usbdevice tablet \
   &>/dev/null &
 
 echo QEMUPID=$!
