@@ -13,7 +13,7 @@ eval $(utils/run.sh $3)
 
 echo $IP
 
-RSYNC_RSH=utils/ssh.sh rsync -rL $2/ root@$IP:demobuilder
+RSYNC_RSH=utils/ssh.sh rsync -rL $2/target/ root@$IP:demobuilder
 utils/ssh.sh root@$IP "cd demobuilder; http_proxy=http://$PROXYLISTENER/ ./install; cd; rm -rf demobuilder; rm /etc/udev/rules.d/70-persistent-net.rules; poweroff"
 
 wait_pid $QEMUPID

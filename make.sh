@@ -16,7 +16,7 @@ layer() {
 }
 
 target() {
-  layer $1 $2 $1-$2
+  [ -e build/$1-$2.qcow2 ] || utils/addlayer.sh build/$1.qcow2 targets/$2 build/$1-$2.qcow2
   [ -e build/$3 ] || targets/$2/install build/$1-$2.qcow2 build/$3
 }
 
