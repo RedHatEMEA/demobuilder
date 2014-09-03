@@ -1,4 +1,6 @@
-#!/bin/bash -x
+#!/bin/bash -e
+
+. utils/functions
 
 TMPDIR=$(mktemp -d)
 

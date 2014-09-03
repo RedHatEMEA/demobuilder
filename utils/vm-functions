@@ -2,7 +2,7 @@
 
 register_channels() {
   for CHANNEL in $*; do
-    curl -so /etc/yum.repos.d/$CHANNEL.repo http://10.33.11.10:8085/$CHANNEL.repo
+    curl -so /etc/yum.repos.d/auto-$CHANNEL.repo http://10.33.11.10:8085/$CHANNEL.repo
   done
 }
 
@@ -17,7 +17,7 @@ install_packages() {
 
 cleanup() {
   yum clean all
-  rm /etc/yum.repos.d/*.repo
+  rm /etc/yum.repos.d/auto-*.repo
 
   rm /etc/ssh/ssh_host_*
 

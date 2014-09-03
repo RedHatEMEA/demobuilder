@@ -1,6 +1,17 @@
-#!/bin/bash -x
+#!/bin/bash -e
 
 . utils/functions
+
+if [ -z "$HTTPLISTENER" -o -z "$BRIDGE" -o ! -e keys/demobuilder.pub ]; then
+  echo "$0: build environment incorrect"
+  exit 1
+fi
+
+TARGET=build/$(basename $(dirname $0)).qcow2
+if [ -e $TARGET ]; then
+  echo "$0: $TARGET already exists, not rebuilding"
+  exit
+fi
 
 TEMPDIR=$(mktemp -d)
 
@@ -10,7 +21,7 @@ for FILE in initrd.img vmlinuz; do
   iso-read -i $ISO -e isolinux/$FILE -o $TEMPDIR/$FILE
 done
 
-qemu-img create -f qcow2 build/rhel-server-6.5.qcow2 10G
+qemu-img create -q -f qcow2 $TARGET 10G
 qemu-kvm -nodefaults \
   -m 512 \
   -kernel $TEMPDIR/vmlinuz \
@@ -27,4 +38,4 @@ qemu-kvm -nodefaults \
 
 rm -rf $TEMPDIR
 
-compress_qcow2 build/rhel-server-6.5.qcow2
+compress_qcow2 $TARGET

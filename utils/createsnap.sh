@@ -1,8 +1,10 @@
-#!/bin/bash -x
+#!/bin/bash -e
 
-if ! [ -e $(realpath $1) ] || [ -e $2 ]; then
-  echo bad
+. utils/functions
+
+if [ $# -ne 2 -o ! -e $(realpath $1) -o -e $2 ]; then
+  echo "usage: $0 base snap"
   exit 1
 fi
 
-qemu-img create -f qcow2 -o backing_file=$(realpath $1) $2
+qemu-img create -q -f qcow2 -o backing_file=$(realpath $1) $2

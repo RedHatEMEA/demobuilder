@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+. utils/functions
+
+TARGET=build/$1-$(basename $(dirname $0))
+if [ -e $TARGET.box ]; then
+  echo "$0: $TARGET.box already exists, not rebuilding"
+  exit
+fi
+
+if [ $# -ne 1 ]; then
+  echo "usage: $0 base"
+  exit 1
+fi
+
+rm -f $TARGET.qcow2
+utils/addlayer.sh $1 $(dirname $0)
+
+flatten_qcow2 $TARGET.qcow2
+
+IN=$(realpath $TARGET.qcow2)
+OUT=$(realpath $TARGET.box)
+
+pushd $(dirname $0)
+ln -f $IN box-disk1.img
+tar czf $OUT metadata.json Vagrantfile box.xml box-disk1.img
+rm box-disk1.img
+popd
+
+rm -f $TARGET.qcow2
+
+echo \$ vagrant box add $(basename $TARGET) $TARGET.box
+echo \$ vagrant init $(basename $TARGET)
+echo \$ vagrant up

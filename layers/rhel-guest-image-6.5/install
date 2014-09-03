@@ -1,12 +1,23 @@
-#!/bin/bash -x
+#!/bin/bash -e
 
 . utils/functions
 
+if [ ! -e keys/demobuilder.pub ]; then
+  echo "$0: build environment incorrect"
+  exit 1
+fi
+
+TARGET=build/$(basename $(dirname $0)).qcow2
+if [ -e $TARGET ]; then
+  echo "$0: $TARGET already exists, not rebuilding"
+  exit
+fi
+
 QCOW=$(cache https://download.eng.rdu2.redhat.com/brewroot/packages/rhel-guest-image/6.5/20140603.0/images/rhel-guest-image-6.5-20140603.0.x86_64.qcow2)
 
-cp $QCOW build/rhel-guest-image-6.5.qcow2
+cp $QCOW $TARGET
 
-guestfish --rw -a build/rhel-guest-image-6.5.qcow2 -i <<EOF
+guestfish --rw -a $TARGET -i <<EOF
 mkdir /root/.ssh
 chmod 0700 /root/.ssh
 copy-in keys/demobuilder.pub /root/.ssh
