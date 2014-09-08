@@ -6,14 +6,14 @@ cache() {
   DEST=cache/$(echo $1 | sed -e 's!.*://!!')
   if ! [ -e $DEST ]; then
     mkdir -p $(dirname $DEST)
-    curl -o $DEST $1 
+    curl -k -o $DEST $1 
 
 	if [ $? -ne 0 ]; then
 		>&2 echo "CURL exited with nonzero exit code, which probably means it could not download and cache a file: $1 --> $DEST"
 		exit 1
 	fi
   fi
-  echo $DEST
+  echo "Cached file: $DEST"
 }
 
 interface_ip() {
