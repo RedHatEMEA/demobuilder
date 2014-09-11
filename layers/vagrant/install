@@ -2,9 +2,15 @@
 
 . utils/functions
 
-TARGET=build/$1-$(basename $(dirname $0))
-if [ -e $TARGET.box ]; then
-  echo "$0: $TARGET.box already exists, not rebuilding"
+TARGET=$1:$(basename $(dirname $0))
+
+. targets/$TARGET
+export MEM=${MEM:-1024}
+export NAME=${NAME:-vagrant}
+export CPUS=${CPUS:-1}
+
+if [ -e build/$TARGET.box ]; then
+  echo "$0: build/$TARGET.box already exists, not rebuilding"
   exit
 fi
 
@@ -13,22 +19,16 @@ if [ $# -ne 1 ]; then
   exit 1
 fi
 
-rm -f $TARGET.qcow2
+rm -f build/$TARGET.qcow2
 utils/addlayer.sh $1 $(dirname $0)
+flatten_qcow2 build/$TARGET.qcow2
 
-flatten_qcow2 $TARGET.qcow2
+TMPDIR=$(mktemp -d)
+envsubst <$(dirname $0)/box.xml >$TMPDIR/box.xml
 
-IN=$(realpath $TARGET.qcow2)
-OUT=$(realpath $TARGET.box)
+tar czf build/$TARGET.box --transform='s!.*/!!' --transform="s/$TARGET.qcow2/box-disk1.img/" $(dirname $0)/{metadata.json,Vagrantfile} build/$TARGET.qcow2 $TMPDIR/box.xml
+rm -f build/$TARGET.qcow2 $(TMPDIR)
 
-pushd $(dirname $0)
-ln -f $IN box-disk1.img
-tar czf $OUT metadata.json Vagrantfile box.xml box-disk1.img
-rm box-disk1.img
-popd
-
-rm -f $TARGET.qcow2
-
-echo \$ vagrant box add $(basename $TARGET) $TARGET.box
-echo \$ vagrant init $(basename $TARGET)
+echo \$ vagrant box add $TARGET build/$TARGET.box
+echo \$ vagrant init $TARGET
 echo \$ vagrant up

@@ -3,8 +3,10 @@
 . utils/functions
 
 build() {
-  echo Building $1...
-  layers/$1/install $2
+  utils/builddeps.py $1 | while read LAYER BASE; do
+    echo Building $LAYER...
+    layers/$LAYER/install $BASE
+  done
 }
 
 mkdir -p build keys
@@ -14,13 +16,11 @@ proxy_start
 httpserver_start
 
 if [ $# -eq 0 ]; then
-  utils/builddeps.py <buildlist | while read LAYER BASE; do
-    build $LAYER $BASE
+  for i in targets/*; do
+    build $(basename $i)
   done
 else
-  echo $1 | utils/builddeps.py | while read LAYER BASE; do
-    build $LAYER $BASE
-  done
+  build $1
 fi
 
 proxy_stop

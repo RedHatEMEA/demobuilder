@@ -14,7 +14,7 @@ fi
 
 LAYER=${2:-$(dirname $0)}
 
-TARGET=build/$1-$(basename $LAYER).qcow2
+TARGET=build/$1:$(basename $LAYER).qcow2
 if [ -e $TARGET ]; then
   echo "$0: $TARGET already exists, not rebuilding"
   exit
