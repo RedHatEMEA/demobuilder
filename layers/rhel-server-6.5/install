@@ -23,7 +23,8 @@ done
 
 qemu-img create -q -f qcow2 $TARGET 10G
 qemu-kvm -nodefaults \
-  -m 512 \
+  -smp 2 \
+  -m 2048 \
   -kernel $TEMPDIR/vmlinuz \
   -initrd $TEMPDIR/initrd.img \
   -append "ks=http://$HTTPLISTENER/$(dirname $0)/rhel-server-6.5.ks listener=$HTTPLISTENER" \
@@ -34,8 +35,8 @@ qemu-kvm -nodefaults \
   -net nic,model=virtio,macaddr=$(utils/random-mac.py) \
   -cdrom $ISO \
   -device vmware-svga \
-  -display vnc \
-  -vnc :0
+  -vnc :0 \
+  -usbdevice tablet
 
 rm -rf $TEMPDIR
 
