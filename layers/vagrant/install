@@ -27,7 +27,7 @@ TMPDIR=$(mktemp -d)
 envsubst <$(dirname $0)/box.xml >$TMPDIR/box.xml
 
 tar czf build/$TARGET.box --transform='s!.*/!!' --transform="s/$TARGET.qcow2/box-disk1.img/" $(dirname $0)/{metadata.json,Vagrantfile} build/$TARGET.qcow2 $TMPDIR/box.xml
-rm -f build/$TARGET.qcow2 $(TMPDIR)
+rm -f build/$TARGET.qcow2 $TMPDIR
 
 echo \$ vagrant box add $TARGET build/$TARGET.box
 echo \$ vagrant init $TARGET
