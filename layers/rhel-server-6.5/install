@@ -34,7 +34,8 @@ qemu-kvm -nodefaults \
   -net nic,model=virtio,macaddr=$(utils/random-mac.py) \
   -cdrom $ISO \
   -device vmware-svga \
-  -display sdl
+  -display vnc \
+  -vnc :0
 
 rm -rf $TEMPDIR
 

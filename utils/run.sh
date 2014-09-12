@@ -18,7 +18,8 @@ qemu-kvm -nodefaults \
   -device virtserialport,chardev=chan0,name=com.redhat.rhevm.vdsm \
   -device virtserialport,chardev=chan1,name=org.qemu.guest_agent.0 \
   -device vmware-svga \
-  -display sdl \
+  -display vnc \
+  -vnc :0 \
   -usbdevice tablet \
   &>/dev/null &
 
