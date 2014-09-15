@@ -19,3 +19,5 @@ fi
 utils/addlayer.sh $1 $(dirname $0)
 flatten_qcow2 build/$TARGET.qcow2
 compress_qcow2 build/$TARGET.qcow2
+
+echo \$ glance image-create --name $TARGET --file build/$TARGET.qcow2 --disk-format qcow2 --container-format bare --min-disk 10 --is-public True

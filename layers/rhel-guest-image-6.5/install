@@ -24,8 +24,8 @@ copy-in keys/demobuilder.pub /root/.ssh
 mv /root/.ssh/demobuilder.pub /root/.ssh/authorized_keys
 chown 0 0 /root/.ssh/authorized_keys
 sh "chcon system_u:object_r:ssh_home_t:s0 /root/.ssh /root/.ssh/authorized_keys"
-rm /etc/rc.d/rc3.d/S50cloud-init-local
-rm /etc/rc.d/rc3.d/S51cloud-init
-rm /etc/rc.d/rc3.d/S52cloud-config
-rm /etc/rc.d/rc3.d/S53cloud-final
+mv /etc/rc.d/rc3.d/S50cloud-init-local /etc/rc.d/rc3.d/K50cloud-init-local
+mv /etc/rc.d/rc3.d/S51cloud-init /etc/rc.d/rc3.d/K50cloud-init
+mv /etc/rc.d/rc3.d/S52cloud-config /etc/rc.d/rc3.d/K50cloud-config
+mv /etc/rc.d/rc3.d/S53cloud-final /etc/rc.d/rc3.d/K50cloud-final
 EOF

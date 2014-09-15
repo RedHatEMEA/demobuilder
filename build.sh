@@ -4,7 +4,7 @@
 
 build() {
   utils/builddeps.py $1 | while read LAYER BASE; do
-    echo Building $LAYER...
+    echo Building $BASE:$LAYER...
     layers/$LAYER/install $BASE
   done
 }
