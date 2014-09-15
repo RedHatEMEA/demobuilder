@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+. utils/functions
+
+TARGET=$1:$(basename $(dirname $0))
+
+. targets/$TARGET
+export MEM=${MEM:-1024}
+export NAME=${NAME:-$TARGET}
+export CPUS=${CPUS:-1}
+
+if [ -e build/$TARGET.ova ]; then
+  echo "$0: build/$TARGET.ova already exists, not rebuilding"
+  exit
+fi
+
+if [ $# -ne 1 ]; then
+  echo "usage: $0 base"
+  exit 1
+fi
+
+rm -f build/$TARGET.qcow2 build/$TARGET.vmdk
+utils/addlayer.sh $1 $(dirname $0)
+convert_qcow2 build/$TARGET.qcow2 vmdk
+
+TMPDIR=$(mktemp -d)
+
+export SYSTEM_UUID=$(uuidgen)
+export SIZE=$((10*1024**3/512))
+
+envsubst <$(dirname $0)/desc.ovf >$TMPDIR/desc.ovf
+
+tar -Pczf build/$TARGET.ova --transform='s!.*/!!' --transform="s/$TARGET.vmdk/disk.img/" $TMPDIR/* build/$TARGET.vmdk
+rm -rf build/$TARGET.qcow2 build/$TARGET.vmdk $TMPDIR
