@@ -1,0 +1,49 @@
+#!/bin/bash -e
+
+. utils/functions
+
+TARGET=$1:$(basename $(dirname $0))
+
+. targets/$TARGET
+export MEM=${MEM:-1024}
+export NAME=${NAME:-rhev}
+export CPUS=${CPUS:-1}
+
+if [ -e build/$TARGET.ova ]; then
+  echo "$0: build/$TARGET.ova already exists, not rebuilding"
+  exit
+fi
+
+if [ $# -ne 1 ]; then
+  echo "usage: $0 base"
+  exit 1
+fi
+
+rm -f build/$TARGET.qcow2
+utils/createsnap.sh build/$1.qcow2 build/$TARGET.qcow2
+flatten_qcow2 build/$TARGET.qcow2
+
+TMPDIR=$(mktemp -d)
+
+export IMAGE_UUID=$(uuidgen)
+export DISK_UUID=$(uuidgen)
+export TEMPLATE_UUID=$(uuidgen)
+export NIC_UUID=$(uuidgen)
+
+export UUID_1=$(uuidgen)
+export UUID_2=$(uuidgen)
+export UUID_3=$(uuidgen)
+export UUID_4=$(uuidgen)
+export UUID_5=$(uuidgen)
+
+export DATE_S=$(date +%s)
+export DATE_YMDHMS=$(date -u +'%Y/%m/%d %H:%M:%S')
+export SECTORS=$((10*1024**3/512))
+
+mkdir -p $TMPDIR/{images/$IMAGE_UUID,master/vms/$TEMPLATE_UUID}
+
+envsubst <$(dirname $0)/disk.meta >$TMPDIR/images/$IMAGE_UUID/$DISK_UUID.meta
+envsubst <$(dirname $0)/template.ovf >$TMPDIR/master/vms/$TEMPLATE_UUID/$TEMPLATE_UUID.ovf
+
+tar -Pczf build/$TARGET.ova --transform="s!$TMPDIR/!!" --transform="s!build/$TARGET.qcow2!images/$IMAGE_UUID/$DISK_UUID!" $TMPDIR/* build/$TARGET.qcow2
+rm -rf build/$TARGET.qcow2 $TMPDIR

@@ -22,12 +22,13 @@ fi
 rm -f build/$TARGET.qcow2
 utils/addlayer.sh $1 $(dirname $0)
 flatten_qcow2 build/$TARGET.qcow2
+compress_qcow2 build/$TARGET.qcow2
 
 TMPDIR=$(mktemp -d)
 envsubst <$(dirname $0)/box.xml >$TMPDIR/box.xml
 
-tar czf build/$TARGET.box --transform='s!.*/!!' --transform="s/$TARGET.qcow2/box-disk1.img/" $(dirname $0)/{metadata.json,Vagrantfile} build/$TARGET.qcow2 $TMPDIR/box.xml
-rm -f build/$TARGET.qcow2 $TMPDIR
+tar -czf build/$TARGET.box --transform='s!.*/!!' --transform="s/$TARGET.qcow2/box-disk1.img/" $(dirname $0)/{metadata.json,Vagrantfile} build/$TARGET.qcow2 $TMPDIR/box.xml
+rm -rf build/$TARGET.qcow2 $TMPDIR
 
 echo \$ vagrant box add $TARGET build/$TARGET.box
 echo \$ vagrant init $TARGET

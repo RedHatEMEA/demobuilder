@@ -37,16 +37,16 @@ compress_qcow2() {
   BACKINGFILE=$(qemu-img info $1 | sed -n -e '/^backing file: / { s/.*: //; p; }')
 
   if [ -z $BACKINGFILE ]; then
-    qemu-img convert -cp -O qcow2 $1 $1.tmp
+    qemu-img convert -c -O qcow2 $1 $1.tmp
   else
-    qemu-img convert -cp -O qcow2 -B $BACKINGFILE $1 $1.tmp
+    qemu-img convert -c -O qcow2 -B $BACKINGFILE $1 $1.tmp
   fi
 
   mv $1.tmp $1
 }
 
 flatten_qcow2() {
-  qemu-img convert -cp -O qcow2 $1 $1.tmp
+  qemu-img convert -O qcow2 $1 $1.tmp
   mv $1.tmp $1
 }
 
