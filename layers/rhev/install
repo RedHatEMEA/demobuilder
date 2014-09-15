@@ -6,7 +6,7 @@ TARGET=$1:$(basename $(dirname $0))
 
 . targets/$TARGET
 export MEM=${MEM:-1024}
-export NAME=${NAME:-rhev}
+export NAME=${NAME:-$TARGET}
 export CPUS=${CPUS:-1}
 
 if [ -e build/$TARGET.ova ]; then
