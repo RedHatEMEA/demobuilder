@@ -24,11 +24,7 @@ utils/addlayer.sh $1 $(dirname $0)
 convert_qcow2 build/$TARGET.qcow2 vmdk
 
 TMPDIR=$(mktemp -d)
+envsubst <$(dirname $0)/template.ovf >$TMPDIR/template.ovf
 
-export SYSTEM_UUID=$(uuidgen)
-export SIZE=$((10*1024**3/512))
-
-envsubst <$(dirname $0)/desc.ovf >$TMPDIR/desc.ovf
-
-tar -Pczf build/$TARGET.ova --transform='s!.*/!!' --transform="s/$TARGET.vmdk/disk.img/" $TMPDIR/* build/$TARGET.vmdk
+tar -Pczf build/$TARGET.ova --transform='s!.*/!!' --transform="s/$TARGET.vmdk/template-disk1.vmdk/" $TMPDIR/* build/$TARGET.vmdk
 rm -rf build/$TARGET.qcow2 build/$TARGET.vmdk $TMPDIR
