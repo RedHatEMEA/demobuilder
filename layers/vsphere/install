@@ -9,8 +9,8 @@ export MEM=${MEM:-1024}
 export NAME=${NAME:-$TARGET}
 export CPUS=${CPUS:-1}
 
-if [ -e build/$TARGET.ova ]; then
-  echo "$0: build/$TARGET.ova already exists, not rebuilding"
+if [ -e build/vsphere/$TARGET.ova ]; then
+  echo "$0: build/vsphere/$TARGET.ova already exists, not rebuilding"
   exit
 fi
 
@@ -28,4 +28,5 @@ envsubst <$(dirname $0)/template.ovf >$TMPDIR/template.ovf
 
 tar -Pczf tmp/$TARGET.ova --transform='s!.*/!!' --transform="s/$TARGET.vmdk/template-disk1.vmdk/" $TMPDIR/* tmp/$TARGET.vmdk
 rm -rf tmp/$TARGET.qcow2 tmp/$TARGET.vmdk $TMPDIR
-mv tmp/$TARGET.ova build/$TARGET.ova
+mkdir build/vsphere
+mv tmp/$TARGET.ova build/vsphere/$TARGET.ova

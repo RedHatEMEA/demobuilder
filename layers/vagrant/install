@@ -9,8 +9,8 @@ export MEM=${MEM:-1024}
 export NAME=${NAME:-$TARGET}
 export CPUS=${CPUS:-1}
 
-if [ -e build/$TARGET.box ]; then
-  echo "$0: build/$TARGET.box already exists, not rebuilding"
+if [ -e build/vagrant/$TARGET.box ]; then
+  echo "$0: build/vagrant/$TARGET.box already exists, not rebuilding"
   exit
 fi
 
@@ -29,8 +29,9 @@ envsubst <$(dirname $0)/box.xml >$TMPDIR/box.xml
 
 tar -czf tmp/$TARGET.box --transform='s!.*/!!' --transform="s/$TARGET.qcow2/box-disk1.img/" $(dirname $0)/{metadata.json,Vagrantfile} tmp/$TARGET.qcow2 $TMPDIR/box.xml
 rm -rf tmp/$TARGET.qcow2 $TMPDIR
-mv tmp/$TARGET.box build/$TARGET.box
+mkdir build/vagrant
+mv tmp/$TARGET.box build/vagrant/$TARGET.box
 
-echo \$ vagrant box add $TARGET build/$TARGET.box
+echo \$ vagrant box add $TARGET build/vagrant/$TARGET.box
 echo \$ vagrant init $TARGET
 echo \$ vagrant up

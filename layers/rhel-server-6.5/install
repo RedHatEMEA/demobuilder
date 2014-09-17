@@ -35,5 +35,4 @@ utils/qemu-kvm.sh -nodefaults \
 
 rm -rf $TEMPDIR
 
-compress_qcow2 tmp/$TARGET.qcow2
 mv tmp/$TARGET.qcow2 build/$TARGET.qcow2

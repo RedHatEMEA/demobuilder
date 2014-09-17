@@ -26,5 +26,4 @@ utils/ssh.sh root@$IP "cd demobuilder; http_proxy=http://$PROXYLISTENER/ ./insta
 
 wait_pid $QEMUPID
 
-compress_qcow2 tmp/$TARGET.qcow2
 mv tmp/$TARGET.qcow2 build/$TARGET.qcow2
