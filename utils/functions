@@ -21,7 +21,9 @@ proxy_start() {
 }
 
 proxy_stop() {
-  [ -n "$PROXYPID" ] && kill $PROXYPID
+  if [ -n "$PROXYPID" ]; then
+      kill $PROXYPID &>/dev/null || true
+  fi
 }
 
 httpserver_start() {
@@ -30,7 +32,9 @@ httpserver_start() {
 }
 
 httpserver_stop() {
-  [ -n "$HTTPPID" ] && kill $HTTPPID
+  if [ -n "$HTTPPID" ]; then
+    kill $HTTPPID &>/dev/null || true
+  fi
 }
 
 compress_qcow2() {
