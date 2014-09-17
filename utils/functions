@@ -12,7 +12,7 @@ cache() {
 }
 
 interface_ip() {
-  ifconfig $1 | awk '/inet / { print $2; }'
+  ip addr show dev $1 | sed -n '/inet / { s!.*inet !!; s!/.*!!; p; }'
 }
 
 proxy_start() {
