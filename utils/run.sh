@@ -4,7 +4,7 @@
 
 TMPDIR=$(mktemp -d)
 
-qemu-kvm -nodefaults \
+utils/qemu-kvm.sh -nodefaults \
   -smp 2 \
   -m 2048 \
   -drive discard=unmap,file=$1,id=disk1,if=none \
