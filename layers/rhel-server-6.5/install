@@ -2,14 +2,9 @@
 
 . utils/functions
 
-if [ -z "$HTTPLISTENER" -o -z "$BRIDGE" -o ! -e keys/demobuilder.pub ]; then
-  echo "$0: build environment incorrect"
-  exit 1
-fi
-
-TARGET=build/$(basename $(dirname $0)).qcow2
-if [ -e $TARGET ]; then
-  echo "$0: $TARGET already exists, not rebuilding"
+TARGET=$(basename $(dirname $0))
+if [ -e build/$TARGET.qcow2 ]; then
+  echo "$0: build/$TARGET.qcow2 already exists, not rebuilding"
   exit
 fi
 
@@ -21,7 +16,7 @@ for FILE in initrd.img vmlinuz; do
   iso-read -i $ISO -e isolinux/$FILE -o $TEMPDIR/$FILE
 done
 
-qemu-img create -q -f qcow2 $TARGET 10G
+qemu-img create -q -f qcow2 tmp/$TARGET.qcow2 10G
 qemu-kvm -nodefaults \
   -smp 2 \
   -m 2048 \
@@ -29,7 +24,7 @@ qemu-kvm -nodefaults \
   -initrd $TEMPDIR/initrd.img \
   -append "ks=http://$HTTPLISTENER/$(dirname $0)/rhel-server-6.5.ks listener=$HTTPLISTENER" \
   -device virtio-scsi-pci \
-  -drive discard=unmap,file=build/rhel-server-6.5.qcow2,id=disk1,if=none \
+  -drive discard=unmap,file=tmp/$TARGET.qcow2,id=disk1,if=none \
   -device scsi-disk,drive=disk1 \
   -net bridge,br=$BRIDGE \
   -net nic,model=virtio,macaddr=$(utils/random-mac.py) \
@@ -40,4 +35,5 @@ qemu-kvm -nodefaults \
 
 rm -rf $TEMPDIR
 
-compress_qcow2 $TARGET
+compress_qcow2 tmp/$TARGET.qcow2
+mv tmp/$TARGET.qcow2 build/$TARGET.qcow2

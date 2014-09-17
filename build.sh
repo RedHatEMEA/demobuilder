@@ -18,11 +18,9 @@ cleanup() {
   httpserver_stop
 }
 
+utils/init.sh
+
 trap cleanup 0
-
-mkdir -p build keys
-[ -e keys/demobuilder ] || ssh-keygen -f keys/demobuilder -N ""
-
 proxy_start
 httpserver_start
 
