@@ -17,7 +17,7 @@ for FILE in initrd.img vmlinuz; do
 done
 
 qemu-img create -q -f qcow2 tmp/$TARGET.qcow2 10G
-utils/qemu-kvm.sh -nodefaults \
+utils/sigwrap /usr/bin/qemu-kvm -nodefaults \
   -smp 2 \
   -m 2048 \
   -kernel $TEMPDIR/vmlinuz \
