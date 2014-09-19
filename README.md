@@ -8,4 +8,5 @@ including OpenStack, RHEV, Vagrant and VMware.
 
 ### Contents
 
-[Getting started](docs/Getting_Started.md)
+- [Getting started](docs/Getting started.md)
+- [Importing a Demobuilder image into vSphere](docs/Importing a Demobuilder image into vSphere.md)
