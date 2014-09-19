@@ -26,7 +26,7 @@ convert_qcow2 tmp/$TARGET.qcow2 vmdk
 TMPDIR=$(mktemp -d)
 envsubst <$(dirname $0)/template.ovf >$TMPDIR/template.ovf
 
-tar -Pczf tmp/$TARGET.ova --transform='s!.*/!!' --transform="s/$TARGET.vmdk/template-disk1.vmdk/" $TMPDIR/* tmp/$TARGET.vmdk
+tar -Pczf tmp/$TARGET.ova --transform='s!.*/!!' --transform="s/$TARGET.vmdk/template-disk1.vmdk/" $TMPDIR/template.ovf tmp/$TARGET.vmdk
 rm -rf tmp/$TARGET.qcow2 tmp/$TARGET.vmdk $TMPDIR
 mkdir build/vsphere
 mv tmp/$TARGET.ova build/vsphere/$TARGET.ova

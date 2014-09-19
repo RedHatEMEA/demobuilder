@@ -45,7 +45,7 @@ mkdir -p $TMPDIR/{images/$IMAGE_UUID,master/vms/$TEMPLATE_UUID}
 envsubst <$(dirname $0)/disk.meta >$TMPDIR/images/$IMAGE_UUID/$DISK_UUID.meta
 envsubst <$(dirname $0)/template.ovf >$TMPDIR/master/vms/$TEMPLATE_UUID/$TEMPLATE_UUID.ovf
 
-tar -Pczf tmp/$TARGET.ova --transform="s!$TMPDIR/!!" --transform="s!tmp/$TARGET.qcow2!images/$IMAGE_UUID/$DISK_UUID!" $TMPDIR/* tmp/$TARGET.qcow2
+tar -Pczf tmp/$TARGET.ova --transform="s!$TMPDIR/!!" --transform="s!tmp/$TARGET.qcow2!images/$IMAGE_UUID/$DISK_UUID!" $TMPDIR/master/vms/$TEMPLATE_UUID/$TEMPLATE_UUID.ovf $TMPDIR/images/$IMAGE_UUID/$DISK_UUID.meta tmp/$TARGET.qcow2
 rm -rf tmp/$TARGET.qcow2 $TMPDIR
 mkdir build/rhev
 mv tmp/$TARGET.ova build/rhev/$TARGET.ova
