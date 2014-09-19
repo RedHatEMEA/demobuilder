@@ -4,21 +4,37 @@
 
 register_channels rhel-x86_64-server-6
 yum_update
-install_packages evince firefox gdm gnome-panel gnome-session gnome-terminal man nautilus tigervnc-server urw-fonts xorg-x11-xinit
+install_packages evince firefox gdm gnome-panel gnome-session gnome-terminal man nautilus tigervnc-server urw-fonts xinetd xorg-x11-xinit
 
 useradd demo
-echo redhat | passwd --stdin demo
+passwd -d demo
+passwd -e demo
 echo 'demo ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers
 passwd -l root
 
+sed -i -e '/^#PermitEmptyPasswords/ a \
+PermitEmptyPasswords yes' /etc/ssh/sshd_config
+
 su demo -c 'gconftool-2 --type int --set /apps/metacity/general/num_workspaces 1'
 
-sed -i -e 's/id:3:initdefault:/id:5:initdefault:/' /etc/inittab
-
-sed -i -e '/^\[greeter\]/a \
+sed -i -e '/^\[greeter\]/ a \
 IncludeAll=false \
-Include=demo' /etc/gdm/custom.conf
+Include=demo
+/^\[xdmcp\]/ a \
+Enable=true' /etc/gdm/custom.conf
 
-# su demo -c 'mkdir ~/.vnc; echo redhat | vncpasswd -f >~/.vnc/passwd; chmod 0600 ~/.vnc/passwd'
-# echo "su demo -c 'vncserver :0'" >>/etc/rc.local
-# lokkit -p 5900:tcp
+cat >/etc/xinetd.d/vnc-server <<EOF
+service vnc-server
+{
+        protocol = tcp
+        wait = no
+        user = nobody
+        server = /usr/bin/Xvnc
+        server_args = -inetd -query localhost -once -SecurityTypes None
+}
+EOF
+
+service xinetd start
+lokkit -p 5900:tcp
+
+sed -i -e 's/id:3:initdefault:/id:5:initdefault:/' /etc/inittab
