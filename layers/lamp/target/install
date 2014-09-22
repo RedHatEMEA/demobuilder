@@ -1,0 +1,21 @@
+#!/bin/bash -x
+
+. vm-functions
+
+register_channels rhel-x86_64-server-6
+yum_update
+install_packages httpd php mysql-server
+chkconfig httpd on
+
+cat > /var/www/html/index.php <<EOF
+<?php
+
+date_default_timezone_set('Europe/London');
+echo 'The time is: ' . date(DATE_ATOM);
+
+?>
+EOF
+
+
+lokkit -p 80:tcp
+
