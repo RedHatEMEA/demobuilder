@@ -3,24 +3,34 @@
 . utils/functions
 
 build() {
-  echo Building $1...
-  layers/$1/install $2
+  utils/builddeps.py $1 | while read LAYER BASE; do
+    if [ -n "$BASE" ]; then
+      echo Building $BASE:$LAYER...
+    else
+      echo Building $LAYER...
+    fi
+    layers/$LAYER/install $BASE
+  done
 }
 
-mkdir -p build keys
-[ -e keys/demobuilder ] || ssh-keygen -f keys/demobuilder -N ""
+utils/init.sh
 
 proxy_start
 httpserver_start
 
 if [ $# -eq 0 ]; then
-  utils/builddeps.py <buildlist | while read LAYER BASE; do
-    build $LAYER $BASE
+  echo "Usage: $0 -a"
+  echo "       $0 target"
+  echo
+  echo "Valid targets:"
+  ls targets | sed -e 's/^/  /'
+  echo
+elif [ $1 = "-a" ]; then
+  for i in targets/*; do
+    build $(basename $i)
   done
 else
-  echo $1 | utils/builddeps.py | while read LAYER BASE; do
-    build $LAYER $BASE
-  done
+  build $1
 fi
 
 proxy_stop

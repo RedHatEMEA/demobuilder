@@ -1,0 +1,26 @@
+#!/bin/bash -e
+
+. utils/functions
+
+TARGET=$1:$(basename $(dirname $0))
+
+. targets/$TARGET
+
+if [ -e build/openstack/$TARGET.qcow2 ]; then
+  echo "$0: build/openstack/$TARGET.qcow2 already exists, not rebuilding"
+  exit
+fi
+
+if [ $# -ne 1 ]; then
+  echo "usage: $0 base"
+  exit 1
+fi
+
+utils/addlayer.sh $1 $(dirname $0)
+mv build/$TARGET.qcow2 tmp/$TARGET.qcow2  # TODO
+convert_qcow2 tmp/$TARGET.qcow2 qcow2
+compress_qcow2 tmp/$TARGET.qcow2
+mkdir build/openstack
+mv tmp/$TARGET.qcow2 build/openstack/$TARGET.qcow2
+
+echo \$ glance image-create --name $TARGET --file build/openstack/$TARGET.qcow2 --disk-format qcow2 --container-format bare --min-disk 10 --is-public True

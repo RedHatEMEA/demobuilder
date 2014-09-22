@@ -1,9 +1,0 @@
-# This file defines a list of VM images, one per line, to be built
-# automatically as a combination of multiple layers.  For example, the
-# line rhel-server-6.5:gui:openshift:rhev would create a RHEL server
-# 6.5 base image, add the GUI and OpenShift layers, and provide an
-# output image ready to be imported into RHEV.
-
-rhel-guest-image-6.5
-rhel-server-6.5:gui:openshift
-rhel-server-6.5:vagrant

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ovf:Envelope xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1/" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ovf:version="3.4.0.0">
+  <References>
+    <File ovf:href="$IMAGE_UUID/$DISK_UUID" ovf:id="$DISK_UUID" ovf:size="10737418240" ovf:description=""/>
+    <Nic ovf:id="$NIC_UUID"/>
+  </References>
+  <Section xsi:type="ovf:NetworkSection_Type">
+    <Info>List of networks</Info>
+    <Network ovf:name="Network 1"/>
+  </Section>
+  <Section xsi:type="ovf:DiskSection_Type">
+    <Info>List of Virtual Disks</Info>
+    <Disk ovf:diskId="$DISK_UUID" ovf:size="10" ovf:actual_size="10" ovf:vm_snapshot_id="$UUID_1" ovf:parentRef="" ovf:fileRef="$IMAGE_UUID/$DISK_UUID" ovf:format="http://www.gnome.org/~markmc/qcow-image-format.html" ovf:volume-format="COW" ovf:volume-type="Sparse" ovf:disk-interface="VirtIO" ovf:boot="true" ovf:disk-alias="$NAME_Disk1" ovf:wipe-after-delete="false"/>
+  </Section>
+  <Content ovf:id="out" xsi:type="ovf:VirtualSystem_Type">
+    <Description/>
+    <CreationDate>$DATE_YMDHMS</CreationDate>
+    <ExportDate>$DATE_YMDHMS</ExportDate>
+    <DeleteProtected>false</DeleteProtected>
+    <SsoMethod>none</SsoMethod>
+    <IsSmartcardEnabled>false</IsSmartcardEnabled>
+    <TimeZone/>
+    <default_boot_sequence>0</default_boot_sequence>
+    <Generation>2</Generation>
+    <VmType>1</VmType>
+    <MinAllocatedMem>$MEM</MinAllocatedMem>
+    <IsStateless>false</IsStateless>
+    <IsRunAndPause>false</IsRunAndPause>
+    <AutoStartup>false</AutoStartup>
+    <Priority>1</Priority>
+    <CreatedByUserId>fdfc627c-d875-11e0-90f0-83df133b58cc</CreatedByUserId>
+    <Name>$NAME</Name>
+    <TemplateId>$TEMPLATE_UUID</TemplateId>
+    <Origin>0</Origin>
+    <default_display_type>0</default_display_type>
+    <IsDisabled>false</IsDisabled>
+    <TrustedService>false</TrustedService>
+    <TemplateType>TEMPLATE</TemplateType>
+    <BaseTemplateId>$TEMPLATE_UUID</BaseTemplateId>
+    <TemplateVersionNumber>1</TemplateVersionNumber>
+    <TemplateVersionName>base version</TemplateVersionName>
+    <Section ovf:id="$TEMPLATE_UUID" ovf:required="false" xsi:type="ovf:OperatingSystemSection_Type">
+      <Info>Guest Operating System</Info>
+      <Description>rhel_6x64</Description>
+    </Section>
+    <Section xsi:type="ovf:VirtualHardwareSection_Type">
+      <Info>$CPUS CPU, $MEM Memeory</Info>
+      <System>
+        <vssd:VirtualSystemType>RHEVM 3.4.0.0</vssd:VirtualSystemType>
+      </System>
+      <Item>
+        <rasd:Caption>$CPUS virtual cpu</rasd:Caption>
+        <rasd:Description>Number of virtual CPU</rasd:Description>
+        <rasd:InstanceId>1</rasd:InstanceId>
+        <rasd:ResourceType>3</rasd:ResourceType>
+        <rasd:num_of_sockets>$CPUS</rasd:num_of_sockets>
+        <rasd:cpu_per_socket>1</rasd:cpu_per_socket>
+      </Item>
+      <Item>
+        <rasd:Caption>$MEM MB of memory</rasd:Caption>
+        <rasd:Description>Memory Size</rasd:Description>
+        <rasd:InstanceId>2</rasd:InstanceId>
+        <rasd:ResourceType>4</rasd:ResourceType>
+        <rasd:AllocationUnits>MegaBytes</rasd:AllocationUnits>
+        <rasd:VirtualQuantity>$MEM</rasd:VirtualQuantity>
+      </Item>
+      <Item>
+        <rasd:Caption>$NAME_Disk1</rasd:Caption>
+        <rasd:InstanceId>$DISK_UUID</rasd:InstanceId>
+        <rasd:ResourceType>17</rasd:ResourceType>
+        <rasd:HostResource>$IMAGE_UUID/$DISK_UUID</rasd:HostResource>
+        <rasd:Parent>00000000-0000-0000-0000-000000000000</rasd:Parent>
+        <rasd:Template>00000000-0000-0000-0000-000000000000</rasd:Template>
+        <rasd:ApplicationList/>
+        <rasd:StorageId>00000000-0000-0000-0000-000000000000</rasd:StorageId>
+        <rasd:StoragePoolId>00000000-0000-0000-0000-000000000000</rasd:StoragePoolId>
+        <rasd:CreationDate>$DATE_YMDHMS</rasd:CreationDate>
+        <rasd:LastModified>$DATE_YMDHMS</rasd:LastModified>
+        <Type>disk</Type>
+        <Device>disk</Device>
+        <rasd:Address/>
+        <BootOrder>0</BootOrder>
+        <IsPlugged>true</IsPlugged>
+        <IsReadOnly>false</IsReadOnly>
+        <Alias/>
+      </Item>
+      <Item>
+        <rasd:Caption>Ethernet adapter on rhevm</rasd:Caption>
+        <rasd:InstanceId>$NIC_UUID</rasd:InstanceId>
+        <rasd:ResourceType>10</rasd:ResourceType>
+        <rasd:OtherResourceType>rhevm</rasd:OtherResourceType>
+        <rasd:ResourceSubType>3</rasd:ResourceSubType>
+        <rasd:Connection>rhevm</rasd:Connection>
+        <rasd:Linked>true</rasd:Linked>
+        <rasd:Name>nic1</rasd:Name>
+        <rasd:speed>1000</rasd:speed>
+        <Type>interface</Type>
+        <Device>bridge</Device>
+        <rasd:Address/>
+        <BootOrder>0</BootOrder>
+        <IsPlugged>true</IsPlugged>
+        <IsReadOnly>false</IsReadOnly>
+        <Alias/>
+      </Item>
+      <Item>
+        <rasd:Caption>USB Controller</rasd:Caption>
+        <rasd:InstanceId>3</rasd:InstanceId>
+        <rasd:ResourceType>23</rasd:ResourceType>
+        <rasd:UsbPolicy>DISABLED</rasd:UsbPolicy>
+      </Item>
+      <Item>
+        <rasd:Caption>Graphical Controller</rasd:Caption>
+        <rasd:InstanceId>$UUID_2</rasd:InstanceId>
+        <rasd:ResourceType>20</rasd:ResourceType>
+        <rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+        <rasd:SinglePciQxl>false</rasd:SinglePciQxl>
+        <Type>video</Type>
+        <Device>cirrus</Device>
+        <rasd:Address/>
+        <BootOrder>0</BootOrder>
+        <IsPlugged>true</IsPlugged>
+        <IsReadOnly>true</IsReadOnly>
+        <Alias/>
+        <SpecParams>
+          <vram>32768</vram>
+          <heads>1</heads>
+        </SpecParams>
+      </Item>
+      <Item>
+        <rasd:Caption>CDROM</rasd:Caption>
+        <rasd:InstanceId>$UUID_3</rasd:InstanceId>
+        <rasd:ResourceType>15</rasd:ResourceType>
+        <Type>disk</Type>
+        <Device>cdrom</Device>
+        <rasd:Address/>
+        <BootOrder>0</BootOrder>
+        <IsPlugged>true</IsPlugged>
+        <IsReadOnly>true</IsReadOnly>
+        <Alias/>
+        <SpecParams>
+          <path/>
+        </SpecParams>
+      </Item>
+      <Item>
+        <rasd:ResourceType>0</rasd:ResourceType>
+        <rasd:InstanceId>$UUID_4</rasd:InstanceId>
+        <Type>balloon</Type>
+        <Device>memballoon</Device>
+        <rasd:Address/>
+        <BootOrder>0</BootOrder>
+        <IsPlugged>true</IsPlugged>
+        <IsReadOnly>true</IsReadOnly>
+        <Alias/>
+        <SpecParams>
+          <model>virtio</model>
+        </SpecParams>
+      </Item>
+      <Item>
+        <rasd:ResourceType>0</rasd:ResourceType>
+        <rasd:InstanceId>$UUID_5</rasd:InstanceId>
+        <Type>controller</Type>
+        <Device>virtio-scsi</Device>
+        <rasd:Address/>
+        <BootOrder>0</BootOrder>
+        <IsPlugged>true</IsPlugged>
+        <IsReadOnly>false</IsReadOnly>
+        <Alias/>
+      </Item>
+    </Section>
+  </Content>
+</ovf:Envelope>

@@ -1,0 +1,10 @@
+#!/bin/bash -x
+
+. vm-functions
+
+register_channels rhel-x86_64-server-rh-common-6 rhel-x86_64-server-6
+install_packages cloud-init
+
+passwd -l root
+
+cleanup
