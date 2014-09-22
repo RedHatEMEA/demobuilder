@@ -21,12 +21,13 @@ fi
 
 utils/addlayer.sh $1 $(dirname $0)
 mv build/$TARGET.qcow2 tmp/$TARGET.qcow2  # TODO
-convert_qcow2 tmp/$TARGET.qcow2 vmdk
+convert_qcow2 tmp/$TARGET.qcow2 raw
+utils/VMDKstream.py tmp/$TARGET.raw tmp/$TARGET.vmdk
 
 TMPDIR=$(mktemp -d)
 envsubst <$(dirname $0)/template.ovf >$TMPDIR/template.ovf
 
-tar -Pczf tmp/$TARGET.ova --transform='s!.*/!!' --transform="s/$TARGET.vmdk/template-disk1.vmdk/" $TMPDIR/template.ovf tmp/$TARGET.vmdk
-rm -rf tmp/$TARGET.qcow2 tmp/$TARGET.vmdk $TMPDIR
+tar -Pcf tmp/$TARGET.ova --transform='s!.*/!!' --transform="s/$TARGET.vmdk/template-disk1.vmdk/" $TMPDIR/template.ovf tmp/$TARGET.vmdk
+rm -rf tmp/$TARGET.qcow2 tmp/$TARGET.raw tmp/$TARGET.vmdk $TMPDIR
 mkdir build/vsphere
 mv tmp/$TARGET.ova build/vsphere/$TARGET.ova
