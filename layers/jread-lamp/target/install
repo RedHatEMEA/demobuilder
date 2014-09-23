@@ -7,15 +7,8 @@ yum_update
 install_packages httpd php mysql-server
 chkconfig httpd on
 
-cat > /var/www/html/index.php <<EOF
-<?php
-
-date_default_timezone_set('Europe/London');
-echo 'The time is: ' . date(DATE_ATOM);
-
-?>
-EOF
-
+cp index.php /var/www/html/
+restorecon -Rv /var/www/html
 
 lokkit -p 80:tcp
 
