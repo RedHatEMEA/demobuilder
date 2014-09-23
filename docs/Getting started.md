@@ -30,8 +30,7 @@ $ git clone https://github.com/RedHatEMEA/demobuilder.git
 
 ### Building images
 
-Note that **all** demobuilder scripts must be run from the root of the
-demobuilder directory tree.
+Note that **all** demobuilder scripts must be run from the root of the demobuilder directory tree.
 
 ```bash
 $ cd demobuilder
@@ -53,21 +52,17 @@ $ ./build.sh -a
 
 ### Notes
 
-1. If you get the following libguestfs errors, running `yum -y update`
-   appears to resolve the problem.
-   ```
-libguestfs: warning: supermin-helper -f checksum returned a short string
-libguestfs: error: cannot find any suitable libguestfs supermin, fixed
-or old-style appliance on LIBGUESTFS_PATH (search path:
-/usr/lib64/guestfs)
-```
+1. If you get the following libguestfs errors, running `yum -y update` appears to resolve the problem.
 
-1. If you get the error `curl: (60) Peer's Certificate issuer is not
-   recognized`, it's because you don't have the necessary CA
-   certificate installed.  Find and download the appropriate
-   certificate, then do the following:
    ```bash
-# Run the following commands as root...
-$ cp myca.crt /etc/pki/ca-trust/sources/anchors
-$ update-ca-trust
-```
+   libguestfs: warning: supermin-helper -f checksum returned a short string
+   libguestfs: error: cannot find any suitable libguestfs supermin, fixed or old-style appliance on LIBGUESTFS_PATH (search path: /usr/lib64/guestfs)
+   ```
+
+1. If you get the error `curl: (60) Peer's Certificate issuer is not recognized`, it's because you don't have the necessary CA certificate installed.  Find and download the appropriate certificate, then do the following:
+
+   ```bash
+   # Run the following commands as root...
+   $ cp myca.crt /etc/pki/ca-trust/sources/anchors
+   $ update-ca-trust
+   ```
