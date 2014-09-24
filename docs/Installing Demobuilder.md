@@ -1,4 +1,4 @@
-# Getting Started
+# Installing Demobuilder
 
 ### Prerequisites
 
@@ -10,7 +10,13 @@
 # Run the following commands as root...
 
 # Install required packages
-$ yum -y install git guestfish libcdio libvirt qemu
+$ yum -y install git guestfish libcdio libvirt python-markdown2 qemu
+
+# Ensure all necessary CA certificates are correctly installed
+$ pushd /etc/pki/ca-trust/sources/anchors
+$ wget http://path/to/ca.crt
+$ popd
+$ update-ca-trust
 
 # Ensure system is up to date
 $ yum -y update
@@ -57,12 +63,4 @@ $ ./build.sh -a
    ```bash
    libguestfs: warning: supermin-helper -f checksum returned a short string
    libguestfs: error: cannot find any suitable libguestfs supermin, fixed or old-style appliance on LIBGUESTFS_PATH (search path: /usr/lib64/guestfs)
-   ```
-
-1. If you get the error `curl: (60) Peer's Certificate issuer is not recognized`, it's because you don't have the necessary CA certificate installed.  Find and download the appropriate certificate, then do the following:
-
-   ```bash
-   # Run the following commands as root...
-   $ cp myca.crt /etc/pki/ca-trust/sources/anchors
-   $ update-ca-trust
    ```
