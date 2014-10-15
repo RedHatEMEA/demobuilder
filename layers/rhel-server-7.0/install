@@ -1,0 +1,38 @@
+#!/bin/bash -e
+
+. utils/functions
+
+TARGET=$(basename $(dirname $0))
+if [ -e build/$TARGET.qcow2 ]; then
+  echo "$0: build/$TARGET.qcow2 already exists, not rebuilding"
+  exit
+fi
+
+TEMPDIR=$(mktemp -d)
+
+ISO=$(cache https://download.eng.rdu2.redhat.com/released/RHEL-7/7.0/Server/x86_64/iso/RHEL-7.0-20140507.0-Server-x86_64-dvd1.iso)
+
+for FILE in initrd.img vmlinuz; do
+  iso-read -i $ISO -e isolinux/$FILE -o $TEMPDIR/$FILE
+done
+
+qemu-img create -q -f qcow2 tmp/$TARGET.qcow2 10G
+utils/sigwrap /usr/bin/qemu-kvm -nodefaults \
+  -smp 2 \
+  -m 2048 \
+  -kernel $TEMPDIR/vmlinuz \
+  -initrd $TEMPDIR/initrd.img \
+  -append "ks=http://$HTTPLISTENER/$(dirname $0)/rhel-server-7.0.ks listener=$HTTPLISTENER" \
+  -device virtio-scsi-pci \
+  -drive discard=unmap,file=tmp/$TARGET.qcow2,id=disk1,if=none \
+  -device scsi-disk,drive=disk1 \
+  -net bridge,br=$BRIDGE \
+  -net nic,model=virtio,macaddr=$(utils/random-mac.py) \
+  -cdrom $ISO \
+  -device vmware-svga \
+  -vnc :0 \
+  -usbdevice tablet
+
+rm -rf $TEMPDIR
+
+mv tmp/$TARGET.qcow2 build/$TARGET.qcow2
