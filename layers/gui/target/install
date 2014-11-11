@@ -4,7 +4,7 @@
 
 register_channels rhel-x86_64-server-6
 yum_update
-install_packages evince firefox gdm gnome-panel gnome-session gnome-terminal man nautilus tigervnc-server urw-fonts xinetd xorg-x11-xinit
+install_packages evince firefox gdm gnome-panel gnome-session gnome-terminal man nautilus system-config-firewall-base tigervnc-server urw-fonts xinetd xorg-x11-xinit
 
 useradd demo
 passwd -d demo
@@ -35,6 +35,7 @@ service vnc-server
 EOF
 
 service xinetd start
+lokkit -p 22:tcp
 lokkit -p 5900:tcp
 
 sed -i -e 's/id:3:initdefault:/id:5:initdefault:/' /etc/inittab
