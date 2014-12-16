@@ -22,7 +22,7 @@ eval $(utils/run.sh tmp/$TARGET.qcow2)
 echo $IP
 
 RSYNC_RSH=utils/ssh.sh rsync -rL $LAYER/target/ root@$IP:demobuilder
-utils/ssh.sh root@$IP "cd demobuilder; http_proxy=http://$PROXYLISTENER/ ./install; cd; rm -rf demobuilder; rm /etc/udev/rules.d/70-persistent-net.rules; poweroff" </dev/null
+utils/ssh.sh root@$IP "cd demobuilder; http_proxy=http://$PROXYLISTENER/ ./install; cd; rm -rf demobuilder; rm /etc/udev/rules.d/70-persistent-net.rules; ( sleep 1; poweroff) &" </dev/null
 
 wait_pid $QEMUPID
 
