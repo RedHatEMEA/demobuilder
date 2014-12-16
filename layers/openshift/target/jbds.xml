@@ -14,7 +14,7 @@
 <com.izforge.izpack.panels.SummaryPanel id="summary"/>
 <com.izforge.izpack.panels.InstallPanel id="install"/>
 <com.jboss.jbds.installer.CreateLinkPanel id="createlink">
-<jrelocation>/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.55.x86_64/bin/java</jrelocation>
+<jrelocation>/usr/lib/jvm/java-1.7.0/bin/java</jrelocation>
 </com.jboss.jbds.installer.CreateLinkPanel>
 <com.izforge.izpack.panels.ShortcutPanel id="shortcut">
 <programGroup name=""/>
