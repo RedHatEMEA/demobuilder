@@ -3,4 +3,7 @@
 . utils/functions
 
 mkdir -p build keys tmp
-[ -e keys/demobuilder ] || ssh-keygen -f keys/demobuilder -N ""
+
+if [ ! -e keys/demobuilder ]; then
+  ssh-keygen -f keys/demobuilder -N ""
+fi

@@ -2,36 +2,34 @@
 
 . utils/functions
 
-build() {
-  utils/builddeps.py $1 | while read LAYER BASE; do
-    if [ -n "$BASE" ]; then
-      echo Building $BASE:$LAYER...
-    else
-      echo Building $LAYER...
-    fi
-    layers/$LAYER/install $BASE
-  done
+start() {
+  proxy_start
+  httpserver_start
+}
+
+stop() {
+  proxy_stop
+  httpserver_stop
 }
 
 utils/init.sh
 
-proxy_start
-httpserver_start
+trap stop ERR
+start
 
 if [ $# -eq 0 ]; then
   echo "Usage: $0 -a"
   echo "       $0 target"
   echo
   echo "Valid targets:"
-  ls targets | sed -e 's/^/  /'
+  ( cd layers && find * -type d -not -name '@*' | sort ) | sed -e 's/^/  /'
   echo
 elif [ $1 = "-a" ]; then
-  for i in targets/*; do
-    build $(basename $i)
+  for i in $( cd layers && find * -type d -not -name '@*' | sort ); do
+    layers/$i/install
   done
 else
-  build $1
+  layers/$1/install
 fi
 
-proxy_stop
-httpserver_stop
+stop

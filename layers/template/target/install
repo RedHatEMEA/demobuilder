@@ -1,9 +1,0 @@
-#!/bin/bash -x
-
-. vm-functions
-
-# register_channels channel1 channel2
-# yum_update
-# install_packages myrpm1 myrpm2
-
-# do more stuff...

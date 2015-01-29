@@ -15,7 +15,7 @@ stop() {
 trap stop EXIT
 TEMPDIR=$(mktemp -d)
 
-ISO=$(cache https://download.eng.rdu2.redhat.com/released/RHEL-7/7.0/Server/x86_64/iso/RHEL-7.0-20140507.0-Server-x86_64-dvd1.iso)
+ISO=$(cache https://download.eng.rdu2.redhat.com/released/F-21/GOLD/Server/x86_64/iso/Fedora-Server-DVD-x86_64-21.iso)
 
 for FILE in initrd.img vmlinuz; do
   iso-read -i $ISO -e isolinux/$FILE -o $TEMPDIR/$FILE

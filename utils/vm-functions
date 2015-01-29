@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 register_channels() {
   for CHANNEL in $*; do
@@ -7,19 +7,25 @@ register_channels() {
 }
 
 yum_update() {
-  yum -y update
+  /usr/bin/python -u /usr/bin/yum -y update
+
+  # running kernel, so must use rpm -e
   rpm -e $(rpm -q kernel --last | tail -n +2 | cut -d' ' -f1)
 }
 
+yum_remove() {
+  /usr/bin/python -u /usr/bin/yum -y remove $*
+}
+
 install_packages() {
-  yum -y install $*
+  /usr/bin/python -u /usr/bin/yum -y install $*
 }
 
 cleanup() {
-  yum clean all
-  rm /etc/yum.repos.d/auto-*.repo
+  /usr/bin/python -u /usr/bin/yum clean all
+  rm -f /etc/yum.repos.d/auto-*.repo
 
-  rm /etc/ssh/ssh_host_*
+  rm -f /etc/ssh/ssh_host_*
 
   fstrim /
 }

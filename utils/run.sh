@@ -3,6 +3,7 @@
 . utils/functions
 
 TMPDIR=$(mktemp -d)
+VNC=${2:-:0}
 
 utils/sigwrap /usr/bin/qemu-kvm -nodefaults \
   -smp 2 \
@@ -18,7 +19,7 @@ utils/sigwrap /usr/bin/qemu-kvm -nodefaults \
   -device virtserialport,chardev=chan0,name=com.redhat.rhevm.vdsm \
   -device virtserialport,chardev=chan1,name=org.qemu.guest_agent.0 \
   -device vmware-svga \
-  -vnc :0 \
+  -vnc $VNC \
   -usbdevice tablet \
   &>/dev/null &
 
