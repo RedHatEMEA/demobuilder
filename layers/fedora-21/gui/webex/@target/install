@@ -1,0 +1,15 @@
+#!/bin/bash -ex
+
+# http://negativo17.org/enabling-cisco-webex-in-fedora-19-x86_64-and-i686/
+
+. vm-functions
+
+install_packages alsa-lib.i686 icedtea-web gtk2.i686 java-1.8.0-openjdk libpng12.i686 libXmu.i686 libXtst.i686 libXv.i686 mesa-libEGL.i686 pangox-compat.i686 
+
+setsebool -P unconfined_mozilla_plugin_transition=off mmap_low_allowed=on
+
+cleanup
+
+# Allow meetings.webex.com to run "IcedTea-Web"?
+# Security Warning / Applet / digital signature
+# JAR File Manifest Attributes / Preventing the Repurposing of an Application
