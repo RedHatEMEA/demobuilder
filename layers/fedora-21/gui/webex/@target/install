@@ -4,7 +4,7 @@
 
 . vm-functions
 
-install_packages alsa-lib.i686 icedtea-web gtk2.i686 java-1.8.0-openjdk libpng12.i686 libXmu.i686 libXtst.i686 libXv.i686 mesa-libEGL.i686 pangox-compat.i686 
+yum_install alsa-lib.i686 icedtea-web gtk2.i686 java-1.8.0-openjdk libpng12.i686 libXmu.i686 libXtst.i686 libXv.i686 mesa-libEGL.i686 pangox-compat.i686 
 
 setsebool -P unconfined_mozilla_plugin_transition=off mmap_low_allowed=on
 

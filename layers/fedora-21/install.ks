@@ -37,7 +37,6 @@ for i in /etc/yum.repos.d/*.repo; do sed -i -e 's!^#baseurl=http://download.fedo
 passwd -l root
 
 curl -so /root/vm-functions http://$listener/utils/vm-functions
-
 . /root/vm-functions
 
 http_proxy=$pxy yum_update

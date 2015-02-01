@@ -3,12 +3,12 @@
 . vm-functions
 
 register_channels rhel-x86_64-server-6
-install_packages httpd php mysql-server
-chkconfig httpd on
+yum_install httpd mysql-server php
 
-cp index.php /var/www/html/
+mv index.php /var/www/html/
 restorecon -Rv /var/www/html
 
+chkconfig httpd on
 lokkit -p 80:tcp
 
 cleanup

@@ -17,7 +17,7 @@ yum_remove() {
   /usr/bin/python -u /usr/bin/yum -y remove $*
 }
 
-install_packages() {
+yum_install() {
   /usr/bin/python -u /usr/bin/yum -y install $*
 }
 

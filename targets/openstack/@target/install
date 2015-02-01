@@ -8,7 +8,7 @@ elif grep -q 'release 7' /etc/redhat-release; then
   register_channels rhel-x86_64-server-rh-common-7 rhel-x86_64-server-7
 fi
 
-install_packages cloud-init
+yum_install cloud-init
 
 rm /root/.ssh/authorized_keys
 

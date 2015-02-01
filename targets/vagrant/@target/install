@@ -8,7 +8,7 @@ elif grep -q 'release 7' /etc/redhat-release; then
   register_channels rhel-x86_64-server-7
 fi
 
-install_packages nfs-utils nfs-utils-lib
+yum_install nfs-utils nfs-utils-lib
 
 useradd vagrant
 echo vagrant | passwd --stdin vagrant
