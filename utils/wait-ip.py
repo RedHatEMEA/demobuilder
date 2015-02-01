@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import json
+import os
 import Queue
 import socket
 import sys
@@ -25,6 +26,13 @@ def start_thread(target, arg):
     t.start()
     return t
 
+
+def pid_thread(p):
+    while True:
+        if not os.path.exists("/proc/%s" % p):
+            q.put(None)
+        
+        time.sleep(1)
 
 def rhev_thread(p):
     s = connect(socket.AF_UNIX, p)
@@ -62,6 +70,7 @@ def main():
 
     start_thread(rhev_thread, "%s/rhev.sock" % sys.argv[1])
     start_thread(qemu_thread, "%s/qemu.sock" % sys.argv[1])
+    start_thread(pid_thread, sys.argv[2])
 
     while True:
         try:
@@ -70,6 +79,9 @@ def main():
 
         except Queue.Empty:
             time.sleep(1)
+
+    if not ip:
+        sys.exit(1)
 
     connect(socket.AF_INET, (ip, 22))
     print "IP=%s" % ip

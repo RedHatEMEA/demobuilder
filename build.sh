@@ -12,24 +12,42 @@ stop() {
   httpserver_stop
 }
 
+install_layer() {
+  LAYER=${1//:/\//}
+  layers/$LAYER/install
+
+  if [ "$2" = "-a" ]; then
+    for TARGET in $(ls targets); do
+      targets/$TARGET/install $LAYER
+    done
+
+  elif [ $# -eq 2 ]; then
+    targets/$2/install $LAYER
+  fi
+}
+
 utils/init.sh
 
 trap stop ERR
 start
 
 if [ $# -eq 0 ]; then
-  echo "Usage: $0 -a"
-  echo "       $0 target"
+  echo "Usage: $0 layer|-a [target|-a]"
+  echo
+  echo "Valid layers:"
+  ( cd layers && find * -type d -not -name '@*' | sort | sed -e 's!/!:!g' ) | sed -e 's/^/  /'
   echo
   echo "Valid targets:"
-  ( cd layers && find * -type d -not -name '@*' | sort ) | sed -e 's/^/  /'
+  ls targets | sed -e 's/^/  /'
   echo
+
 elif [ $1 = "-a" ]; then
-  for i in $( cd layers && find * -type d -not -name '@*' | sort ); do
-    layers/$i/install
+  for i in $( cd layers && find * -type d -not -name '@*' | sort | sed -e 's!/!:!g' ); do
+    install_layer ${i//:/\//} $2
   done
+
 else
-  layers/$1/install
+  install_layer ${1//:/\//} $2
 fi
 
 stop

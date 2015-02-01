@@ -2,9 +2,18 @@
 
 . utils/functions
 
-TARGET=$1:$(basename $(dirname $0))
+if [ $# -ne 1 ]; then
+  echo "usage: $0 base"
+  exit 1
+fi
 
-. targets/$TARGET
+BASE=$1
+TARGET=${BASE//\//:}
+
+if [ -e layers/$BASE/properties ]; then
+  . layers/$BASE/properties
+fi
+
 export MEM=${MEM:-1024}
 export NAME=${NAME:-$TARGET}
 export CPUS=${CPUS:-1}
@@ -14,20 +23,16 @@ if [ -e build/vsphere/$TARGET.ova ]; then
   exit
 fi
 
-if [ $# -ne 1 ]; then
-  echo "usage: $0 base"
-  exit 1
-fi
+utils/addlayer.sh build/$TARGET.qcow2 targets/vsphere tmp/$TARGET:vsphere.qcow2
+convert_qcow2 tmp/$TARGET:vsphere.qcow2 raw
 
-utils/addlayer.sh $1 $(dirname $0)
-mv build/$TARGET.qcow2 tmp/$TARGET.qcow2  # TODO
-convert_qcow2 tmp/$TARGET.qcow2 raw
-utils/VMDKstream.py tmp/$TARGET.raw tmp/$TARGET.vmdk
+utils/VMDKstream.py tmp/$TARGET:vsphere.raw tmp/$TARGET:vsphere.vmdk
 
 TMPDIR=$(mktemp -d)
 envsubst <$(dirname $0)/template.ovf >$TMPDIR/template.ovf
 
-tar -Pcf tmp/$TARGET.ova --transform='s!.*/!!' --transform="s/$TARGET.vmdk/template-disk1.vmdk/" $TMPDIR/template.ovf tmp/$TARGET.vmdk
-rm -rf tmp/$TARGET.qcow2 tmp/$TARGET.raw tmp/$TARGET.vmdk $TMPDIR
-mkdir build/vsphere
+tar -Pcf tmp/$TARGET.ova --transform='s!.*/!!' --transform="s/$TARGET:vsphere.vmdk/template-disk1.vmdk/" $TMPDIR/template.ovf tmp/$TARGET:vsphere.vmdk
+rm -rf tmp/$TARGET:vsphere.qcow2 tmp/$TARGET:vsphere.raw tmp/$TARGET:vsphere.vmdk $TMPDIR
+
+mkdir -p build/vsphere
 mv tmp/$TARGET.ova build/vsphere/$TARGET.ova

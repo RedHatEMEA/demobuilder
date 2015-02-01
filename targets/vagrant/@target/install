@@ -2,16 +2,23 @@
 
 . vm-functions
 
-register_channels rhel-x86_64-server-6
+if grep -q 'release 6' /etc/redhat-release; then
+  register_channels rhel-x86_64-server-6
+elif grep -q 'release 7' /etc/redhat-release; then
+  register_channels rhel-x86_64-server-7
+fi
+
 install_packages nfs-utils nfs-utils-lib
 
 useradd vagrant
 echo vagrant | passwd --stdin vagrant
 echo 'vagrant ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers
-passwd -l root
 
 sed -i -e '/Defaults.*requiretty/ d;' /etc/sudoers
 
 su vagrant -c 'mkdir -m 0700 /home/vagrant/.ssh; curl -so /home/vagrant/.ssh/authorized_keys https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub; chmod 0600 /home/vagrant/.ssh/authorized_keys'
+chcon system_u:object_r:ssh_home_t:s0 /home/vagrant/.ssh /home/vagrant/.ssh/authorized_keys
+
+rm /root/.ssh/authorized_keys
 
 cleanup

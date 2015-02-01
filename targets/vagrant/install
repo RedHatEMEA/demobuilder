@@ -2,9 +2,18 @@
 
 . utils/functions
 
-TARGET=$1:$(basename $(dirname $0))
+if [ $# -ne 1 ]; then
+  echo "usage: $0 base"
+  exit 1
+fi
 
-. targets/$TARGET
+BASE=$1
+TARGET=${BASE//\//:}
+
+if [ -e layers/$BASE/properties ]; then
+  . layers/$BASE/properties
+fi
+
 export MEM=${MEM:-1024}
 export NAME=${NAME:-$TARGET}
 export CPUS=${CPUS:-1}
@@ -14,22 +23,17 @@ if [ -e build/vagrant/$TARGET.box ]; then
   exit
 fi
 
-if [ $# -ne 1 ]; then
-  echo "usage: $0 base"
-  exit 1
-fi
-
-utils/addlayer.sh $1 $(dirname $0)
-mv build/$TARGET.qcow2 tmp/$TARGET.qcow2  # TODO
-convert_qcow2 tmp/$TARGET.qcow2 qcow2
-compress_qcow2 tmp/$TARGET.qcow2
+utils/addlayer.sh build/$TARGET.qcow2 targets/vagrant tmp/$TARGET:vagrant.qcow2
+convert_qcow2 tmp/$TARGET:vagrant.qcow2 qcow2
+compress_qcow2 tmp/$TARGET:vagrant.qcow2
 
 TMPDIR=$(mktemp -d)
-envsubst <$(dirname $0)/box.xml >$TMPDIR/box.xml
+envsubst <$(dirname $0)/Vagrantfile >$TMPDIR/Vagrantfile
 
-tar -czf tmp/$TARGET.box --transform='s!.*/!!' --transform="s/$TARGET.qcow2/box-disk1.img/" $(dirname $0)/{metadata.json,Vagrantfile} tmp/$TARGET.qcow2 $TMPDIR/box.xml
-rm -rf tmp/$TARGET.qcow2 $TMPDIR
-mkdir build/vagrant
+tar -czf tmp/$TARGET.box --transform='s!.*/!!' --transform="s/$TARGET:vagrant.qcow2/box.img/" $(dirname $0)/metadata.json tmp/$TARGET:vagrant.qcow2 $TMPDIR/Vagrantfile
+rm -rf tmp/$TARGET:vagrant.qcow2 $TMPDIR
+
+mkdir -p build/vagrant
 mv tmp/$TARGET.box build/vagrant/$TARGET.box
 
 echo \$ vagrant box add $TARGET build/vagrant/$TARGET.box

@@ -2,9 +2,14 @@
 
 . vm-functions
 
-register_channels rhel-x86_64-server-rh-common-6 rhel-x86_64-server-6
+if grep -q 'release 6' /etc/redhat-release; then
+  register_channels rhel-x86_64-server-rh-common-6 rhel-x86_64-server-6
+elif grep -q 'release 7' /etc/redhat-release; then
+  register_channels rhel-x86_64-server-rh-common-7 rhel-x86_64-server-7
+fi
+
 install_packages cloud-init
 
-passwd -l root
+rm /root/.ssh/authorized_keys
 
 cleanup

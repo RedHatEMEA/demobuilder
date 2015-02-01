@@ -2,7 +2,6 @@
 
 . vm-functions
 
-yum_update
 install_packages evince firefox gdm gnome-session gnome-terminal nautilus tigervnc-server xinetd xorg-x11-drivers xorg-x11-server-Xorg
 
 useradd demo

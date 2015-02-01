@@ -2,20 +2,18 @@
 
 . utils/functions
 
-LAYER=$(dirname $0)
-
-TARGET=${LAYER#*/}
-BASE=${TARGET%/*}
-TARGET=${TARGET//\//:}
-BASE=${BASE//\//:}
-if [ -e build/$TARGET.qcow2 ]; then
-  echo "$0: build/$TARGET.qcow2 already exists, not rebuilding"
-  exit
+if [ $# -ne 3 ]; then
+  echo "usage: $0 base layer target"
+  exit 1
 fi
 
-utils/createsnap.sh build/$BASE.qcow2 tmp/$TARGET.qcow2
+BASE=$1
+LAYER=$2
+TARGET=$3
 
-eval $(utils/run.sh tmp/$TARGET.qcow2)
+utils/createsnap.sh $BASE $TARGET
+
+eval $(utils/run.sh $TARGET)
 
 echo $IP
 
@@ -27,4 +25,3 @@ if ! utils/ssh.sh root@$IP "cd demobuilder; chcon system_u:object_r:rpm_exec_t:s
 fi
 
 wait_pid $QEMUPID
-mv tmp/$TARGET.qcow2 build/$TARGET.qcow2

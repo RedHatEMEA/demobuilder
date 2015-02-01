@@ -23,7 +23,9 @@ utils/sigwrap /usr/bin/qemu-kvm -nodefaults \
   -usbdevice tablet \
   &>/dev/null &
 
-echo QEMUPID=$!
-utils/wait-ip.py $TMPDIR
+QEMUPID=$!
+echo QEMUPID=$QEMUPID
+
+utils/wait-ip.py $TMPDIR $QEMUPID
 
 rm -rf $TMPDIR

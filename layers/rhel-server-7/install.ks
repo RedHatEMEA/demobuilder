@@ -34,4 +34,14 @@ sed -i -e 's/^  set timeout=.*/  set timeout=0/' /boot/grub2/grub.cfg
 
 passwd -l root
 
+curl -so /root/vm-functions http://$listener/utils/vm-functions
+
+. /root/vm-functions
+
+register_channels rhel-x86_64-server-7
+http_proxy=$pxy yum_update
+cleanup
+
+rm /root/vm-functions
+
 %end

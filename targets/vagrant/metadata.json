@@ -1,3 +1,5 @@
 {
-    "provider": "kvm"
+  "provider": "libvirt",
+  "format": "qcow2",
+  "virtual_size": 10
 }
