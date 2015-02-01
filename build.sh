@@ -13,7 +13,9 @@ stop() {
 }
 
 install_layer() {
-  LAYER=${1//:/\//}
+  echo "Building $1..."
+
+  LAYER=${1//:/\/}
   layers/$LAYER/install
 
   if [ "$2" = "-a" ]; then
@@ -43,11 +45,11 @@ if [ $# -eq 0 ]; then
 
 elif [ $1 = "-a" ]; then
   for i in $( cd layers && find * -type d -not -name '@*' | sort | sed -e 's!/!:!g' ); do
-    install_layer ${i//:/\//} $2
+    install_layer $i $2
   done
 
 else
-  install_layer ${1//:/\//} $2
+  install_layer $1 $2
 fi
 
 stop
