@@ -53,3 +53,5 @@ else
 fi
 
 stop
+
+echo "Done."

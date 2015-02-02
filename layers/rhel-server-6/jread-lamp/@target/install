@@ -3,7 +3,7 @@
 . vm-functions
 
 register_channels rhel-x86_64-server-6
-yum_install httpd mysql-server php
+yum_install httpd mysql-server php system-config-firewall-base
 
 mv index.php /var/www/html/
 restorecon -Rv /var/www/html
