@@ -56,6 +56,9 @@ cat >/etc/dconf/db/local.d/01-fixes <<EOF
 [org/gnome/settings-daemon/plugins/xrandr]
 default-monitors-setup='do-nothing'
 
+[org/gnome/desktop/session]
+idle-delay=uint32 0
+
 [org/gnome/desktop/wm/preferences]
 num-workspaces=1
 EOF
