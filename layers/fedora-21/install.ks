@@ -32,16 +32,20 @@ sed -i -e '/^HWADDR=/ d' /etc/sysconfig/network-scripts/ifcfg-eth0
 
 sed -i -e 's/^  set timeout=.*/  set timeout=0/' /boot/grub2/grub.cfg
 
-for i in /etc/yum.repos.d/*.repo; do sed -i -e 's!^#baseurl=http://download.fedoraproject.org/!baseurl=http://www.mirrorservice.org/sites/dl.fedoraproject.org/!; s/^metalink=/#metalink=/' $i; done
-
 passwd -l root
 
-curl -so /root/vm-functions http://$listener/utils/vm-functions
-. /root/vm-functions
+cd /root
+curl -so config http://$listener/config
+curl -so vm-functions http://$listener/utils/vm-functions
+. ./vm-functions
 
-http_proxy=$pxy yum_update
+for i in /etc/yum.repos.d/*.repo; do
+  sed -i -e "s!^#baseurl=http://download.fedoraproject.org/!baseurl=$MIRROR_FEDORA/!; s/^metalink=/#metalink=/" $i
+done
+
+http_proxy=$PROXY yum_update
 cleanup
 
-rm /root/vm-functions
+rm config vm-functions
 
 %end

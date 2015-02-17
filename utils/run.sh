@@ -8,7 +8,7 @@ VNC=${2:-:0}
 utils/sigwrap /usr/bin/qemu-kvm -nodefaults \
   -smp 2 \
   -m 2048 \
-  -drive discard=unmap,file=$1,id=disk1,if=none \
+  -drive discard=unmap,file=$1,id=disk1,if=none,cache=unsafe \
   -device virtio-scsi-pci \
   -device scsi-disk,drive=disk1 \
   -net bridge,br=virbr0 \

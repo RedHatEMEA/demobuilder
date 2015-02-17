@@ -3,7 +3,7 @@
 . vm-functions
 
 openshift_install() {
-  curl -so openshift.sh https://raw.githubusercontent.com/openshift/openshift-extras/enterprise-2.2/enterprise/install-scripts/generic/openshift.sh
+  https_proxy=$PROXY curl -so openshift.sh https://raw.githubusercontent.com/openshift/openshift-extras/enterprise-2.2/enterprise/install-scripts/generic/openshift.sh
   chmod 0755 ./openshift.sh
   ./openshift.sh
 }
@@ -23,12 +23,12 @@ openshift_configure_node() {
 }
 
 jbds_install() {
-  curl -so jbdevstudio.jar http://download.eng.rdu2.redhat.com/released/jbdevstudio/7.1.1/jbdevstudio-product-universal-7.1.1.GA-v20140314-2145-B688.jar
+  http_proxy=$PROXY curl -so jbdevstudio.jar http://download.eng.rdu2.redhat.com/released/jbdevstudio/7.1.1/jbdevstudio-product-universal-7.1.1.GA-v20140314-2145-B688.jar
   java -jar jbdevstudio.jar jbds.xml
 }
 
 nexus_install() {
-  ( cd /usr/local && curl -Ls http://www.sonatype.org/downloads/nexus-latest-bundle.tar.gz | tar -xz )
+  ( cd /usr/local && https_proxy=$PROXY curl -Ls https://download.sonatype.com/nexus/oss/nexus-2.11.1-01-bundle.tar.gz | tar -xz )
 
   RUN_AS_USER=root /usr/local/nexus-*/bin/nexus start
   RUN_AS_USER=root /usr/local/nexus-*/bin/nexus stop
@@ -59,9 +59,11 @@ export CONF_NO_NTP=true
 export CONF_NODE_IP_ADDR=127.0.0.1
 export CONF_OPENSHIFT_PASSWORD1=redhat
 
-register_channels jbappplatform-6-x86_64-server-6-rpm jb-ews-2-x86_64-server-6-rpm rhel-x86_64-server-6 rhel-x86_64-server-6-rhscl-1 rhel-x86_64-server-6-ose-2.2-infrastructure rhel-x86_64-server-6-ose-2.2-jbosseap rhel-x86_64-server-6-ose-2.2-node rhel-x86_64-server-6-ose-2.2-rhc
+register_channels jb-eap-6-for-rhel-6-server-rpms jb-ews-2-for-rhel-6-server-rpms rhel-6-server-ose-2.2-infra-rpms rhel-6-server-ose-2.2-jbossamq-rpms rhel-6-server-ose-2.2-jbosseap-rpms rhel-6-server-ose-2.2-jbossfuse-rpms rhel-6-server-ose-2.2-node-rpms rhel-6-server-ose-2.2-rhc-rpms rhel-6-server-rpms rhel-server-rhscl-6-rpms
 
 yum_remove rsyslog
+
+register_https_proxy_ca
 
 openshift_install
 openshift_enable_admin_console

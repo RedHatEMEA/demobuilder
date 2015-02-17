@@ -2,26 +2,8 @@
 
 . config
 
-cache() {
-  DEST=cache/$(echo $1 | sed -e 's!.*://!!')
-  if ! [ -e $DEST ]; then
-    mkdir -p $(dirname $DEST)
-    curl -o $DEST $1
-  fi
-  echo $DEST
-}
-
 interface_ip() {
   ip addr show dev $1 | sed -n '/inet / { s!.*inet !!; s!/.*!!; p; }'
-}
-
-proxy_start() {
-  eval $(utils/yumproxy.py $(interface_ip $BRIDGE))
-  export PROXYLISTENER
-}
-
-proxy_stop() {
-  kill $PROXYPID
 }
 
 httpserver_start() {

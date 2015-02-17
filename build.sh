@@ -3,12 +3,10 @@
 . utils/functions
 
 start() {
-  proxy_start
   httpserver_start
 }
 
 stop() {
-  proxy_stop
   httpserver_stop
 }
 

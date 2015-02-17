@@ -1,8 +1,12 @@
 #!/bin/bash -e
 
+. ./config
+
 register_channels() {
   for CHANNEL in $*; do
-    curl -so /etc/yum.repos.d/auto-$CHANNEL.repo http://10.33.11.10:8085/$CHANNEL.repo
+    curl -so /etc/yum.repos.d/auto-$CHANNEL.repo $MIRROR_RHN/$CHANNEL.repo
+    sed -i -e "$ a\
+proxy=$PROXY" /etc/yum.repos.d/auto-$CHANNEL.repo
   done
 }
 
@@ -21,11 +25,22 @@ yum_install() {
   /usr/bin/python -u /usr/bin/yum -y install $*
 }
 
+register_https_proxy_ca() {
+  http_proxy=$PROXY curl -so /etc/pki/ca-trust/source/anchors/demobuilder-insecure-CA.crt http://cacert/
+  update-ca-trust enable
+  update-ca-trust
+}
+
 cleanup() {
   /usr/bin/python -u /usr/bin/yum clean all
   rm -f /etc/yum.repos.d/auto-*.repo
 
   rm -f /etc/ssh/ssh_host_*
+
+  if [ -e /etc/pki/ca-trust/source/anchors/demobuilder-insecure-CA.crt ]; then
+    rm -f /etc/pki/ca-trust/source/anchors/demobuilder-insecure-CA.crt
+    update-ca-trust
+  fi
 
   fstrim /
 }

@@ -2,7 +2,7 @@
 
 . vm-functions
 
-register_channels rhel-x86_64-server-6
+register_channels rhel-6-server-rpms
 yum_install httpd mysql-server php system-config-firewall-base
 
 mv index.php /var/www/html/

@@ -19,7 +19,6 @@ zerombr
 @core
 rsync
 qemu-guest-agent
--kexec-tools
 %end
 
 %post
@@ -29,11 +28,9 @@ mkdir -m 0700 /root/.ssh
 curl -so /root/.ssh/authorized_keys http://$listener/keys/demobuilder.pub
 chcon system_u:object_r:ssh_home_t:s0 /root/.ssh /root/.ssh/authorized_keys
 
-echo >/etc/udev/rules.d/75-persistent-net-generator.rules
 sed -i -e '/^HWADDR=/ d' /etc/sysconfig/network-scripts/ifcfg-eth0
-rm /etc/udev/rules.d/70-persistent-net.rules
 
-sed -i -e 's/^timeout=.*/timeout=0/' /boot/grub/grub.conf
+sed -i -e 's/^  set timeout=.*/  set timeout=0/' /boot/grub2/grub.cfg
 
 passwd -l root
 
@@ -42,7 +39,7 @@ curl -so config http://$listener/config
 curl -so vm-functions http://$listener/utils/vm-functions
 . ./vm-functions
 
-register_channels rhel-6-server-rpms
+register_channels rhel-7-server-beta-rpms
 yum_update
 cleanup
 

@@ -20,5 +20,4 @@ libra_server=$CONF_BROKER_HOSTNAME
 ssl_ca_file=/etc/pki/CA/certs/ca.crt
 EOF
 
-unset http_proxy
 rhc sshkey add -p $CONF_OPENSHIFT_PASSWORD1 default .ssh/id_rsa.pub
