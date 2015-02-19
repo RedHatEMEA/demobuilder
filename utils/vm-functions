@@ -32,7 +32,7 @@ register_https_proxy_ca() {
 }
 
 cleanup() {
-  /usr/bin/python -u /usr/bin/yum clean all
+  /usr/bin/python -u /usr/bin/yum clean all || true
   rm -f /etc/yum.repos.d/auto-*.repo
 
   rm -f /etc/ssh/ssh_host_*

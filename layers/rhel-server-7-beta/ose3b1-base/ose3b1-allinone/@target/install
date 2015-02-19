@@ -1,0 +1,19 @@
+#!/bin/bash -ex
+
+. vm-functions
+
+sed -i -e 's/^OPTIONS=.*/OPTIONS="--loglevel=4 --public-master=ose3-master.example.com"/' /etc/sysconfig/openshift-master 
+
+sed -i -e 's/^OPTIONS=.*/OPTIONS="--loglevel=4"/' /etc/sysconfig/openshift-node
+
+sed -i -e 's/^OPTIONS=.*/OPTIONS="-v=4"/' /etc/sysconfig/openshift-sdn-master
+
+sed -i -e 's!^MASTER_URL=.*!MASTER_URL="http://ose3-master.example.com:4001"!; s!^OPTIONS=.*!OPTIONS="-v=4"!; s!^DOCKER_OPTIONS=.*!DOCKER_OPTIONS="--insecure-registry=0.0.0.0/0 -b=lbr0 --mtu=1450 --selinux-enabled"!' /etc/sysconfig/openshift-sdn-node
+
+sed -i -e 's!^MINION_IP=.*!MINION_IP="127.0.0.1"!' /etc/sysconfig/openshift-sdn-node
+
+systemctl enable openshift-master
+systemctl enable openshift-sdn-master
+systemctl enable openshift-sdn-node
+
+cleanup

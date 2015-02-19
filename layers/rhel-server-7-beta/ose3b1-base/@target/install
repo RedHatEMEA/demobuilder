@@ -6,7 +6,6 @@ register_channels rhel-7-server-beta-rpms rhel-7-server-extras-rpms rhel-server-
 
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-beta
 
-# yum_install bind-utils bridge-utils deltarpm docker git iptables-services net-tools '*openshift*' openvswitch tmux vim-enhanced wget
 yum_install bind-utils bridge-utils docker git iptables-services net-tools '*openshift*' openvswitch wget
 yum_remove 'NetworkManager*'
 
@@ -39,12 +38,18 @@ register_https_proxy_ca
 
 systemctl start docker
 
-docker pull registry.access.redhat.com/openshift3_beta/ose-haproxy-router
-docker pull registry.access.redhat.com/openshift3_beta/ose-deployer
-docker pull registry.access.redhat.com/openshift3_beta/ose-sti-builder
-docker pull registry.access.redhat.com/openshift3_beta/ose-docker-builder
-docker pull registry.access.redhat.com/openshift3_beta/ose-pod
-docker pull registry.access.redhat.com/openshift3_beta/ose-docker-registry
+for image in \
+	registry.access.redhat.com/openshift3_beta/ose-deployer \
+	registry.access.redhat.com/openshift3_beta/ose-docker-builder \
+	registry.access.redhat.com/openshift3_beta/ose-docker-registry \
+	registry.access.redhat.com/openshift3_beta/ose-haproxy-router \
+	registry.access.redhat.com/openshift3_beta/ose-pod \
+	registry.access.redhat.com/openshift3_beta/ose-sti-builder \
+	openshift/hello-openshift \
+	openshift/ruby-20-centos \
+	mysql; do
+  docker pull $image
+done 
 
 systemctl stop docker
 mv /etc/sysconfig/docker.bak /etc/sysconfig/docker
