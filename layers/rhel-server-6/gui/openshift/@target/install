@@ -23,7 +23,7 @@ openshift_configure_node() {
 }
 
 jbds_install() {
-  http_proxy=$PROXY curl -so jbdevstudio.jar http://download.eng.rdu2.redhat.com/released/jbdevstudio/7.1.1/jbdevstudio-product-universal-7.1.1.GA-v20140314-2145-B688.jar
+  https_proxy=$PROXY curl -so jbdevstudio.jar https://download.eng.rdu2.redhat.com/released/jbdevstudio/7.1.1/jbdevstudio-product-universal-7.1.1.GA-v20140314-2145-B688.jar
   java -jar jbdevstudio.jar jbds.xml
 }
 

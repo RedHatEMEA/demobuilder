@@ -2,6 +2,11 @@
 
 . utils/functions
 
+if [ $# -eq 0 ]; then
+  echo "usage: $0 snap [vncport]"
+  exit 1
+fi
+
 TMPDIR=$(mktemp -d)
 VNC=${2:-:0}
 
