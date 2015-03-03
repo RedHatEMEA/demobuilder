@@ -6,7 +6,7 @@ register_channels rhel-7-server-beta-rpms rhel-7-server-extras-rpms rhel-server-
 
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-beta
 
-yum_install bind-utils bridge-utils docker git iptables-services net-tools '*openshift*' openvswitch wget
+yum_install bind-utils bridge-utils docker git iptables-services lsof python-requests net-tools '*openshift*' openvswitch strace tcpdump wget
 yum_remove 'NetworkManager*'
 
 sed -i -e 's!^OPTIONS=.*!OPTIONS=--insecure-registry 0.0.0.0/0 -H fd://!' /etc/sysconfig/docker
@@ -46,7 +46,7 @@ for image in \
 	registry.access.redhat.com/openshift3_beta/ose-pod \
 	registry.access.redhat.com/openshift3_beta/ose-sti-builder \
 	openshift/hello-openshift \
-	openshift/ruby-20-centos \
+	openshift/ruby-20-centos7 \
 	mysql; do
   docker pull $image
 done 

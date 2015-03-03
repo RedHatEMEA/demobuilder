@@ -14,7 +14,7 @@ sed -i -e 's/^OPTIONS=.*/OPTIONS="--loglevel=4"/' /etc/sysconfig/openshift-node
 
 sed -i -e 's/^OPTIONS=.*/OPTIONS="-v=4"/' /etc/sysconfig/openshift-sdn-master
 
-sed -i -e "s!^MASTER_URL=.*!MASTER_URL=\"http://ose3-allinone.example.com:4001\"!; s!^OPTIONS=.*!OPTIONS=\"-v=4\"!; s!^DOCKER_OPTIONS=.*!DOCKER_OPTIONS=\"--insecure-registry=0.0.0.0/0 -b=lbr0 --mtu=1450 --selinux-enabled\"!" /etc/sysconfig/openshift-sdn-node
+sed -i -e "s!^MASTER_URL=.*!MASTER_URL=\"http://$HOSTNAME:4001\"!; s!^OPTIONS=.*!OPTIONS=\"-v=4\"!; s!^DOCKER_OPTIONS=.*!DOCKER_OPTIONS=\"--insecure-registry=0.0.0.0/0 -b=lbr0 --mtu=1450 --selinux-enabled\"!" /etc/sysconfig/openshift-sdn-node
 
 sed -i -e "s!^MINION_IP=.*!MINION_IP=\"$IP\"!" /etc/sysconfig/openshift-sdn-node
 
