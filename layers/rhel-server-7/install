@@ -15,7 +15,7 @@ stop() {
 trap stop EXIT
 TEMPDIR=$(mktemp -d)
 
-ISO=$(cache $MIRROR_RHN/content/dist/rhel/server/7/7Server/x86_64/iso/rhel-server-7.0-x86_64-dvd.iso)
+ISO=$(cache $MIRROR_RHN/content/dist/rhel/server/7/7Server/x86_64/iso/rhel-server-7.1-x86_64-dvd.iso)
 
 for FILE in initrd.img vmlinuz; do
   iso-read -i $ISO -e isolinux/$FILE -o $TEMPDIR/$FILE
