@@ -2,7 +2,7 @@
 
 ### Prerequisites
 
-- Fedora 20 on a physical machine.
+- Fedora 21 on a physical machine.
 
 ### Installation
 
@@ -10,7 +10,7 @@
 # Run the following commands as root...
 
 # Install required packages
-$ yum -y install git guestfish libcdio libvirt python-markdown2 qemu
+$ yum -y install git libcdio libguestfs-tools-c libvirt python-markdown2 qemu
 
 # Ensure all necessary CA certificates are correctly installed
 $ pushd /etc/pki/ca-trust/sources/anchors
@@ -41,16 +41,21 @@ Note that **all** demobuilder scripts must be run from the root of the demobuild
 ```bash
 $ cd demobuilder
 $ ./build.sh
-Usage: ./build.sh -a
-       ./build.sh target
+Usage: ./build.sh layer|-a [target|-a]
+
+Valid layers:
+  foo
+  foo:bar
+  baz
 
 Valid targets:
-  foo:openstack
-  foo:rhev
-  bar:vsphere
+  openstack
+  rhev
+  vagrant
+  vsphere
 
 # Build a single image
-$ ./build.sh foo:openstack
+$ ./build.sh foo openstack
 
 # Build all images
 $ ./build.sh -a
