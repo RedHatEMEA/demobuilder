@@ -2,8 +2,8 @@ BRIDGE=virbr0
 CACHEROOT=/var/cache/rhn-proxy/cache
 # DEBUG=
 MIRROR_FEDORA=http://www.mirrorservice.org:80/sites/dl.fedoraproject.org
-MIRROR_RHN=http://192.168.0.254:8086
-PROXY=http://192.168.0.254:8080/
+MIRROR_RHN=http://192.168.122.1:8086
+PROXY=http://192.168.122.1:8080/
 
 cache() {
   DEST=$CACHEROOT/$(echo $1 | sed -e 's!.*://!!')
