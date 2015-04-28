@@ -9,6 +9,7 @@ elif grep -q 'release 7' /etc/redhat-release; then
 fi
 
 yum_install nfs-utils nfs-utils-lib
+chkconfig rpcbind on
 
 useradd vagrant
 echo vagrant | passwd --stdin vagrant

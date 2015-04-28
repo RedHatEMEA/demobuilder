@@ -3,10 +3,12 @@
 . utils/functions
 
 start() {
+  dcserver_start
   httpserver_start
 }
 
 stop() {
+  dcserver_stop
   httpserver_stop
 }
 

@@ -6,6 +6,19 @@ interface_ip() {
   ip addr show dev $1 | sed -n '/inet / { s!.*inet !!; s!/.*!!; p; }'
 }
 
+dcserver_start() {
+  [ -e dockercache ] || mkdir dockercache
+  WD=$PWD
+  pushd dockercache &>/dev/null
+  eval $($WD/utils/dockercache.py $(interface_ip $BRIDGE))
+  popd &>/dev/null
+  export DCLISTENER
+}
+
+dcserver_stop() {
+  kill $DCPID
+}
+
 httpserver_start() {
   eval $(utils/httpserver.py $(interface_ip $BRIDGE))
   export HTTPLISTENER
