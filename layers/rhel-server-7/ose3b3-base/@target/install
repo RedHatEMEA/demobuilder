@@ -27,7 +27,8 @@ for image in \
 	registry.access.redhat.com/openshift3_beta/sti-basicauthurl \
 	docker.io/openshift/hello-openshift \
 	docker.io/openshift/wildfly-8-centos \
-	docker.io/fabric8/hawtio-kubernetes; do
+	docker.io/fabric8/hawtio-kubernetes \
+	mysql; do
   if ! curl -s $DCLISTENER/$image | gunzip 2>/dev/null | docker load &>/dev/null; then
     docker pull $image
     docker save $image | gzip | curl -s --data-binary @- $DCLISTENER/$image
