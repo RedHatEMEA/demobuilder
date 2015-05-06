@@ -11,6 +11,13 @@ fi
 yum_install nfs-utils nfs-utils-lib
 chkconfig rpcbind on
 
+if grep -q 'release 7' /etc/redhat-release; then
+  chmod +x /etc/rc.d/rc.local
+  cat >>/etc/rc.d/rc.local <<EOF
+service rpcbind start
+EOF
+fi
+
 useradd vagrant
 echo vagrant | passwd --stdin vagrant
 echo 'vagrant ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers
