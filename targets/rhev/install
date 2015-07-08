@@ -41,7 +41,7 @@ export UUID_5=$(uuidgen)
 
 export DATE_S=$(date +%s)
 export DATE_YMDHMS=$(date -u +'%Y/%m/%d %H:%M:%S')
-export SECTORS=$((10*1024**3/512))
+export SECTORS=$((20*1024**3/512))
 
 mkdir -p $TMPDIR/{images/$IMAGE_UUID,master/vms/$TEMPLATE_UUID}
 

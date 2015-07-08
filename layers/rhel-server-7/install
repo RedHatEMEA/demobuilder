@@ -21,8 +21,9 @@ for FILE in initrd.img vmlinuz; do
   iso-read -i $ISO -e isolinux/$FILE -o $TEMPDIR/$FILE
 done
 
-qemu-img create -q -f qcow2 tmp/$TARGET.qcow2 10G
+qemu-img create -q -f qcow2 tmp/$TARGET.qcow2 20G
 utils/sigwrap /usr/bin/qemu-kvm -nodefaults \
+  -cpu host \
   -smp 2 \
   -m 2048 \
   -kernel $TEMPDIR/vmlinuz \
