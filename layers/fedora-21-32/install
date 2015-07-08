@@ -15,14 +15,15 @@ stop() {
 trap stop EXIT
 TEMPDIR=$(mktemp -d)
 
-ISO=$(cache $MIRROR_FEDORA/pub/fedora/linux/releases/21/Server/x86_64/iso/Fedora-Server-DVD-x86_64-21.iso)
+ISO=$(cache $MIRROR_FEDORA/pub/fedora/linux/releases/21/Server/i386/iso/Fedora-Server-DVD-i386-21.iso)
 
 for FILE in initrd.img vmlinuz; do
   iso-read -i $ISO -e isolinux/$FILE -o $TEMPDIR/$FILE
 done
 
-qemu-img create -q -f qcow2 tmp/$TARGET.qcow2 10G
+qemu-img create -q -f qcow2 tmp/$TARGET.qcow2 20G
 utils/sigwrap /usr/bin/qemu-kvm -nodefaults \
+  -cpu host \
   -smp 2 \
   -m 2048 \
   -kernel $TEMPDIR/vmlinuz \
