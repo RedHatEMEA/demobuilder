@@ -1,0 +1,11 @@
+[Unit]
+After=openshift-master.service
+Before=openshift-node.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/libexec/openshift-node-ipcfg.py
+Environment="KUBECONFIG=/etc/openshift/master/openshift-master.kubeconfig"
+
+[Install]
+WantedBy=multi-user.target

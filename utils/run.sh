@@ -3,21 +3,22 @@
 . utils/functions
 
 if [ $# -eq 0 ]; then
-  echo "usage: $0 snap [vncport]"
+  echo "usage: $0 snap"
   exit 1
 fi
 
 TMPDIR=$(mktemp -d)
-VNC=${2:-:0}
+VNC=${VNC:-:0}
 
 utils/sigwrap /usr/bin/qemu-kvm -nodefaults \
-  -smp 2 \
-  -m 2048 \
+  -cpu host \
+  -smp 4 \
+  -m 4096 \
   -drive discard=unmap,file=$1,id=disk1,if=none,cache=unsafe \
   -device virtio-scsi-pci \
   -device scsi-disk,drive=disk1 \
-  -net bridge,br=virbr0 \
-  -net nic,model=virtio,macaddr=$(utils/random-mac.py) \
+  -netdev bridge,id=net0,br=$BRIDGE \
+  -device virtio-net-pci,netdev=net0,mac=$(utils/random-mac.py) \
   -chardev socket,id=chan0,path=$TMPDIR/rhev.sock,server,nowait \
   -chardev socket,id=chan1,path=$TMPDIR/qemu.sock,server,nowait \
   -device virtio-serial-pci \

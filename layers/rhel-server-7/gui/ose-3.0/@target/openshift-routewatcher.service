@@ -1,0 +1,9 @@
+[Unit]
+After=openshift-master.service
+
+[Service]
+ExecStart=/usr/local/libexec/openshift-routewatcher.py
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target

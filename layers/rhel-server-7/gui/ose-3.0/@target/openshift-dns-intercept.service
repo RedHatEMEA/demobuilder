@@ -1,0 +1,10 @@
+[Unit]
+After=network.target
+Before=openshift-master.service
+
+[Service]
+ExecStart=/usr/local/libexec/openshift-dns-intercept.py
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target

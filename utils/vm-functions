@@ -5,16 +5,13 @@
 register_channels() {
   for CHANNEL in $*; do
     curl -so /etc/yum.repos.d/auto-$CHANNEL.repo $MIRROR_RHN/$CHANNEL.repo
-    sed -i -e "$ a\
+    sed -i -e "/\[/ a\
 proxy=$PROXY" /etc/yum.repos.d/auto-$CHANNEL.repo
   done
 }
 
 yum_update() {
   /usr/bin/python -u /usr/bin/yum -y update
-
-  # running kernel, so must use rpm -e
-  rpm -e $(rpm -q kernel --last | tail -n +2 | cut -d' ' -f1)
 }
 
 yum_remove() {
@@ -25,6 +22,17 @@ yum_install() {
   /usr/bin/python -u /usr/bin/yum -y install $*
 }
 
+docker_pull() {
+  if ! pidof docker >/dev/null; then
+    service docker start
+  fi
+
+  if ! curl -s $DCLISTENER/$1 | gunzip 2>/dev/null | docker load &>/dev/null; then
+    docker pull $1
+    docker save $1 | gzip | curl -s --data-binary @- $DCLISTENER/$1
+  fi
+}
+
 register_https_proxy_ca() {
   http_proxy=$PROXY curl -so /etc/pki/ca-trust/source/anchors/demobuilder-insecure-CA.crt http://cacert/
   update-ca-trust enable
@@ -32,6 +40,9 @@ register_https_proxy_ca() {
 }
 
 cleanup() {
+  # running kernel, so must use rpm -e
+  [ -n "$(rpm -q kernel --last | tail -n +2 | cut -d' ' -f1)" ] && rpm -e $(rpm -q kernel --last | tail -n +2 | cut -d' ' -f1)
+
   /usr/bin/python -u /usr/bin/yum clean all || true
   rm -f /etc/yum.repos.d/auto-*.repo
 
@@ -64,3 +75,5 @@ sign_cert() {
   openssl ca -batch -keyfile /etc/pki/CA/private/ca.key -cert /etc/pki/CA/certs/ca.crt -extensions usr_cert -notext -md sha1 -in $TEMPFILE -out $3
   rm $TEMPFILE
 }
+
+swapoff -a
