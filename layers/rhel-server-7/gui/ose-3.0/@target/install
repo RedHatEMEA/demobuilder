@@ -96,4 +96,9 @@ oadm router --credentials=/etc/openshift/master/openshift-router.kubeconfig --im
 rm /root/.ssh/id_rsa
 rm /root/.ssh/known_hosts
 
+cp /etc/openshift/master/ca.crt /etc/pki/ca-trust/source/anchors/
+update-ca-trust
+
+firefox_set_homepage https://$MY_HOSTNAME:8443/
+
 cleanup

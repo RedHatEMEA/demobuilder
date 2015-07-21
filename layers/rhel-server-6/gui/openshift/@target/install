@@ -36,20 +36,6 @@ nexus_install() {
   echo RUN_AS_USER=root /usr/local/nexus-*/bin/nexus start >>/etc/rc.local
 }
 
-firefox_set_homepage() {
-  cat >/usr/lib64/firefox/browser/defaults/preferences/local-settings.js <<EOF
-pref("general.config.filename", "firefox.cfg");
-pref("general.config.obscure_value", 0);
-pref("startup.homepage_override_url", "");
-pref("startup.homepage_welcome_url", "");
-EOF
-
-  cat >/usr/lib64/firefox/firefox.cfg <<EOF
-//
-pref("browser.startup.homepage", "$1");
-EOF
-}
-
 export CONF_ACTIONS=do_all_actions,post_deploy
 export CONF_BROKER_HOSTNAME=openshift.example.com
 export CONF_BROKER_IP_ADDR=127.0.0.1
