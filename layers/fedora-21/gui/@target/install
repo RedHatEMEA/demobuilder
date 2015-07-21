@@ -1,0 +1,99 @@
+#!/bin/bash -ex
+
+. vm-functions
+
+http_proxy=$PROXY yum_install evince firefox gdm gnome-session gnome-terminal nautilus tigervnc-server xinetd xorg-x11-drivers xorg-x11-server-Xorg
+
+useradd demo
+passwd -d demo
+passwd -e demo
+echo 'demo ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers
+
+sed -i -e '/^#PermitEmptyPasswords/ a \
+PermitEmptyPasswords yes' /etc/ssh/sshd_config
+
+sed -i -e '/^\[greeter\]/ a \
+IncludeAll=false\
+Include=demo
+/^\[xdmcp\]/ a \
+Enable=true\
+PingIntervalSeconds=0' /etc/gdm/custom.conf
+
+cat >/etc/xinetd.d/rfb <<EOF
+service rfb
+{
+        protocol = tcp
+        wait = no
+        user = nobody
+        server = /usr/bin/Xvnc
+        server_args = -inetd -query localhost -once -SecurityTypes None
+}
+EOF
+
+mkdir -p /var/lib/gdm/.config
+cat >/var/lib/gdm/.config/monitors.xml <<EOF
+<monitors version="1">
+  <configuration>
+    <clone>no</clone>
+    <output name="VNC-0">
+      <vendor>unknown</vendor>
+      <product>unknown</product>
+      <serial>unknown</serial>
+      <width>1024</width>
+      <height>768</height>
+      <rate>60</rate>
+      <x>0</x>
+      <y>0</y>
+      <rotation>normal</rotation>
+      <reflect_x>no</reflect_x>
+      <reflect_y>no</reflect_y>
+      <primary>yes</primary>
+      <presentation>no</presentation>
+    </output>
+  </configuration>
+</monitors>
+EOF
+chown -R gdm:gdm /var/lib/gdm
+
+mkdir /home/demo/.config
+cp /var/lib/gdm/.config/monitors.xml /home/demo/.config/monitors.xml
+chown -R demo:demo /home/demo/.config
+
+cat >/etc/dconf/profile/user <<EOF
+user-db:user
+system-db:local
+EOF
+
+mkdir /etc/dconf/db/local.d
+cat >/etc/dconf/db/local.d/01-fixes <<EOF
+[org/gnome/shell]
+favorite-apps=['firefox.desktop', 'org.gnome.Nautilus.desktop', 'gnome-terminal.desktop']
+
+[org/gnome/shell/overrides]
+dynamic-workspaces=false
+
+[org/gnome/desktop/screensaver]
+lock-enabled=false
+
+[org/gnome/desktop/session]
+idle-delay=uint32 0
+
+[org/gnome/desktop/wm/preferences]
+num-workspaces=1
+EOF
+
+dconf update
+
+cat >/etc/polkit-1/rules.d/80-color-manager.rules <<EOF
+polkit.addRule(function(action, subject) {
+  if(action.id == "org.freedesktop.color-manager.create-device") {
+    return polkit.Result.YES;
+  }
+});
+EOF
+
+firewall-cmd --permanent --zone=public --add-port=5900/tcp
+
+ln -sf /lib/systemd/system/graphical.target /etc/systemd/system/default.target
+
+cleanup

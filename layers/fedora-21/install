@@ -1,0 +1,42 @@
+#!/bin/bash -e
+
+. utils/functions
+
+TARGET=$(basename $(dirname $0))
+if [ -e build/$TARGET.qcow2 ]; then
+  echo "$0: build/$TARGET.qcow2 already exists, not rebuilding"
+  exit
+fi
+
+stop() {
+  rm -rf $TEMPDIR
+}
+
+trap stop EXIT
+TEMPDIR=$(mktemp -d)
+
+ISO=$(cache $MIRROR_FEDORA/pub/fedora/linux/releases/21/Server/x86_64/iso/Fedora-Server-DVD-x86_64-21.iso)
+
+for FILE in initrd.img vmlinuz; do
+  iso-read -i $ISO -e isolinux/$FILE -o $TEMPDIR/$FILE
+done
+
+qemu-img create -q -f qcow2 tmp/$TARGET.qcow2 20G
+utils/sigwrap /usr/bin/qemu-kvm -nodefaults \
+  -cpu host \
+  -smp 2 \
+  -m 2048 \
+  -kernel $TEMPDIR/vmlinuz \
+  -initrd $TEMPDIR/initrd.img \
+  -append "ks=http://$HTTPLISTENER/$(dirname $0)/install.ks listener=$HTTPLISTENER" \
+  -device virtio-scsi-pci \
+  -drive discard=unmap,file=tmp/$TARGET.qcow2,id=disk1,if=none,cache=unsafe \
+  -device scsi-disk,drive=disk1 \
+  -net bridge,br=$BRIDGE \
+  -net nic,model=virtio,macaddr=$(utils/random-mac.py) \
+  -cdrom $ISO \
+  -device vmware-svga \
+  -vnc :0 \
+  -usbdevice tablet
+
+mv tmp/$TARGET.qcow2 build/$TARGET.qcow2
