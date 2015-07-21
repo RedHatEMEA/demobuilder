@@ -26,11 +26,13 @@ fi
 utils/addlayer.sh build/$TARGET.qcow2 targets/vagrant tmp/$TARGET:vagrant.qcow2
 convert_qcow2 tmp/$TARGET:vagrant.qcow2 qcow2
 compress_qcow2 tmp/$TARGET:vagrant.qcow2
+# ~/src/vmdisktool/vmdisktool -f qcow2 tmp/$TARGET:vagrant.qcow2 tmp/$TARGET:vagrant.qcow2.tmp
+# mv tmp/$TARGET:vagrant.qcow2.tmp tmp/$TARGET:vagrant.qcow2
 
 TMPDIR=$(mktemp -d)
 envsubst <$(dirname $0)/Vagrantfile >$TMPDIR/Vagrantfile
 
-tar -czf tmp/$TARGET.box --transform='s!.*/!!' --transform="s/$TARGET:vagrant.qcow2/box.img/" $(dirname $0)/metadata.json tmp/$TARGET:vagrant.qcow2 $TMPDIR/Vagrantfile
+tar -c --transform='s!.*/!!' --transform="s/$TARGET:vagrant.qcow2/box.img/" $(dirname $0)/metadata.json tmp/$TARGET:vagrant.qcow2 $TMPDIR/Vagrantfile | pigz >tmp/$TARGET.box
 rm -rf tmp/$TARGET:vagrant.qcow2 $TMPDIR
 
 mkdir -p build/vagrant

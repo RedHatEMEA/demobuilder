@@ -6,6 +6,8 @@ if grep -q 'release 6' /etc/redhat-release; then
   register_channels rhel-6-server-rpms
 elif grep -q 'release 7' /etc/redhat-release; then
   register_channels rhel-7-server-rpms
+else
+  export http_proxy=$PROXY
 fi
 
 yum_install nfs-utils nfs-utils-lib
