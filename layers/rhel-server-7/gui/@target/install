@@ -5,30 +5,7 @@
 register_channels rhel-7-server-rpms
 yum_install evince firefox gdm gnome-classic-session gnome-session gnome-terminal man nautilus system-config-firewall-base tigervnc-server urw-fonts xinetd xorg-x11-drivers xorg-x11-xinit
 
-useradd demo
-passwd -d demo
-passwd -e demo
-echo 'demo ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers
-
-sed -i -e '/^#PermitEmptyPasswords/ a \
-PermitEmptyPasswords yes' /etc/ssh/sshd_config
-
-sed -i -e '/^\[greeter\]/ a \
-IncludeAll=false\
-Include=demo
-/^\[xdmcp\]/ a \
-Enable=true' /etc/gdm/custom.conf
-
-cat >/etc/xinetd.d/rfb <<EOF
-service rfb
-{
-        protocol = tcp
-        wait = no
-        user = nobody
-        server = /usr/bin/Xvnc
-        server_args = -inetd -query localhost -once -SecurityTypes None
-}
-EOF
+ln -sf /lib/systemd/system/graphical.target /etc/systemd/system/default.target
 
 cat >/etc/gnome-settings-daemon/xrandr/monitors.xml <<EOF
 <monitors version="1">
@@ -52,6 +29,25 @@ cat >/etc/gnome-settings-daemon/xrandr/monitors.xml <<EOF
 </monitors>
 EOF
 
+sed -i -e '/^\[greeter\]/ a \
+IncludeAll=false\
+Include=demo
+/^\[xdmcp\]/ a \
+Enable=true' /etc/gdm/custom.conf
+
+cat >/etc/xinetd.d/rfb <<EOF
+service rfb
+{
+        protocol = tcp
+        wait = no
+        user = nobody
+        server = /usr/bin/Xvnc
+        server_args = -inetd -query localhost -once -SecurityTypes None
+}
+EOF
+
+firewall-cmd --permanent --zone=public --add-port=5900/tcp
+
 cat >/etc/dconf/db/local.d/01-fixes <<EOF
 [org/gnome/settings-daemon/plugins/xrandr]
 default-monitors-setup='do-nothing'
@@ -65,8 +61,18 @@ EOF
 
 dconf update
 
-firewall-cmd --permanent --zone=public --add-port=5900/tcp
+mkdir /etc/skel/Desktop
+for shortcut in firefox gnome-terminal; do
+  cp /usr/share/applications/$shortcut.desktop /etc/skel/Desktop
+  chmod 0755 /etc/skel/Desktop/$shortcut.desktop
+done
 
-ln -sf /lib/systemd/system/graphical.target /etc/systemd/system/default.target
+useradd demo
+passwd -d demo
+passwd -e demo
+echo 'demo ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers
+
+sed -i -e '/^#PermitEmptyPasswords/ a \
+PermitEmptyPasswords yes' /etc/ssh/sshd_config
 
 cleanup
