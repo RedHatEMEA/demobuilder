@@ -119,4 +119,7 @@ update-ca-trust
 
 firefox_set_homepage https://$MY_HOSTNAME:8443/
 
+sed -i -e '/FORWARD/ a\
+-A OS_FIREWALL_ALLOW -p tcp -m state --state NEW -m tcp --dport 5900 -j ACCEPT' /etc/sysconfig/iptables
+
 cleanup
