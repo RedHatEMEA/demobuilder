@@ -1,0 +1,48 @@
+#!/bin/bash -x
+
+. vm-functions
+
+if grep -q 'release 6' /etc/redhat-release; then
+  register_channels rhel-6-server-rpms
+elif grep -q 'release 7' /etc/redhat-release; then
+  register_channels rhel-7-server-rpms
+else
+  export http_proxy=$PROXY
+fi
+
+yum_install bzip2 kernel-devel gcc
+
+http_proxy=$PROXY curl -O http://download.virtualbox.org/virtualbox/5.0.0/VBoxGuestAdditions_5.0.0.iso
+mount -o loop,ro VBoxGuestAdditions_5.0.0.iso /mnt
+sh /mnt/VBoxLinuxAdditions.run
+umount /mnt
+rm VBoxGuestAdditions_5.0.0.iso
+
+yum history undo $(yum history list | awk 'FNR == 5 {print $1;}')
+
+yum_install nfs-utils nfs-utils-lib
+chkconfig rpcbind on
+
+if grep -q 'release 7' /etc/redhat-release; then
+  chmod +x /etc/rc.d/rc.local
+  cat >>/etc/rc.d/rc.local <<EOF
+service rpcbind start
+EOF
+fi
+
+useradd vagrant
+echo vagrant | passwd --stdin vagrant
+echo 'vagrant ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers
+
+sed -i -e '/Defaults.*requiretty/ d;' /etc/sudoers
+
+register_https_proxy_ca
+
+su vagrant -c "mkdir -m 0700 /home/vagrant/.ssh; https_proxy=$PROXY curl -so /home/vagrant/.ssh/authorized_keys https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub; chmod 0600 /home/vagrant/.ssh/authorized_keys"
+chcon system_u:object_r:ssh_home_t:s0 /home/vagrant/.ssh /home/vagrant/.ssh/authorized_keys
+
+rm /root/.ssh/authorized_keys
+
+grubby --update-kernel=ALL --args=net.ifnames=0
+
+cleanup
