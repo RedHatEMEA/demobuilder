@@ -3,7 +3,7 @@
 . vm-functions
 
 register_channels rhel-6-server-rpms
-yum_install evince firefox gdm gnome-panel gnome-session gnome-terminal man nautilus system-config-firewall-base tigervnc-server urw-fonts xinetd xorg-x11-drivers xorg-x11-xinit
+yum_install bash-completion evince firefox gdm gnome-panel gnome-session gnome-terminal man nautilus system-config-firewall-base tigervnc-server urw-fonts xinetd xorg-x11-drivers xorg-x11-xinit
 
 useradd demo
 passwd -d demo

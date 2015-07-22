@@ -2,7 +2,7 @@
 
 . vm-functions
 
-http_proxy=$PROXY yum_install evince firefox gdm gnome-session gnome-terminal nautilus tigervnc-server xinetd xorg-x11-drivers xorg-x11-server-Xorg
+http_proxy=$PROXY yum_install bash-completion evince firefox gdm gnome-session gnome-terminal nautilus tigervnc-server xinetd xorg-x11-drivers xorg-x11-server-Xorg
 
 useradd demo
 passwd -d demo
