@@ -4,8 +4,8 @@ import os
 import socket
 import yaml
 
-HOSTNAME=socket.gethostname()
-IP=socket.gethostbyname(HOSTNAME)
+HOSTNAME = socket.gethostname()
+IP = socket.gethostbyname(HOSTNAME)
 
 f = "/etc/openshift/node/node-config.yaml"
 y = yaml.load(open(f, "r").read())

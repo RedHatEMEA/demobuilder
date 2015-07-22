@@ -59,7 +59,6 @@ nodes
 
 [OSEv3:vars]
 deployment_type=enterprise
-#openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/openshift/openshift-passwd'}]
 openshift_master_identity_providers=[{'name': 'basicauthpassword', 'login': 'true', 'challenge': 'true', 'kind': 'BasicAuthPasswordIdentityProvider', 'url': 'http://localhost:2305/'}]
 
 [masters]
@@ -82,7 +81,26 @@ for svc in auth dns-intercept master-ipcfg node-ipcfg routewatcher; do
   systemctl enable openshift-$svc
 done
 
+cp dhclient-eth0-up-hooks /etc/dhcp
+semanage fcontext --add -t net_conf_t /etc/hosts
+restorecon -v /etc/hosts
+
 oadm new-project demo --admin=demo
+mkdir /home/demo/.kube
+cat <<EOF >/home/demo/.kube/config
+kind: Config
+apiVersion: v1
+clusters:
+- cluster:
+    server: https://$MY_HOSTNAME:8443
+  name: ${MY_HOSTNAME//./-}:8443
+contexts:
+- context:
+    cluster: ${MY_HOSTNAME//./-}:8443
+  name: ${MY_HOSTNAME//./-}:8443
+current-context: ${MY_HOSTNAME//./-}:8443
+EOF
+chown -R demo:demo /home/demo/.kube
 
 systemctl stop openshift-node
 

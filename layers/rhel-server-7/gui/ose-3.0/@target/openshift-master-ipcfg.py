@@ -3,8 +3,8 @@
 import socket
 import yaml
 
-HOSTNAME=socket.gethostname()
-IP=socket.gethostbyname(HOSTNAME)
+HOSTNAME = socket.gethostname()
+IP = socket.gethostbyname(HOSTNAME)
 
 f = "/etc/openshift/master/master-config.yaml"
 y = yaml.load(open(f, "r").read())

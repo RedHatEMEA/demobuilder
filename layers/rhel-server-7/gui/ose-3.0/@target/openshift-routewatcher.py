@@ -8,6 +8,7 @@ import requests
 import socket
 import sys
 import tempfile
+import time
 
 
 class RouteWatcher(object):
@@ -33,6 +34,7 @@ class RouteWatcher(object):
         """
         j = self.get("/osapi/v1beta3/routes").json()
 
+        self.o.clear()
         for i in j["items"]:
             self.o.add(i["spec"]["host"])
 
@@ -44,23 +46,27 @@ class RouteWatcher(object):
         """
         Notify helper object for every route that is added or deleted.
         """
-        self.get_routes()
+        while True:
+            try:
+                self.get_routes()
 
-        r = self.get("/osapi/v1beta3/watch/routes?resourceVersion=%s" %
-                     self.resourceVersion, stream=True)
+                r = self.get("/osapi/v1beta3/watch/routes?resourceVersion=%s" %
+                             self.resourceVersion, stream=True)
 
-        for l in read_chunked(r.raw):
-            j = json.loads(l)
+                for l in read_chunked(r.raw):
+                    j = json.loads(l)
 
-            if j["type"] == "ADDED":
-                self.o.add(j["object"]["spec"]["host"])
-                self.o.commit()
+                    if j["type"] == "ADDED":
+                        self.o.add(j["object"]["spec"]["host"])
+                        self.o.commit()
 
-            elif j["type"] == "DELETED":
-                self.o.delete(j["object"]["spec"]["host"])
-                self.o.commit()
+                    elif j["type"] == "DELETED":
+                        self.o.delete(j["object"]["spec"]["host"])
+                        self.o.commit()
 
-            self.resourceVersion = j["object"]["metadata"]["resourceVersion"]
+            except Exception as e:
+                print >>sys.stderr, e
+                time.sleep(5)
 
 
 class Hosts(object):
@@ -86,6 +92,7 @@ class Hosts(object):
 
         os.chmod(f.name, 0644)
         os.rename(f.name, "/etc/hosts")
+        os.system("restorecon /etc/hosts")
 
     def add(self, x):
         print >>sys.stderr, "add %s" % x
