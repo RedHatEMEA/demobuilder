@@ -75,4 +75,9 @@ echo 'demo ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers
 sed -i -e '/^#PermitEmptyPasswords/ a \
 PermitEmptyPasswords yes' /etc/ssh/sshd_config
 
+for dest in password-auth system-auth; do
+  cp pam-auth-demobuilder /etc/pam.d/$dest-demobuilder
+  ln -sf $dest-demobuilder /etc/pam.d/$dest
+done
+
 cleanup
