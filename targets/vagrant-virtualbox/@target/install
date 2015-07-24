@@ -33,6 +33,13 @@ fi
 useradd vagrant
 echo vagrant | passwd --stdin vagrant
 echo 'vagrant ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers
+mkdir -p /var/lib/AccountsService/users
+cat <<EOF >/var/lib/AccountsService/users/vagrant
+[User]
+Language=
+XSession=
+SystemAccount=true
+EOF
 
 sed -i -e '/Defaults.*requiretty/ d;' /etc/sudoers
 
