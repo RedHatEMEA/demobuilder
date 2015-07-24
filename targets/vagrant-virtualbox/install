@@ -15,7 +15,6 @@ if [ -e layers/$BASE/properties ]; then
 fi
 
 export MEM=${MEM:-1024}
-export NAME=${NAME:-$TARGET}
 export CPUS=${CPUS:-1}
 
 if [ -e build/vagrant-virtualbox/$TARGET.box ]; then
