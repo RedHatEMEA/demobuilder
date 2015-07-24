@@ -80,14 +80,14 @@ firefox_set_homepage() {
   cat >/usr/lib64/firefox/browser/defaults/preferences/local-settings.js <<EOF
 pref("general.config.filename", "firefox.cfg");
 pref("general.config.obscure_value", 0);
-pref("startup.homepage_override_url", "");
-pref("startup.homepage_welcome_url", "");
-pref("signon.rememberSignons", false);
 EOF
 
   cat >/usr/lib64/firefox/firefox.cfg <<EOF
 //
 pref("browser.startup.homepage", "$1");
+pref("startup.homepage_override_url", "");
+pref("startup.homepage_welcome_url", "");
+pref("signon.rememberSignons", false);
 EOF
 }
 
