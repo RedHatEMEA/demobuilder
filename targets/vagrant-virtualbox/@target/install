@@ -43,6 +43,4 @@ chcon system_u:object_r:ssh_home_t:s0 /home/vagrant/.ssh /home/vagrant/.ssh/auth
 
 rm /root/.ssh/authorized_keys
 
-grubby --update-kernel=ALL --args=net.ifnames=0
-
 cleanup

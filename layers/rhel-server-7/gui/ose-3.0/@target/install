@@ -29,10 +29,6 @@ for image in \
   docker_pull $image
 done
 
-cat >>/etc/sysconfig/network-scripts/ifcfg-eth0 <<EOF
-NM_CONTROLLED=false
-EOF
-
 http_proxy=$PROXY yum_install $MIRROR_FEDORA/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
 sed -i -e "/\[/ a\
 proxy=$PROXY" /etc/yum.repos.d/epel.repo
