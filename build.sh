@@ -3,13 +3,11 @@
 . utils/functions
 
 start() {
-  dcserver_start
-  httpserver_start
+  apiserver_start
 }
 
 stop() {
-  dcserver_stop
-  httpserver_stop
+  apiserver_stop
 }
 
 install_layer() {

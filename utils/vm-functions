@@ -27,9 +27,9 @@ docker_pull() {
     service docker start
   fi
 
-  if ! curl -s $DCLISTENER/$1 | gunzip 2>/dev/null | docker load &>/dev/null; then
+  if ! curl -s $APILISTENER/static/dockercache/$1 | gunzip 2>/dev/null | docker load &>/dev/null; then
     docker pull $1
-    docker save $1 | gzip | curl -s --data-binary @- $DCLISTENER/$1
+    docker save $1 | gzip | curl -s -H 'Content-Type: application/octet-stream' --data-binary @- $APILISTENER/static/dockercache/$1
   fi
 }
 
@@ -40,6 +40,8 @@ register_https_proxy_ca() {
 }
 
 cleanup() {
+  curl -s "http://$APILISTENER/gitstamp?msg=$LAYER" >>/etc/demobuilder
+
   # running kernel, so must use rpm -e
   [ -n "$(rpm -q kernel --last | tail -n +2 | cut -d' ' -f1)" ] && rpm -e $(rpm -q kernel --last | tail -n +2 | cut -d' ' -f1)
 

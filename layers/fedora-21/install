@@ -28,7 +28,7 @@ utils/sigwrap /usr/bin/qemu-kvm -nodefaults \
   -m 2048 \
   -kernel $TEMPDIR/vmlinuz \
   -initrd $TEMPDIR/initrd.img \
-  -append "ks=http://$HTTPLISTENER/$(dirname $0)/install.ks listener=$HTTPLISTENER" \
+  -append "ks=http://$APILISTENER/static/$(dirname $0)/install.ks APILISTENER=$APILISTENER LAYER=$TARGET" \
   -device virtio-scsi-pci \
   -drive discard=unmap,file=tmp/$TARGET.qcow2,id=disk1,if=none,cache=unsafe \
   -device scsi-disk,drive=disk1 \

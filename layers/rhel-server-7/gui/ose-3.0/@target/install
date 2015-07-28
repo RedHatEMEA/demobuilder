@@ -47,7 +47,7 @@ echo $MY_HOSTNAME >/etc/hostname
 
 echo "$(ifconfig eth0 | awk '/inet / { print $2; }') $MY_HOSTNAME" >>/etc/hosts
 
-curl -so /root/.ssh/id_rsa $HTTPLISTENER/keys/demobuilder
+curl -so /root/.ssh/id_rsa $APILISTENER/static/keys/demobuilder
 chmod 0600 /root/.ssh/id_rsa
 
 cat >/etc/ansible/hosts <<EOF

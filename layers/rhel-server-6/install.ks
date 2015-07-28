@@ -26,7 +26,7 @@ qemu-guest-agent
 eval $(tr ' ' '\n' < /proc/cmdline | grep =)
 
 mkdir -m 0700 /root/.ssh
-curl -so /root/.ssh/authorized_keys http://$listener/keys/demobuilder.pub
+curl -so /root/.ssh/authorized_keys http://$APILISTENER/static/keys/demobuilder.pub
 chcon system_u:object_r:ssh_home_t:s0 /root/.ssh /root/.ssh/authorized_keys
 
 echo >/etc/udev/rules.d/75-persistent-net-generator.rules
@@ -38,8 +38,8 @@ sed -i -e 's/^timeout=.*/timeout=0/' /boot/grub/grub.conf
 passwd -l root
 
 cd /root
-curl -so config http://$listener/config
-curl -so vm-functions http://$listener/utils/vm-functions
+curl -so config http://$APILISTENER/static/config
+curl -so vm-functions http://$APILISTENER/static/utils/vm-functions
 . ./vm-functions
 
 register_channels rhel-6-server-rpms
