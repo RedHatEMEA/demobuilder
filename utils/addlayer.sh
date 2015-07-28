@@ -18,7 +18,7 @@ eval $(utils/run.sh $TARGET)
 echo $IP
 
 RSYNC_RSH=utils/ssh.sh rsync -rL $LAYER/@target/ root@$IP:demobuilder
-if ! utils/ssh.sh root@$IP "setenforce 0; cd demobuilder; APILISTENER=$APILISTENER LAYER=$LAYER ./install || kill -9 \$\$; cd; rm -rf demobuilder; ( sleep 1; poweroff) &" </dev/null; then
+if ! utils/ssh.sh root@$IP "setenforce 0; cd demobuilder; APILISTENER=$APILISTENER LAYER=${LAYER//layers\//} ./install || kill -9 \$\$; cd; rm -rf demobuilder; ( sleep 1; poweroff) &" </dev/null; then
   kill $QEMUPID
   wait_pid $QEMUPID
   exit 1
