@@ -10,6 +10,8 @@ register_channels rhel-7-server-rpms rhel-7-server-optional-rpms rhel-7-server-o
 
 yum_install bind-utils git httpd-tools iptables-services lsof openshift-master openshift-sdn-ovs PyPAM python-requests net-tools nmap-ncat PyYAML strace tcpdump unzip
 
+OPENSHIFTVERSION=$(rpm -q openshift --qf '%{VERSION}')
+
 for image in \
     docker.io/openshift/hello-openshift:latest \
     docker.io/openshift/mysql-55-centos7:latest \
@@ -18,11 +20,11 @@ for image in \
     registry.access.redhat.com/jboss-webserver-3/tomcat7-openshift:latest \
     registry.access.redhat.com/jboss-webserver-3/tomcat8-openshift:latest \
     registry.access.redhat.com/openshift3/mysql-55-rhel7:latest \
-    registry.access.redhat.com/openshift3/ose-deployer:v3.0.0.0 \
-    registry.access.redhat.com/openshift3/ose-docker-registry:v3.0.0.0 \
-    registry.access.redhat.com/openshift3/ose-haproxy-router:v3.0.0.0 \
-    registry.access.redhat.com/openshift3/ose-pod:v3.0.0.0 \
-    registry.access.redhat.com/openshift3/ose-sti-builder:v3.0.0.0 \
+    registry.access.redhat.com/openshift3/ose-deployer:v$OPENSHIFTVERSION \
+    registry.access.redhat.com/openshift3/ose-docker-registry:v$OPENSHIFTVERSION \
+    registry.access.redhat.com/openshift3/ose-haproxy-router:v$OPENSHIFTVERSION \
+    registry.access.redhat.com/openshift3/ose-pod:v$OPENSHIFTVERSION \
+    registry.access.redhat.com/openshift3/ose-sti-builder:v$OPENSHIFTVERSION \
     registry.access.redhat.com/openshift3/php-55-rhel7:latest \
     registry.access.redhat.com/openshift3/python-33-rhel7:latest \
     ; do
