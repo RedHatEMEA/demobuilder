@@ -71,23 +71,23 @@ class RouteWatcher(object):
 
 class Hosts(object):
     def __init__(self, args):
-        self.h = set()
+        self.h = {}
         self.ip = socket.gethostbyname(args.host)
 
     def commit(self):
         with open("/etc/hosts", "r") as f:
             hosts = f.read()
 
-        hosts = re.sub("\n# etcd-hosts begin\n.*# etcd-hosts end\n", "\n",
+        hosts = re.sub("\n# openshift-routewatcher begin\n.*# openshift-routewatcher end\n", "\n",
                        hosts, flags=re.S)
 
         f = tempfile.NamedTemporaryFile(dir="/etc", prefix="hosts.",
                                         delete=False)
         f.write(hosts)
         if self.h:
-            f.write("# etcd-hosts begin\n")
+            f.write("# openshift-routewatcher begin\n")
             f.write("".join(["%-13s %s\n" % (self.ip, h) for h in self.h]))
-            f.write("# etcd-hosts end\n")
+            f.write("# openshift-routewatcher end\n")
         f.close()
 
         os.chmod(f.name, 0644)
@@ -96,11 +96,15 @@ class Hosts(object):
 
     def add(self, x):
         print >>sys.stderr, "add %s" % x
-        self.h.add(x)
+        if x not in self.h:
+            self.h[x] = 0
+        self.h[x] += 1
 
     def delete(self, x):
         print >>sys.stderr, "delete %s" % x
-        self.h.discard(x)
+        self.h[x] -= 1
+        if self.h[x] == 0:
+            del self.h[x]
 
     def clear(self):
         self.h.clear()
