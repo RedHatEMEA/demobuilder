@@ -13,16 +13,19 @@ stop() {
 install_layer() {
   echo "Building $1..."
 
-  LAYER=${1//:/\/}
-  layers/$LAYER/install
+  if [[ $1 =~ : ]]; then
+    utils/install-layer.sh $1
+  else
+    layers/$1/install
+  fi
 
   if [ "$2" = "-a" ]; then
     for TARGET in $(ls targets); do
-      targets/$TARGET/install $LAYER
+      targets/$TARGET/install $1
     done
 
   elif [ $# -eq 2 ]; then
-    targets/$2/install $LAYER
+    targets/$2/install $1
   fi
 }
 
@@ -35,14 +38,14 @@ if [ $# -eq 0 ]; then
   echo "Usage: $0 layer|-a [target|-a]"
   echo
   echo "Valid layers:"
-  ( cd layers && find * -type d -not -name '@*' | sort | sed -e 's!/!:!g' ) | sed -e 's/^/  /'
+  ls layers | grep -v \@ | sed -e 's/^/  /'
   echo
   echo "Valid targets:"
   ls targets | sed -e 's/^/  /'
   echo
 
 elif [ $1 = "-a" ]; then
-  for i in $( cd layers && find * -type d -not -name '@*' | sort | sed -e 's!/!:!g' ); do
+  for i in $( ls layers | grep -v \@ ); do
     install_layer $i $2
   done
 
