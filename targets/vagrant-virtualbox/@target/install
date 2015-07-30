@@ -14,11 +14,11 @@ yum_install bzip2 kernel-devel gcc
 
 http_proxy=$PROXY curl -O http://download.virtualbox.org/virtualbox/5.0.0/VBoxGuestAdditions_5.0.0.iso
 mount -o loop,ro VBoxGuestAdditions_5.0.0.iso /mnt
-sh /mnt/VBoxLinuxAdditions.run
+sh /mnt/VBoxLinuxAdditions.run || true
 umount /mnt
 rm VBoxGuestAdditions_5.0.0.iso
 
-yum history undo $(yum history list | awk 'FNR == 5 {print $1;}')
+yum -y history undo $(yum history list | awk 'FNR == 5 {print $1;}')
 
 yum_install nfs-utils nfs-utils-lib
 chkconfig rpcbind on
