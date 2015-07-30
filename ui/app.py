@@ -12,7 +12,7 @@ def make_table(targets, images, root):
         for t in targets:
             x = glob.glob("%s/%s/%s.*" % (root, t, i))
             if x:
-                row.append(x[0])
+                row.append((x[0], os.stat(x[0]).st_size))
             else:
                 row.append(None)
         table.append(row)
@@ -23,15 +23,15 @@ def make_table(targets, images, root):
 @route("/")
 @view("ui/index.html.tpl")
 def root():
-    targets = {os.path.basename(x[:-1])
-               for x in glob.glob("build/*/") + glob.glob("releases/*/")}
+    targets = sorted({os.path.basename(x[:-1])
+                      for x in glob.glob("build/*/") + glob.glob("releases/*/")})
 
-    build = {os.path.basename(x).rsplit(".")[0]: ""
-              for x in glob.glob("build/*/*")}
+    build = sorted({os.path.basename(x).rsplit(".", 1)[0]: ""
+                    for x in glob.glob("build/*/*")})
     build_table = make_table(targets, build, "build")
 
-    releases = {os.path.basename(x).rsplit(".")[0]: ""
-              for x in glob.glob("releases/*/*")}
+    releases = sorted({os.path.basename(x).rsplit(".", 1)[0]: ""
+                       for x in glob.glob("releases/*/*")})
     releases_table = make_table(targets, releases, "releases")
 
     return {"targets": targets, "build_table": build_table,
