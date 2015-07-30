@@ -3,4 +3,5 @@ build
 config
 keys
 tmp
+releases
 *.pyc
