@@ -1,5 +1,6 @@
 dockercache
 build
+config
 keys
 tmp
 *.pyc
