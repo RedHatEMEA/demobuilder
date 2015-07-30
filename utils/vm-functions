@@ -40,7 +40,7 @@ register_https_proxy_ca() {
 }
 
 cleanup() {
-  curl -s "http://$APILISTENER/gitstamp?msg=$LAYER" >>/etc/demobuilder
+  http_proxy= curl -s "http://$APILISTENER/gitstamp?msg=$LAYER" >>/etc/demobuilder
 
   # running kernel, so must use rpm -e
   [ -n "$(rpm -q kernel --last | tail -n +2 | cut -d' ' -f1)" ] && rpm -e $(rpm -q kernel --last | tail -n +2 | cut -d' ' -f1)
