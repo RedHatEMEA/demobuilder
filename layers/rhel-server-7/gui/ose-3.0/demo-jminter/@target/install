@@ -1,0 +1,60 @@
+#!/bin/bash -ex
+
+. vm-functions
+
+register_channels rhel-7-server-rpms rhel-7-server-optional-rpms rhel-server-rhscl-7-rpms
+
+yum_install git-daemon maven30
+
+semodule -i gitdaemon-rw-net.pp
+cp gitconfig /etc
+
+# bz1135071
+rm /lib/systemd/system/git.service
+cp git@.service /lib/systemd/system
+
+systemctl enable git.socket
+systemctl start git.socket
+
+mkdir /home/demo/git
+unzip -q -d /home/demo/git openshift-demos.zip
+for i in /home/demo/git/*; do
+  git init --bare /var/lib/git/demo/$(basename $i)
+  chown -R nobody:nobody /var/lib/git
+
+  pushd $i
+  git init
+  git add -A
+  git commit -m 'Initial commit'
+  git remote add origin git://$(hostname)/demo/$(basename $i)
+  git push -u origin master
+  popd
+
+  cat >/var/lib/git/demo/$(basename $i)/hooks/post-receive <<EOF
+#!/bin/bash
+
+echo 'Triggering OSE3 build...'
+curl -sX POST 'https://$(hostname):8443/osapi/v1beta3/namespaces/demo/buildconfigs/$(basename $i)-build/webhooks/secret/generic'
+EOF
+  chmod 0755 /var/lib/git/demo/$(basename $i)/hooks/post-receive
+  chown -R nobody:nobody /var/lib/git
+done
+
+http_proxy=$PROXY curl -sO http://download.eng.rdu2.redhat.com/released/jbdevstudio/8.1.0/jboss-devstudio-8.1.0.GA-installer-standalone.jar
+java -jar jboss-devstudio-8.1.0.GA-installer-standalone.jar InstallConfigRecord.xml
+cp 'Red Hat JBoss Developer Studio 8.1.0.GA.desktop' /usr/share/applications
+install -m 0755 'Red Hat JBoss Developer Studio 8.1.0.GA.desktop' /etc/skel/Desktop
+install -m 0755 -o demo 'Red Hat JBoss Developer Studio 8.1.0.GA.desktop' /home/demo/Desktop
+
+unzip -q -d /home/demo recipes.zip
+chown -R demo:demo /home/demo
+
+#for image in \
+#    docker.io/jimminter/sti-wildfly:latest \
+#    ; do
+#  docker_pull $image
+#done
+
+# imagestream for sti-wildfly
+
+cleanup
