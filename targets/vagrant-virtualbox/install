@@ -8,32 +8,27 @@ if [ $# -ne 1 ]; then
 fi
 
 BASE=$1
-TARGET=${BASE//\//:}
+TARGET=$(basename $(dirname $0))
 
-if [ -e layers/$BASE/properties ]; then
-  . layers/$BASE/properties
-fi
+read_properties $BASE $TARGET
 
-export MEM=${MEM:-1024}
-export CPUS=${CPUS:-1}
-
-if [ -e build/vagrant-virtualbox/$TARGET.box ]; then
-  echo "$0: build/vagrant-virtualbox/$TARGET.box already exists, not rebuilding"
+if [ -e build/$TARGET/$BASE.box ]; then
+  echo "$0: build/$TARGET/$BASE.box already exists, not rebuilding"
   exit
 fi
 
-utils/addlayer.sh build/$TARGET.qcow2 targets/vagrant-virtualbox tmp/$TARGET:vagrant.qcow2
-convert_qcow2 tmp/$TARGET:vagrant.qcow2 vmdk
+utils/addlayer.sh build/$BASE.qcow2 targets/$TARGET tmp/$BASE:vagrant.qcow2
+convert_qcow2 tmp/$BASE:vagrant.qcow2 vmdk
 
 TMPDIR=$(mktemp -d)
-envsubst <$(dirname $0)/box.ovf >$TMPDIR/box.ovf
+envsubst <targets/$TARGET/box.ovf >$TMPDIR/box.ovf
 
-tar -c --transform='s!.*/!!' --transform="s/$TARGET:vagrant.vmdk/box-disk1.vmdk/" $(dirname $0)/metadata.json tmp/$TARGET:vagrant.vmdk $(dirname $0)/Vagrantfile $TMPDIR/box.ovf | pigz >tmp/$TARGET.box
-rm -rf tmp/$TARGET:vagrant.qcow2 tmp/$TARGET:vagrant.vmdk $TMPDIR
+tar -c --transform='s!.*/!!' --transform="s/$BASE:vagrant.vmdk/box-disk1.vmdk/" targets/$TARGET/metadata.json tmp/$BASE:vagrant.vmdk targets/$TARGET/Vagrantfile $TMPDIR/box.ovf | pigz >tmp/$BASE.box
+rm -rf tmp/$BASE:vagrant.qcow2 tmp/$BASE:vagrant.vmdk $TMPDIR
 
-mkdir -p build/vagrant-virtualbox
-mv tmp/$TARGET.box build/vagrant-virtualbox/$TARGET.box
+mkdir -p build/$TARGET
+mv tmp/$BASE.box build/$TARGET/$BASE.box
 
-echo \$ vagrant box add $TARGET build/vagrant-virtualbox/$TARGET.box
-echo \$ vagrant init $TARGET
+echo \$ vagrant box add $BASE build/$TARGET/$BASE.box
+echo \$ vagrant init $BASE
 echo \$ vagrant up

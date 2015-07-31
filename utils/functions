@@ -38,6 +38,10 @@ wait_pid() {
   done
 }
 
+read_properties() {
+  eval $(utils/readproperties.py $1 $2)
+}
+
 if [ "$DEBUG" ]; then
   set -x
 fi

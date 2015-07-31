@@ -8,31 +8,27 @@ if [ $# -ne 1 ]; then
 fi
 
 BASE=$1
-TARGET=${BASE//\//:}
+TARGET=$(basename $(dirname $0))
 
-if [ -e layers/$BASE/properties ]; then
-  . layers/$BASE/properties
-fi
+read_properties $BASE $TARGET
 
-export MEM=${MEM:-1024}
-export NAME=${NAME:-$TARGET}
-export CPUS=${CPUS:-1}
+export BASE
 
-if [ -e build/vsphere/$TARGET.ova ]; then
-  echo "$0: build/vsphere/$TARGET.ova already exists, not rebuilding"
+if [ -e build/$TARGET/$BASE.ova ]; then
+  echo "$0: build/$TARGET/$BASE.ova already exists, not rebuilding"
   exit
 fi
 
-utils/addlayer.sh build/$TARGET.qcow2 targets/vsphere tmp/$TARGET:vsphere.qcow2
-convert_qcow2 tmp/$TARGET:vsphere.qcow2 raw
+utils/addlayer.sh build/$BASE.qcow2 targets/$TARGET tmp/$BASE:$TARGET.qcow2
+convert_qcow2 tmp/$BASE:$TARGET.qcow2 raw
 
-utils/VMDKstream.py tmp/$TARGET:vsphere.raw tmp/$TARGET:vsphere.vmdk
+utils/VMDKstream.py tmp/$BASE:$TARGET.raw tmp/$BASE:$TARGET.vmdk
 
 TMPDIR=$(mktemp -d)
-envsubst <$(dirname $0)/template.ovf >$TMPDIR/template.ovf
+envsubst <targets/$TARGET/template.ovf >$TMPDIR/template.ovf
 
-tar -Pcf tmp/$TARGET.ova --transform='s!.*/!!' --transform="s/$TARGET:vsphere.vmdk/template-disk1.vmdk/" $TMPDIR/template.ovf tmp/$TARGET:vsphere.vmdk
-rm -rf tmp/$TARGET:vsphere.qcow2 tmp/$TARGET:vsphere.raw tmp/$TARGET:vsphere.vmdk $TMPDIR
+tar -Pcf tmp/$BASE.ova --transform='s!.*/!!' --transform="s/$BASE:$TARGET.vmdk/template-disk1.vmdk/" $TMPDIR/template.ovf tmp/$BASE:$TARGET.vmdk
+rm -rf tmp/$BASE:$TARGET.qcow2 tmp/$BASE:$TARGET.raw tmp/$BASE:$TARGET.vmdk $TMPDIR
 
-mkdir -p build/vsphere
-mv tmp/$TARGET.ova build/vsphere/$TARGET.ova
+mkdir -p build/$TARGET
+mv tmp/$BASE.ova build/$TARGET/$BASE.ova

@@ -8,35 +8,31 @@ if [ $# -ne 1 ]; then
 fi
 
 BASE=$1
-TARGET=${BASE//\//:}
+TARGET=$(basename $(dirname $0))
 
-if [ -e layers/$BASE/properties ]; then
-  . layers/$BASE/properties
-fi
+read_properties $BASE $TARGET
 
-export MEM=${MEM:-1024}
-export CPUS=${CPUS:-1}
-
-if [ -e build/vagrant-libvirt/$TARGET.box ]; then
-  echo "$0: build/vagrant-libvirt/$TARGET.box already exists, not rebuilding"
+if [ -e build/$TARGET/$BASE.box ]; then
+  echo "$0: build/$TARGET/$BASE.box already exists, not rebuilding"
   exit
 fi
 
-utils/addlayer.sh build/$TARGET.qcow2 targets/vagrant-libvirt tmp/$TARGET:vagrant.qcow2
-convert_qcow2 tmp/$TARGET:vagrant.qcow2 qcow2
-compress_qcow2 tmp/$TARGET:vagrant.qcow2
-# ~/src/vmdisktool/vmdisktool -f qcow2 tmp/$TARGET:vagrant.qcow2 tmp/$TARGET:vagrant.qcow2.tmp
-# mv tmp/$TARGET:vagrant.qcow2.tmp tmp/$TARGET:vagrant.qcow2
+utils/addlayer.sh build/$BASE.qcow2 targets/$TARGET tmp/$BASE:vagrant.qcow2
+convert_qcow2 tmp/$BASE:vagrant.qcow2 qcow2
+compress_qcow2 tmp/$BASE:vagrant.qcow2
+# ~/src/vmdisktool/vmdisktool -f qcow2 tmp/$BASE:vagrant.qcow2 tmp/$BASE:vagrant.qcow2.tmp
+# mv tmp/$BASE:vagrant.qcow2.tmp tmp/$BASE:vagrant.qcow2
 
 TMPDIR=$(mktemp -d)
-envsubst <$(dirname $0)/Vagrantfile >$TMPDIR/Vagrantfile
+envsubst <targets/$TARGET/Vagrantfile >$TMPDIR/Vagrantfile
+envsubst <targets/$TARGET/metadata.json >$TMPDIR/metadata.json
 
-tar -c --transform='s!.*/!!' --transform="s/$TARGET:vagrant.qcow2/box.img/" $(dirname $0)/metadata.json tmp/$TARGET:vagrant.qcow2 $TMPDIR/Vagrantfile | pigz >tmp/$TARGET.box
-rm -rf tmp/$TARGET:vagrant.qcow2 $TMPDIR
+tar -c --transform='s!.*/!!' --transform="s/$BASE:vagrant.qcow2/box.img/" $TMPDIR/metadata.json tmp/$BASE:vagrant.qcow2 $TMPDIR/Vagrantfile | pigz >tmp/$BASE.box
+rm -rf tmp/$BASE:vagrant.qcow2 $TMPDIR
 
-mkdir -p build/vagrant-libvirt
-mv tmp/$TARGET.box build/vagrant-libvirt/$TARGET.box
+mkdir -p build/$TARGET
+mv tmp/$BASE.box build/$TARGET/$BASE.box
 
-echo \$ vagrant box add $TARGET build/vagrant-libvirt/$TARGET.box
-echo \$ vagrant init $TARGET
+echo \$ vagrant box add $BASE build/$TARGET/$BASE.box
+echo \$ vagrant init $BASE
 echo \$ vagrant up

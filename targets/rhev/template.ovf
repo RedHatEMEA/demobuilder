@@ -10,7 +10,7 @@
   </Section>
   <Section xsi:type="ovf:DiskSection_Type">
     <Info>List of Virtual Disks</Info>
-    <Disk ovf:diskId="$DISK_UUID" ovf:size="10" ovf:actual_size="10" ovf:vm_snapshot_id="$UUID_1" ovf:parentRef="" ovf:fileRef="$IMAGE_UUID/$DISK_UUID" ovf:format="http://www.gnome.org/~markmc/qcow-image-format.html" ovf:volume-format="COW" ovf:volume-type="Sparse" ovf:disk-interface="VirtIO" ovf:boot="true" ovf:disk-alias="$NAME_Disk1" ovf:wipe-after-delete="false"/>
+    <Disk ovf:diskId="$DISK_UUID" ovf:size="$DISK" ovf:actual_size="$DISK" ovf:vm_snapshot_id="$UUID_1" ovf:parentRef="" ovf:fileRef="$IMAGE_UUID/$DISK_UUID" ovf:format="http://www.gnome.org/~markmc/qcow-image-format.html" ovf:volume-format="COW" ovf:volume-type="Sparse" ovf:disk-interface="VirtIO" ovf:boot="true" ovf:disk-alias="$BASE_Disk1" ovf:wipe-after-delete="false"/>
   </Section>
   <Content ovf:id="out" xsi:type="ovf:VirtualSystem_Type">
     <Description/>
@@ -29,7 +29,7 @@
     <AutoStartup>false</AutoStartup>
     <Priority>1</Priority>
     <CreatedByUserId>fdfc627c-d875-11e0-90f0-83df133b58cc</CreatedByUserId>
-    <Name>$NAME</Name>
+    <Name>$BASE</Name>
     <TemplateId>$TEMPLATE_UUID</TemplateId>
     <Origin>0</Origin>
     <default_display_type>0</default_display_type>
@@ -65,7 +65,7 @@
         <rasd:VirtualQuantity>$MEM</rasd:VirtualQuantity>
       </Item>
       <Item>
-        <rasd:Caption>$NAME_Disk1</rasd:Caption>
+        <rasd:Caption>$BASE_Disk1</rasd:Caption>
         <rasd:InstanceId>$DISK_UUID</rasd:InstanceId>
         <rasd:ResourceType>17</rasd:ResourceType>
         <rasd:HostResource>$IMAGE_UUID/$DISK_UUID</rasd:HostResource>

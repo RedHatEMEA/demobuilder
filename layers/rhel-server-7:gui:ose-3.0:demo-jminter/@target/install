@@ -40,7 +40,7 @@ EOF
   chown -R nobody:nobody /var/lib/git
 done
 
-http_proxy=$PROXY curl -sO http://download.eng.rdu2.redhat.com/released/jbdevstudio/8.1.0/jboss-devstudio-8.1.0.GA-installer-standalone.jar
+https_proxy=$PROXY curl -sO https://download.eng.rdu2.redhat.com/released/jbdevstudio/8.1.0/jboss-devstudio-8.1.0.GA-installer-standalone.jar
 java -jar jboss-devstudio-8.1.0.GA-installer-standalone.jar InstallConfigRecord.xml
 cp 'Red Hat JBoss Developer Studio 8.1.0.GA.desktop' /usr/share/applications
 install -m 0755 'Red Hat JBoss Developer Studio 8.1.0.GA.desktop' /etc/skel/Desktop

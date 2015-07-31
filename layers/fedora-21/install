@@ -8,6 +8,8 @@ if [ -e build/$TARGET.qcow2 ]; then
   exit
 fi
 
+read_properties $TARGET
+
 stop() {
   rm -rf $TEMPDIR
 }
@@ -22,11 +24,11 @@ for FILE in initrd.img vmlinuz; do
   iso-read -i $ISO -e isolinux/$FILE -o $TEMPDIR/$FILE
 done
 
-qemu-img create -q -f qcow2 tmp/$TARGET.qcow2 20G
+qemu-img create -q -f qcow2 tmp/$TARGET.qcow2 ${DISK}G
 utils/sigwrap /usr/bin/qemu-kvm -nodefaults \
   -cpu host \
-  -smp 2 \
-  -m 2048 \
+  -smp $BUILD_CPUS \
+  -m $BUILD_MEM \
   -kernel $TEMPDIR/vmlinuz \
   -initrd $TEMPDIR/initrd.img \
   -append "ks=http://$APILISTENER/static/$(dirname $0)/install.ks APILISTENER=$APILISTENER LAYER=$TARGET" \

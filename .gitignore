@@ -1,7 +1,8 @@
-dockercache
-build
-config
-keys
-tmp
-releases
+/dockercache
+/build
+/config
+/keys
+/tmp
+/properties
+/releases
 *.pyc

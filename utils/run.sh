@@ -7,13 +7,15 @@ if [ $# -eq 0 ]; then
   exit 1
 fi
 
+read_properties
+
 TMPDIR=$(mktemp -d)
 VNC=${VNC:-:0}
 
 utils/sigwrap /usr/bin/qemu-kvm -nodefaults \
   -cpu host \
-  -smp 4 \
-  -m 4096 \
+  -smp $BUILD_CPUS \
+  -m $BUILD_MEM \
   -drive discard=unmap,file=$1,id=disk1,if=none,cache=unsafe \
   -device virtio-scsi-pci \
   -device scsi-disk,drive=disk1 \

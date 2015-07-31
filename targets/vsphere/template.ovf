@@ -5,7 +5,7 @@
   </References>
   <DiskSection>
     <Info>Virtual disk information</Info>
-    <Disk ovf:capacity="10" ovf:capacityAllocationUnits="byte * 2^30" ovf:diskId="vmdisk1" ovf:fileRef="file1" ovf:format="http://www.vmware.com/interfaces/specifications/vmdk.html#streamOptimized" ovf:populatedSize="10" />
+    <Disk ovf:capacity="$DISK" ovf:capacityAllocationUnits="byte * 2^30" ovf:diskId="vmdisk1" ovf:fileRef="file1" ovf:format="http://www.vmware.com/interfaces/specifications/vmdk.html#streamOptimized" ovf:populatedSize="$DISK" />
   </DiskSection>
   <NetworkSection>
     <Info>The list of logical networks</Info>
@@ -13,9 +13,9 @@
       <Description>The VM Network network</Description>
     </Network>
   </NetworkSection>
-  <VirtualSystem ovf:id="$NAME">
+  <VirtualSystem ovf:id="$BASE">
     <Info>A virtual machine</Info>
-    <Name>$NAME</Name>
+    <Name>$BASE</Name>
     <OperatingSystemSection ovf:id="80" ovf:version="6" vmw:osType="rhel6_64Guest">
       <Info>The kind of installed guest operating system</Info>
       <Description>Red Hat Enterprise Linux 6 (64-bit)</Description>
@@ -25,7 +25,7 @@
       <System>
         <vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
         <vssd:InstanceID>0</vssd:InstanceID>
-        <vssd:VirtualSystemIdentifier>$NAME</vssd:VirtualSystemIdentifier>
+        <vssd:VirtualSystemIdentifier>$BASE</vssd:VirtualSystemIdentifier>
         <vssd:VirtualSystemType>vmx-07</vssd:VirtualSystemType>
       </System>
       <Item>
@@ -123,4 +123,4 @@
       <vmw:Config ovf:required="false" vmw:key="tools.toolsUpgradePolicy" vmw:value="manual" />
     </VirtualHardwareSection>
   </VirtualSystem>
-</Envelope>                          
+</Envelope>

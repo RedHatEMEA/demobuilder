@@ -8,23 +8,19 @@ if [ $# -ne 1 ]; then
 fi
 
 BASE=$1
-TARGET=${BASE//\//:}
+TARGET=$(basename $(dirname $0))
 
-if [ -e layers/$BASE/properties ]; then
-  . layers/$BASE/properties
-fi
+read_properties $BASE $TARGET
 
-export MEM=${MEM:-1024}
-export NAME=${NAME:-$TARGET}
-export CPUS=${CPUS:-1}
+export BASE
 
-if [ -e build/rhev/$TARGET.ova ]; then
-  echo "$0: build/rhev/$TARGET.ova already exists, not rebuilding"
+if [ -e build/$TARGET/$BASE.ova ]; then
+  echo "$0: build/$TARGET/$BASE.ova already exists, not rebuilding"
   exit
 fi
 
-utils/addlayer.sh build/$TARGET.qcow2 targets/rhev tmp/$TARGET:rhev.qcow2
-convert_qcow2 tmp/$TARGET:rhev.qcow2 qcow2
+utils/addlayer.sh build/$BASE.qcow2 targets/$TARGET tmp/$BASE:$TARGET.qcow2
+convert_qcow2 tmp/$BASE:$TARGET.qcow2 qcow2
 
 TMPDIR=$(mktemp -d)
 
@@ -41,15 +37,15 @@ export UUID_5=$(uuidgen)
 
 export DATE_S=$(date +%s)
 export DATE_YMDHMS=$(date -u +'%Y/%m/%d %H:%M:%S')
-export SECTORS=$((20*1024**3/512))
+export SECTORS=$((DISK*2**30/512))
 
 mkdir -p $TMPDIR/{images/$IMAGE_UUID,master/vms/$TEMPLATE_UUID}
 
-envsubst <$(dirname $0)/disk.meta >$TMPDIR/images/$IMAGE_UUID/$DISK_UUID.meta
-envsubst <$(dirname $0)/template.ovf >$TMPDIR/master/vms/$TEMPLATE_UUID/$TEMPLATE_UUID.ovf
+envsubst <targets/$TARGET/disk.meta >$TMPDIR/images/$IMAGE_UUID/$DISK_UUID.meta
+envsubst <targets/$TARGET/template.ovf >$TMPDIR/master/vms/$TEMPLATE_UUID/$TEMPLATE_UUID.ovf
 
-tar -Pczf tmp/$TARGET.ova --transform="s!$TMPDIR/!!" --transform="s!tmp/$TARGET:rhev.qcow2!images/$IMAGE_UUID/$DISK_UUID!" $TMPDIR/master/vms/$TEMPLATE_UUID/$TEMPLATE_UUID.ovf $TMPDIR/images/$IMAGE_UUID/$DISK_UUID.meta tmp/$TARGET:rhev.qcow2
-rm -rf tmp/$TARGET:rhev.qcow2 $TMPDIR
+tar -Pczf tmp/$BASE.ova --transform="s!$TMPDIR/!!" --transform="s!tmp/$BASE:$TARGET.qcow2!images/$IMAGE_UUID/$DISK_UUID!" $TMPDIR/master/vms/$TEMPLATE_UUID/$TEMPLATE_UUID.ovf $TMPDIR/images/$IMAGE_UUID/$DISK_UUID.meta tmp/$BASE:$TARGET.qcow2
+rm -rf tmp/$BASE:$TARGET.qcow2 $TMPDIR
 
-mkdir -p build/rhev
-mv tmp/$TARGET.ova build/rhev/$TARGET.ova
+mkdir -p build/$TARGET
+mv tmp/$BASE.ova build/$TARGET/$BASE.ova
