@@ -1,41 +1,56 @@
 #!/usr/bin/python
 
 from bottle import *
-import glob
 import os
+import socket
+import yaml
 
 
-def make_table(targets, images, root):
-    table = []
-    for i in images:
-        row = [i]
-        for t in targets:
-            x = glob.glob("%s/%s/%s.*" % (root, t, i))
-            if x:
-                row.append((x[0], os.stat(x[0]).st_size))
-            else:
-                row.append(None)
-        table.append(row)
+class Layer(object):
+    def __init__(self, layer):
+        self.layer = layer
+        self.images = []
 
-    return table
+        with open("layers/%s/metadata.yml" % self.layer) as metaf:
+            self.yaml = yaml.load(metaf.read())
+
+
+class Target(object):
+    def __init__(self, f):
+        (self.layer, self.target, self.ext) = splitname(f)
+
+        with open("targets/%s/metadata.yml" % self.target) as metaf:
+            self.yaml = yaml.load(metaf.read())
+
+        if "description" in self.yaml:
+            d = self.yaml["description"]
+            d = d.replace("$IMAGE-SHORT", self.layer.rsplit(":", 1)[1])
+            d = d.replace("$IMAGE", self.layer + ":" + self.target)
+            d = d.replace("$URL", "http://%s/releases/%s" % (socket.gethostname(), f))
+            self.yaml["description"] = d
+
+
+def splitname(f):
+    (fn, ext) = f.rsplit(".", 1)
+    (layer, target) = fn.rsplit(":", 1)
+
+    return (layer, target, ext)
 
 
 @route("/")
 @view("ui/index.html.tpl")
 def root():
-    targets = sorted({os.path.basename(x[:-1])
-                      for x in glob.glob("build/*/") + glob.glob("releases/*/")})
+    layers = {}
 
-    build = sorted({os.path.basename(x).rsplit(".", 1)[0]: ""
-                    for x in glob.glob("build/*/*")})
-    build_table = make_table(targets, build, "build")
+    for f in sorted(os.listdir("releases")):
+        (layer, target, ext) = splitname(f)
 
-    releases = sorted({os.path.basename(x).rsplit(".", 1)[0]: ""
-                       for x in glob.glob("releases/*/*")})
-    releases_table = make_table(targets, releases, "releases")
+        if not layer in layers:
+            layers[layer] = Layer(layer)
 
-    return {"targets": targets, "build_table": build_table,
-            "releases_table": releases_table}
+        layers[layer].images.append({"target": Target(f), "link": "releases/" + f, "size": os.stat("releases/" + f).st_size})
+
+    return {"layers": layers}
 
 
 @route("/<path:path>")

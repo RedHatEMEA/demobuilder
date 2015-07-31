@@ -1,0 +1,7 @@
+name: OpenShift 3.0 all-in-one image
+maintainers:
+- Jim Minter <jminter@redhat.com>
+description: |
+  This image provides an all-in-one instance of OpenShift 3.0, including the
+  master and node components, examples, GUI and web browser.  No additional
+  external configuration is required.

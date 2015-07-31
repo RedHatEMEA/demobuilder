@@ -1,0 +1,21 @@
+name: Vagrant image (libvirt)
+maintainers:
+- Jim Minter <jminter@redhat.com>
+description: |
+  This image requires vagrant-libvirt and is suitable for recent Fedora hosts.  To use this image, do the following:
+
+  # Install vagrant-libvirt
+  $ sudo dnf -y install vagrant-libvirt
+
+  # Download and install the box image
+  $ vagrant box add $IMAGE $URL
+
+  # Change to a clean working directory for the image
+  $ mkdir -p $HOME/vagrant/$IMAGE-SHORT
+  $ cd $HOME/vagrant/$IMAGE-SHORT
+
+  # Launch the image
+  $ vagrant init $IMAGE
+  $ vagrant up
+
+  Then VNC to your vagrant box IP address.

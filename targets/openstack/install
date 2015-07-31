@@ -12,8 +12,8 @@ TARGET=$(basename $(dirname $0))
 
 read_properties $BASE $TARGET
 
-if [ -e build/$TARGET/$BASE.qcow2 ]; then
-  echo "$0: build/$TARGET/$BASE.qcow2 already exists, not rebuilding"
+if [ -e releases/$BASE:$TARGET.qcow2 ]; then
+  echo "$0: releases/$BASE:$TARGET.qcow2 already exists, not rebuilding"
   exit
 fi
 
@@ -21,7 +21,6 @@ utils/addlayer.sh build/$BASE.qcow2 targets/$TARGET tmp/$BASE:$TARGET.qcow2
 convert_qcow2 tmp/$BASE:$TARGET.qcow2 qcow2
 compress_qcow2 tmp/$BASE:$TARGET.qcow2
 
-mkdir -p build/$TARGET
-mv tmp/$BASE:$TARGET.qcow2 build/$TARGET/$BASE.qcow2
+mv tmp/$BASE:$TARGET.qcow2 releases/$BASE:$TARGET.qcow2
 
-echo \$ glance image-create --name $BASE --file build/$TARGET/$BASE.qcow2 --disk-format qcow2 --container-format bare --min-disk $DISK --is-public True
+echo \$ glance image-create --name $BASE --file releases/$BASE:$TARGET.qcow2 --disk-format qcow2 --container-format bare --min-disk $DISK --is-public True

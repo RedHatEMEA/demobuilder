@@ -14,8 +14,8 @@ read_properties $BASE $TARGET
 
 export BASE
 
-if [ -e build/$TARGET/$BASE.ova ]; then
-  echo "$0: build/$TARGET/$BASE.ova already exists, not rebuilding"
+if [ -e releases/$BASE:$TARGET.ova ]; then
+  echo "$0: releases/$BASE:$TARGET.ova already exists, not rebuilding"
   exit
 fi
 
@@ -27,8 +27,7 @@ utils/VMDKstream.py tmp/$BASE:$TARGET.raw tmp/$BASE:$TARGET.vmdk
 TMPDIR=$(mktemp -d)
 envsubst <targets/$TARGET/template.ovf >$TMPDIR/template.ovf
 
-tar -Pcf tmp/$BASE.ova --transform='s!.*/!!' --transform="s/$BASE:$TARGET.vmdk/template-disk1.vmdk/" $TMPDIR/template.ovf tmp/$BASE:$TARGET.vmdk
+tar -Pcf tmp/$BASE:$TARGET.ova --transform='s!.*/!!' --transform="s/$BASE:$TARGET.vmdk/template-disk1.vmdk/" $TMPDIR/template.ovf tmp/$BASE:$TARGET.vmdk
 rm -rf tmp/$BASE:$TARGET.qcow2 tmp/$BASE:$TARGET.raw tmp/$BASE:$TARGET.vmdk $TMPDIR
 
-mkdir -p build/$TARGET
-mv tmp/$BASE.ova build/$TARGET/$BASE.ova
+mv tmp/$BASE:$TARGET.ova releases/$BASE:$TARGET.ova

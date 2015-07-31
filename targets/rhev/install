@@ -14,8 +14,8 @@ read_properties $BASE $TARGET
 
 export BASE
 
-if [ -e build/$TARGET/$BASE.ova ]; then
-  echo "$0: build/$TARGET/$BASE.ova already exists, not rebuilding"
+if [ -e releases/$BASE:$TARGET.ova ]; then
+  echo "$0: releases/$BASE:$TARGET.ova already exists, not rebuilding"
   exit
 fi
 
@@ -44,8 +44,7 @@ mkdir -p $TMPDIR/{images/$IMAGE_UUID,master/vms/$TEMPLATE_UUID}
 envsubst <targets/$TARGET/disk.meta >$TMPDIR/images/$IMAGE_UUID/$DISK_UUID.meta
 envsubst <targets/$TARGET/template.ovf >$TMPDIR/master/vms/$TEMPLATE_UUID/$TEMPLATE_UUID.ovf
 
-tar -Pczf tmp/$BASE.ova --transform="s!$TMPDIR/!!" --transform="s!tmp/$BASE:$TARGET.qcow2!images/$IMAGE_UUID/$DISK_UUID!" $TMPDIR/master/vms/$TEMPLATE_UUID/$TEMPLATE_UUID.ovf $TMPDIR/images/$IMAGE_UUID/$DISK_UUID.meta tmp/$BASE:$TARGET.qcow2
+tar -Pczf tmp/$BASE:$TARGET.ova --transform="s!$TMPDIR/!!" --transform="s!tmp/$BASE:$TARGET.qcow2!images/$IMAGE_UUID/$DISK_UUID!" $TMPDIR/master/vms/$TEMPLATE_UUID/$TEMPLATE_UUID.ovf $TMPDIR/images/$IMAGE_UUID/$DISK_UUID.meta tmp/$BASE:$TARGET.qcow2
 rm -rf tmp/$BASE:$TARGET.qcow2 $TMPDIR
 
-mkdir -p build/$TARGET
-mv tmp/$BASE.ova build/$TARGET/$BASE.ova
+mv tmp/$BASE:$TARGET.ova releases/$BASE:$TARGET.ova

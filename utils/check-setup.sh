@@ -2,7 +2,7 @@
 
 . utils/functions
 
-for pkg in git libcdio libguestfs libvirt pigz pyOpenSSL python-bottle qemu-kvm; do
+for pkg in git libcdio libguestfs libvirt pigz pyOpenSSL python-bottle python-yaml qemu-kvm; do
   rpm -q $pkg &>/dev/null || echo "Please install $pkg."
 done
 
