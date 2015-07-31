@@ -13,7 +13,7 @@
 $ yum -y install git libcdio libguestfs-tools-c libvirt python-markdown2 qemu
 
 # Ensure all necessary CA certificates are correctly installed
-$ pushd /etc/pki/ca-trust/sources/anchors
+$ pushd /etc/pki/ca-trust/source/anchors
 $ wget http://path/to/ca.crt
 $ popd
 $ update-ca-trust
