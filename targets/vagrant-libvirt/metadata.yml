@@ -1,4 +1,4 @@
-name: Vagrant image (libvirt)
+name: Vagrant image (Fedora / libvirt)
 maintainers:
 - Jim Minter <jminter@redhat.com>
 description: |

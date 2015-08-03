@@ -1,4 +1,4 @@
-name: Vagrant image (VirtualBox)
+name: Vagrant image (OS X / VirtualBox)
 maintainers:
 - Jim Minter <jminter@redhat.com>
 description: |
