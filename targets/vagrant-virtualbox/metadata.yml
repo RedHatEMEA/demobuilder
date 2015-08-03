@@ -2,19 +2,20 @@ name: Vagrant image (OS X / VirtualBox)
 maintainers:
 - Jim Minter <jminter@redhat.com>
 description: |
-  This image requires Vagrant and VirtualBox and is suitable for Apple OS X hosts.  To use this image, do the following:
+  This image requires Vagrant and VirtualBox and is suitable for Apple OS X
+  hosts.  To use this image, do the following:
 
   # Install Vagrant and VirtualBox before proceeding
 
   # Download and install the box image
   $ vagrant box add $IMAGE $URL
 
-  # Change to a clean working directory for the image
+  # Create a clean working directory for the image
   $ mkdir -p $HOME/vagrant/$IMAGE-SHORT
   $ cd $HOME/vagrant/$IMAGE-SHORT
+  $ vagrant init $IMAGE
 
   # Launch the image
-  $ vagrant init $IMAGE
   $ vagrant up
 
-  Then connect to your vagrant box via the VirtualBox console.
+  # Then connect to your vagrant box via the VirtualBox console.
