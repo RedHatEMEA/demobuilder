@@ -6,6 +6,15 @@
   <title>Welcome to {{ socket.gethostname() }}!</title>
 </head>
 
+<script type="text/javascript">
+function hideshow(x) {
+  if(x.style.display == "block")
+    x.style.display = "none"
+  else
+    x.style.display = "block"
+}
+</script>
+
 <body>
   <h1>Welcome to {{ socket.gethostname() }}!</h1>
 
@@ -19,10 +28,13 @@
     <ul>
       % for image in layer.images:
       <li><b>{{ image["target"].yaml["name"] }}</b>
-      % if image["target"].yaml.get("description", ""):
-      <p>{{ !image["target"].yaml.get("description", "").replace("\n", "<br>") }}
-      % end
       <p><a href="{{ image["link"] }}">Download</a> ({{ "%0.2fGB" % (image["size"] / 1e9) }})
+      <p><a href="javascript:hideshow(document.getElementById('{{ image["link"] }}'))">More details...</a>
+      % if image["target"].yaml.get("description", ""):
+      <div id="{{ image["link"] }}" style="display: none">
+      <p>{{ !image["target"].yaml.get("description", "").replace("\n", "<br>") }}
+      </div>
+      % end
       % end
     </ul>
     % end
