@@ -5,8 +5,13 @@ import bottle
 import gitstamp
 import os
 import socket
+import sys
 import tempfile
+import threading
 import wsgiref.simple_server
+
+sys.path.append("contrib")
+import webproxycache
 
 
 class WSGIRefServer(bottle.ServerAdapter):
@@ -67,8 +72,13 @@ def static(path):
 
 
 @app.get("/gitstamp")
-def git_stamp():
+def gitstamp():
     return gitstamp.gitstamp(bottle.request.query.msg)
+
+
+@app.get("/cache")
+def cache():
+    return "http://%s:%u/" % (args.ip, cacheport)
 
 
 def parse_args():
@@ -80,18 +90,33 @@ def parse_args():
 
 
 def main():
+    global args
+    global cacheport
+
     args = parse_args()
 
-    for port in range(1024, 65536):
+    for apiport in range(1024, 65536):
         try:
-            server = WSGIRefServer(args.ip, port)
+            apiserver = WSGIRefServer(args.ip, apiport)
+            break
+
+        except socket.error:
+            pass
+
+    for cacheport in range(apiport + 1, 65536):
+        try:
+            cacheserver = webproxycache.make_server(args.ip, cacheport)
             break
 
         except socket.error:
             pass
 
     if args.debug:
-        app.run(server=server)
+        t = threading.Thread(target=cacheserver.serve_forever)
+        t.daemon = True
+        t.start()
+
+        app.run(server=apiserver)
 
     else:
         pid = os.fork()
@@ -100,10 +125,15 @@ def main():
             os.open("/dev/null", os.O_RDONLY)
             os.open("/dev/null", os.O_WRONLY)
             os.open("/dev/null", os.O_WRONLY)
-            app.run(server=server)
+
+            t = threading.Thread(target=cacheserver.serve_forever)
+            t.daemon = True
+            t.start()
+
+            app.run(server=apiserver)
 
         else:
-            print "APILISTENER=%s:%u" % (args.ip, port)
+            print "APILISTENER=%s:%u" % (args.ip, apiport)
             print "APIPID=%u" % pid
 
 if __name__ == "__main__":

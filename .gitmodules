@@ -1,0 +1,3 @@
+[submodule "contrib/webproxycache"]
+	path = contrib/webproxycache
+	url = https://github.com/RedHatEMEA/webproxycache.git

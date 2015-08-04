@@ -94,3 +94,5 @@ EOF
 }
 
 swapoff -a
+
+export PROXY=$(curl -s http://$APILISTENER/cache)

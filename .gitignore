@@ -1,5 +1,7 @@
 /dockercache
 /build
+/cache
+/certs
 /config
 /keys
 /tmp
