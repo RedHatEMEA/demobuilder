@@ -104,12 +104,12 @@ chown -R demo:demo /home/demo/.kube
 
 systemctl stop openshift-node
 
-echo '{"kind": "ServiceAccount", "apiVersion": "v1", "metadata": {"name": "registry"}}' | oc create -f -
-(oc get -o yaml scc privileged; echo - system:serviceaccount:default:registry) | oc update scc privileged -f -
+echo '{"kind": "ServiceAccount", "apiVersion": "v1", "metadata": {"name": "infra"}}' | oc create -f -
+(oc get -o yaml scc privileged; echo - system:serviceaccount:default:infra) | oc replace scc privileged -f -
 mkdir /registry
-oadm registry --config=/etc/openshift/master/admin.kubeconfig --credentials=/etc/openshift/master/openshift-registry.kubeconfig --mount-host=/registry --service-account=registry --images='registry.access.redhat.com/openshift3/ose-${component}:${version}'
+oadm registry --config=/etc/openshift/master/admin.kubeconfig --credentials=/etc/openshift/master/openshift-registry.kubeconfig --mount-host=/registry --service-account=infra --images='registry.access.redhat.com/openshift3/ose-${component}:${version}'
 
-oadm router --credentials=/etc/openshift/master/openshift-router.kubeconfig --images='registry.access.redhat.com/openshift3/ose-${component}:${version}'
+oadm router --credentials=/etc/openshift/master/openshift-router.kubeconfig --service-account=infra --images='registry.access.redhat.com/openshift3/ose-${component}:${version}'
 
 rm /root/.ssh/id_rsa
 rm /root/.ssh/known_hosts
