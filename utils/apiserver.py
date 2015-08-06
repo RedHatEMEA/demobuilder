@@ -61,10 +61,11 @@ def static(path):
         bottle.abort(400)
 
     path = "./" + path.strip("/")
-    with tempfile.NamedTemporaryFile(dir=".") as f:
+    if os.path.dirname(path) and not os.path.isdir(os.path.dirname(path)):
+        os.makedirs(os.path.dirname(path))
+
+    with tempfile.NamedTemporaryFile(dir=os.path.dirname(path)) as f:
         copy(bottle.request["wsgi.input"], f, length)
-        if os.path.dirname(path) and not os.path.isdir(os.path.dirname(path)):
-            os.makedirs(os.path.dirname(path))
         os.rename(f.name, path)
         f.delete = False
 
