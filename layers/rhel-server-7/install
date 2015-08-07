@@ -2,13 +2,19 @@
 
 . utils/functions
 
-TARGET=$(basename $(dirname $0))
-if [ -e build/$TARGET.qcow2 ]; then
-  echo "$0: build/$TARGET.qcow2 already exists, not rebuilding"
+LAYER=$(basename $(dirname $0))
+if [ -e build/$LAYER.qcow2 ]; then
+  echo "$0: build/$LAYER.qcow2 already exists, not rebuilding"
   exit
 fi
 
-read_properties $TARGET
+ISO=isos/rhel-server-7.1-x86_64-dvd.iso
+if [ ! -e $ISO ]; then
+  echo "$0: please download $(basename $ISO) and place it in $ISO"
+  exit 1
+fi
+
+read_properties $LAYER
 
 stop() {
   rm -rf $TEMPDIR
@@ -17,29 +23,25 @@ stop() {
 trap stop EXIT
 TEMPDIR=$(mktemp -d)
 
-ISO=$(cache $MIRROR_RHN/content/dist/rhel/server/7/7Server/x86_64/iso/rhel-server-7.1-x86_64-dvd.iso)
-VNC=${VNC:-:0}
-
 for FILE in initrd.img vmlinuz; do
   iso-read -i $ISO -e isolinux/$FILE -o $TEMPDIR/$FILE
 done
 
-qemu-img create -q -f qcow2 tmp/$TARGET.qcow2 ${DISK}G
+qemu-img create -q -f qcow2 tmp/$LAYER.qcow2 ${DISK}G
 utils/sigwrap /usr/bin/qemu-kvm -nodefaults \
   -cpu host \
   -smp $BUILD_CPUS \
   -m $BUILD_MEM \
   -kernel $TEMPDIR/vmlinuz \
   -initrd $TEMPDIR/initrd.img \
-  -append "ks=http://$APILISTENER/static/$(dirname $0)/install.ks APILISTENER=$APILISTENER LAYER=$TARGET" \
+  -append "ks=http://$APILISTENER/static/$(dirname $0)/install.ks APILISTENER=$APILISTENER LAYER=$LAYER console=ttyS0,115200n8" \
   -device virtio-scsi-pci \
-  -drive discard=unmap,file=tmp/$TARGET.qcow2,id=disk1,if=none,cache=unsafe \
+  -drive discard=unmap,file=tmp/$LAYER.qcow2,id=disk1,if=none,cache=unsafe \
   -device scsi-disk,drive=disk1 \
   -net bridge,br=$BRIDGE \
   -net nic,model=virtio,macaddr=$(utils/random-mac.py) \
   -cdrom $ISO \
-  -device vmware-svga \
-  -vnc $VNC \
-  -usbdevice tablet
+  -display none \
+  -serial file:/proc/self/fd/2
 
-mv tmp/$TARGET.qcow2 build/$TARGET.qcow2
+mv tmp/$LAYER.qcow2 build/$LAYER.qcow2

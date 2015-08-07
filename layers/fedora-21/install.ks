@@ -17,11 +17,15 @@ zerombr
 
 %packages --nobase
 @core
+iptables-services
 rsync
 qemu-guest-agent
 %end
 
 %post
+exec &>/dev/console
+set -x
+
 eval $(tr ' ' '\n' < /proc/cmdline | grep =)
 
 mkdir -m 0700 /root/.ssh
@@ -39,13 +43,15 @@ curl -so config http://$APILISTENER/static/config
 curl -so vm-functions http://$APILISTENER/static/utils/vm-functions
 . ./vm-functions
 
-for i in /etc/yum.repos.d/*.repo; do
-  sed -i -e "s!^#baseurl=http://download.fedoraproject.org/!baseurl=$MIRROR_FEDORA/!; s/^metalink=/#metalink=/" $i
-done
+systemctl enable iptables.service
 
-http_proxy=$PROXY yum_update
+register_channels
+yum_remove 'NetworkManager*' firewalld
+yum_update
 cleanup
 
 rm config vm-functions
+
+grubby --update-kernel=ALL --args=net.ifnames=0 --remove-args=console=ttyS0,115200n8
 
 %end

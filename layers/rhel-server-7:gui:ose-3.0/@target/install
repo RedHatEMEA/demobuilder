@@ -31,9 +31,7 @@ for image in \
   docker_pull $image
 done
 
-http_proxy=$PROXY yum_install $MIRROR_FEDORA/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
-sed -i -e "/\[/ a\
-proxy=$PROXY" /etc/yum.repos.d/epel.repo
+yum_install $MIRROR_FEDORA/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
 sed -i -e "s!^#baseurl=http://download.fedoraproject.org/!baseurl=$MIRROR_FEDORA/!; s/^mirrorlist=/#mirrorlist=/" /etc/yum.repos.d/epel.repo
 yum_install ansible
 yum_remove epel-release-7-5
@@ -121,5 +119,3 @@ firefox_set_homepage https://$MY_HOSTNAME:8443/
 
 sed -i -e '/FORWARD/ a\
 -A OS_FIREWALL_ALLOW -p tcp -m state --state NEW -m tcp --dport 5900 -j ACCEPT' /etc/sysconfig/iptables
-
-cleanup

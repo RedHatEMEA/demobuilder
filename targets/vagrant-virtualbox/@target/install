@@ -7,7 +7,7 @@ if grep -q 'release 6' /etc/redhat-release; then
 elif grep -q 'release 7' /etc/redhat-release; then
   register_channels rhel-7-server-rpms
 else
-  export http_proxy=$PROXY
+  register_channels
 fi
 
 yum_install bzip2 kernel-devel gcc
@@ -18,7 +18,7 @@ sh /mnt/VBoxLinuxAdditions.run || true
 umount /mnt
 rm VBoxGuestAdditions_5.0.0.iso
 
-yum -y history undo $(yum history list | awk 'FNR == 5 {print $1;}')
+yum -y history undo $(yum history list | grep -A1 ^- | tail -1 | awk '{print $1;}')
 
 yum_install nfs-utils nfs-utils-lib
 chkconfig rpcbind on
@@ -49,5 +49,3 @@ su vagrant -c "mkdir -m 0700 /home/vagrant/.ssh; https_proxy=$PROXY curl -so /ho
 chcon system_u:object_r:ssh_home_t:s0 /home/vagrant/.ssh /home/vagrant/.ssh/authorized_keys
 
 rm /root/.ssh/authorized_keys
-
-cleanup

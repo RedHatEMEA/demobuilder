@@ -55,4 +55,4 @@ fi
 
 stop
 
-echo "Done."
+echo "$0: Done."

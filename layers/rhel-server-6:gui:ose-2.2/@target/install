@@ -73,5 +73,3 @@ firefox_set_homepage https://$CONF_BROKER_HOSTNAME/
 # nexus configuration and .m2 etc
 # add apps
 # add docs
-
-cleanup

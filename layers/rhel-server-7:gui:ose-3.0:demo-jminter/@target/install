@@ -56,5 +56,3 @@ chown -R demo:demo /home/demo
 #done
 
 # imagestream for sti-wildfly
-
-cleanup

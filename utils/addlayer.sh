@@ -17,8 +17,8 @@ eval $(utils/run.sh $TARGET)
 
 echo $IP
 
-RSYNC_RSH=utils/ssh.sh rsync -rL $LAYER/@target/ config utils/vm-functions root@$IP:demobuilder
-if ! utils/ssh.sh root@$IP "setenforce 0; cd demobuilder; APILISTENER=$APILISTENER LAYER=${LAYER//layers\//} ./install || kill -9 \$\$; cd; rm -rf demobuilder; ( sleep 1; poweroff) &" </dev/null; then
+RSYNC_RSH=utils/ssh.sh rsync -rL $LAYER/@target/ config utils/{install_wrapper,vm-functions} root@$IP:demobuilder
+if ! utils/ssh.sh root@$IP "APILISTENER=$APILISTENER LAYER=${LAYER//layers\//} demobuilder/install_wrapper" </dev/null; then
   kill $QEMUPID
   wait_pid $QEMUPID
   exit 1

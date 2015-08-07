@@ -3,10 +3,33 @@
 . ./config
 
 register_channels() {
+  if [ -n "$RHN_USER" -a -x /sbin/subscription-manager -a ! -e /etc/pki/consumer/cert.pem ]; then
+    cp /etc/os-release /etc/os-release-
+
+    subscription-manager register --username "$RHN_USER" --password "$RHN_PASS"
+
+    for pool in $RHN_POOLS; do
+      subscription-manager attach --pool=$pool
+    done
+
+    yum-config-manager --disable &>/dev/null
+
+  else
+    grep -q ^proxy= /etc/yum.conf || echo proxy=$PROXY >>/etc/yum.conf
+  fi
+
+  if [ -e /etc/fedora-release ]; then
+    for i in /etc/yum.repos.d/*.repo; do
+      sed -i -e "s!^#baseurl=http://download.fedoraproject.org/!baseurl=$MIRROR_FEDORA/!; s/^metalink=/#metalink=/" $i
+    done
+  fi
+
   for CHANNEL in $*; do
-    curl -so /etc/yum.repos.d/auto-$CHANNEL.repo $MIRROR_RHN/$CHANNEL.repo
-    sed -i -e "/\[/ a\
-proxy=$PROXY" /etc/yum.repos.d/auto-$CHANNEL.repo
+    if [ -n "$RHN_USER" -a -x /sbin/subscription-manager ]; then
+      yum-config-manager --enable $CHANNEL &>/dev/null
+    else
+      curl -so /etc/yum.repos.d/auto-$CHANNEL.repo $MIRROR_RHN/$CHANNEL.repo
+    fi
   done
 }
 
@@ -47,6 +70,19 @@ cleanup() {
 
   /usr/bin/python -u /usr/bin/yum clean all || true
   rm -f /etc/yum.repos.d/auto-*.repo
+  sed -i -e '/^proxy=/ d;' /etc/yum.conf
+
+  if [ -n "$RHN_USER" -a -x /sbin/subscription-manager -a -e /etc/pki/consumer/cert.pem ]; then
+    subscription-manager unregister || sleep 86400
+    rm /var/lib/rhsm/branded_name
+    mv /etc/os-release- /etc/os-release
+  fi
+
+  if [ -e /etc/fedora-release ]; then
+    for i in /etc/yum.repos.d/*.repo; do
+      sed -i -e "s!^baseurl=$MIRROR_FEDORA/!#baseurl=http://download.fedoraproject.org/!; s/^#metalink=/metalink=/" $i
+    done
+  fi
 
   rm -f /etc/ssh/ssh_host_*
 
@@ -93,6 +129,7 @@ pref("signon.rememberSignons", false);
 EOF
 }
 
+setenforce 0
 swapoff -a
 
 export PROXY=$(curl -s http://$APILISTENER/cache)

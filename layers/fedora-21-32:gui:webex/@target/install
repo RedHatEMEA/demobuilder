@@ -4,11 +4,10 @@
 
 . vm-functions
 
-http_proxy=$PROXY yum_install icedtea-web java-1.8.0-openjdk libpng12 mesa-libEGL pangox-compat tigervnc
+register_channels
+yum_install icedtea-web java-1.8.0-openjdk libpng12 mesa-libEGL pangox-compat tigervnc
 
 setsebool -P unconfined_mozilla_plugin_transition=off mmap_low_allowed=on
-
-cleanup
 
 # Allow meetings.webex.com to run "IcedTea-Web"?
 # Security Warning / Applet / digital signature

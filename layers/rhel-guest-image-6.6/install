@@ -8,7 +8,11 @@ if [ -e build/$TARGET.qcow2 ]; then
   exit
 fi
 
-QCOW=$(cache $MIRROR_RHN/content/dist/rhel/server/6/6Server/x86_64/iso/rhel-guest-image-6.6-20141222.0.x86_64.qcow2)
+QCOW=isos/rhel-guest-image-6.7-20150706.0.x86_64.qcow2
+if [ ! -e $QCOW ]; then
+  echo "$0: please download $(basename $QCOW) and place it in $QCOW"
+  exit 1
+fi
 
 cp $QCOW tmp/$TARGET.qcow2
 

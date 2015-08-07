@@ -6,10 +6,10 @@ if grep -q 'release 6' /etc/redhat-release; then
   register_channels rhel-6-server-rh-common-rpms rhel-6-server-rpms
 elif grep -q 'release 7' /etc/redhat-release; then
   register_channels rhel-7-server-rh-common-rpms rhel-7-server-rpms
+else
+  register_channels
 fi
 
 yum_install cloud-init
 
 rm /root/.ssh/authorized_keys
-
-cleanup

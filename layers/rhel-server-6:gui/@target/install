@@ -36,5 +36,3 @@ lokkit -p 22:tcp
 lokkit -p 5900:tcp
 
 sed -i -e 's/id:3:initdefault:/id:5:initdefault:/' /etc/inittab
-
-cleanup

@@ -3,7 +3,7 @@
 . vm-functions
 
 register_channels rhel-7-server-rpms
-yum_install bash-completion evince firefox gdm gnome-classic-session gnome-session gnome-terminal man nautilus system-config-firewall-base tigervnc-server urw-fonts xinetd xorg-x11-drivers xorg-x11-xinit
+yum_install bash-completion evince firefox gdm gnome-classic-session gnome-session gnome-terminal man nautilus tigervnc-server urw-fonts xinetd xorg-x11-drivers xorg-x11-xinit
 
 ln -sf /lib/systemd/system/graphical.target /etc/systemd/system/default.target
 
@@ -46,7 +46,8 @@ service rfb
 }
 EOF
 
-firewall-cmd --permanent --zone=public --add-port=5900/tcp
+sed -i -e '/-A INPUT -i lo -j ACCEPT/ a\
+-A INPUT -p tcp -m state --state NEW -m tcp --dport 5900 -j ACCEPT' /etc/sysconfig/iptables
 
 cat >/etc/dconf/db/local.d/01-fixes <<EOF
 [org/gnome/settings-daemon/plugins/xrandr]
@@ -79,5 +80,3 @@ for dest in password-auth system-auth; do
   cp pam-auth-demobuilder /etc/pam.d/$dest-demobuilder
   ln -sf $dest-demobuilder /etc/pam.d/$dest
 done
-
-cleanup

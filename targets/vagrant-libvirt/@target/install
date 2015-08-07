@@ -7,7 +7,7 @@ if grep -q 'release 6' /etc/redhat-release; then
 elif grep -q 'release 7' /etc/redhat-release; then
   register_channels rhel-7-server-rpms
 else
-  export http_proxy=$PROXY
+  register_channels
 fi
 
 yum_install nfs-utils nfs-utils-lib
@@ -39,5 +39,3 @@ su vagrant -c "mkdir -m 0700 /home/vagrant/.ssh; https_proxy=$PROXY curl -so /ho
 chcon system_u:object_r:ssh_home_t:s0 /home/vagrant/.ssh /home/vagrant/.ssh/authorized_keys
 
 rm /root/.ssh/authorized_keys
-
-cleanup

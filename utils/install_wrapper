@@ -1,0 +1,22 @@
+#!/bin/bash -ex
+
+cd demobuilder
+
+. vm-functions
+
+if ! ./install; then
+  if [ -n "$RHN_USER" -a -x /sbin/subscription-manager -a -e /etc/pki/consumer/cert.pem ]; then
+    subscription-manager unregister
+  fi
+
+  echo "$0: FAILED."
+  exit 1
+fi
+
+cd ..
+rm -rf demobuilder
+
+cleanup
+
+echo "$0: Done."
+nohup bash -c 'sleep 1; poweroff' &>/dev/null &

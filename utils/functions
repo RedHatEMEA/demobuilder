@@ -44,14 +44,6 @@ read_properties() {
   eval $(utils/readproperties.py $1 $2)
 }
 
-cache() {
-  DEST=cache/$(echo $1 | sed -e 's!.*://!!')
-  if ! [ -e $DEST ]; then
-    http_proxy=$PROXY https_proxy=$PROXY curl -o /dev/null $1
-  fi
-  echo $DEST
-}
-
 if [ "$DEBUG" ]; then
   set -x
 fi

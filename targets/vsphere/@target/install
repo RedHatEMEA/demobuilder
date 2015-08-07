@@ -3,5 +3,3 @@
 . vm-functions
 
 rm /root/.ssh/authorized_keys
-
-cleanup
