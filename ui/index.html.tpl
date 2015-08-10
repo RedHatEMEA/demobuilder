@@ -14,10 +14,10 @@ function hideshow(x) {
 </script>
 
 <xmp style="display:none;">
-# Available images
+## Available images
 
 % for layer in sorted(layers.values(), key=lambda l: l.yaml["name"]):
-## {{ layer.yaml["name"] }}
+### {{ layer.yaml["name"] }}
 
 % if layer.yaml.get("description", ""):
 {{ layer.yaml["description"] }}
@@ -27,7 +27,7 @@ function hideshow(x) {
 
   {{ !image["target"].yaml.get("description", "") }}
 
-  <a href="javascript:hideshow(document.getElementById('{{ image["link"] }}'))">More...</a>
+  <a href="javascript:hideshow(document.getElementById('{{ image["link"] }}'))">Installation instructions...</a>
 
   <div id="{{ image["link"] }}" style="display:none;">
 
@@ -39,11 +39,11 @@ function hideshow(x) {
 % end
 % end
 
-# Give feedback
+## Please contribute!
 
-Questions, comments, feature requests, patches, pull requests and cake are all
-welcomed on [GitHub](http://github.com/RedHatEMEA/demobuilder) or to
-[jminter@redhat.com](mailto:jminter@redhat.com).
+Questions, comments, bug reports, feature requests, patches, pull requests and
+cake are all welcomed on [GitHub](http://github.com/RedHatEMEA/demobuilder) or
+to [jminter@redhat.com](mailto:jminter@redhat.com).
 </xmp>
 
 <script src="/contrib/strapdown/v/0.2/strapdown.js"></script>

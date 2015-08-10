@@ -85,6 +85,21 @@ cleanup() {
     update-ca-trust
   fi
 
+  if [ -e /usr/share/doc/demobuilder/index.html ]; then
+    mkdir -p /home/demo/Desktop
+    cat <<'EOF' >/home/demo/Desktop/demobuilder.desktop
+[Desktop Entry]
+Version=1.0
+Name=About this demo
+Exec=firefox file:///usr/share/doc/demobuilder/index.html
+Icon=/usr/share/icons/gnome/256x256/apps/help-browser.png
+Terminal=false
+Type=Application
+StartupNotify=true
+EOF
+    chown -R demo:demo /home/demo/Desktop
+  fi
+
   fstrim /
 }
 

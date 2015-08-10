@@ -5,7 +5,7 @@
 utils/init.sh
 
 if [ $# -eq 0 ]; then
-  echo "Usage: $0 layer[:target]"
+  echo "Usage: $0 layer[:target]..."
   echo
   echo "Valid layers:"
   ls layers | grep -v \@ | sed -e 's/^/  /'
@@ -18,18 +18,20 @@ else
   trap apiserver_stop EXIT
   apiserver_start
 
-  echo "Building $1..."
+  for item in "$@"; do
+    echo "Building $item..."
 
-  if [ -d layers/$1 ]; then
-    if [ -x layers/$1/install ]; then
-      layers/$1/install
+    if [ -d layers/$item ]; then
+      if [ -x layers/$item/install ]; then
+        layers/$item/install
+      else
+        utils/install-layer.sh $item
+      fi
+
     else
-      utils/install-layer.sh $1
+      targets/${item##*:}/install ${item%:*}
     fi
 
-  else
-    targets/${1##*:}/install ${1%:*}
-  fi
-
-  echo "$0: Done."
+    echo "$0: Done building $item."
+  done
 fi

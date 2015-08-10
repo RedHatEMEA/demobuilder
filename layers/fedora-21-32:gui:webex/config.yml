@@ -4,3 +4,6 @@ maintainers:
 description: |
   This image provides a 32-bit Linux environment suitable for joining WebEx
   conferences, seeing remotely shared desktops, and sharing your VM desktop.
+
+  Run the VM and open the GUI.  Log in as *demo* and set your password.  There
+  are full further instructions on the desktop.
