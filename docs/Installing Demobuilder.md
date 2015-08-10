@@ -2,36 +2,43 @@
 
 ### Prerequisites
 
-- Fedora 21 on a physical machine.
+- Fedora 22 on a physical machine.
 
 ### Installation
 
 ```bash
-# Run the following commands as root...
-
 # Install required packages
-$ yum -y install git libcdio libguestfs-tools-c libvirt python-markdown2 qemu
-
-# Ensure all necessary CA certificates are correctly installed
-$ pushd /etc/pki/ca-trust/source/anchors
-$ wget http://path/to/ca.crt
-$ popd
-$ update-ca-trust
+sudo dnf -y install git libcdio libguestfs libvirt pigz pyOpenSSL \
+  python-bottle PyYAML qemu-kvm
 
 # Ensure system is up to date
-$ yum -y update
+sudo dnf -y update
 
 # Ensure required services are started
-$ systemctl enable libvirtd.service
-$ systemctl start libvirtd.service
+sudo systemctl enable libvirtd.service
+sudo systemctl start libvirtd.service
 
 # If using firewalld (on by default), allow VMs to communicate to the
 # hypervisor
-$ firewall-cmd --permanent --zone=trusted --add-interface=virbr0
-$ firewall-cmd --reload
+sudo firewall-cmd --permanent --zone=trusted --add-interface=virbr0
+sudo firewall-cmd --reload
 
 # Clone repository
-$ git clone https://github.com/RedHatEMEA/demobuilder.git
+cd $HOME
+git clone -u https://github.com/RedHatEMEA/demobuilder.git
+
+# Configure demobuilder
+cd demobuilder
+cp config.yml.example config.yml
+
+# Add your RHN username and password to config.yml, and provide the UUID(s) of
+# one or more pools to which VMs should be temporarily connected using
+# subscription-manager at build time
+
+# If building RHEL-based VMs, download appropriate ISOs to isos/.
+mkdir isos
+# download isos/rhel-server-6.7-x86_64-dvd,
+# isos/rhel-server-7.1-x86_64-dvd.iso, etc.
 ```
 
 ### Building images
@@ -39,33 +46,33 @@ $ git clone https://github.com/RedHatEMEA/demobuilder.git
 Note that **all** demobuilder scripts must be run from the root of the demobuilder directory tree.
 
 ```bash
-$ cd demobuilder
-$ ./build.sh
-Usage: ./build.sh layer|-a [target|-a]
+cd demobuilder
+./build.sh
+Usage: ./build.sh layer[:target]...
 
 Valid layers:
-  foo
-  foo:bar
-  baz
+  fedora-21
+  fedora-21-32
+  fedora-21-32:gui
+  fedora-21-32:gui:webex
+  fedora-21:gui
+  rhel-guest-image-6.6
+  rhel-server-6
+  rhel-server-6:gui
+  rhel-server-6:gui:ose-2.2
+  rhel-server-7
+  rhel-server-7:gui
+  rhel-server-7:gui:ose-3.0
+  rhel-server-7:gui:ose-3.0:demo-jminter
 
 Valid targets:
   openstack
   rhev
-  vagrant
+  vagrant-libvirt
+  vagrant-virtualbox
   vsphere
 
-# Build a single image
-$ ./build.sh foo openstack
-
-# Build all images
-$ ./build.sh -a
+# Build an image
+./build.sh rhel-server-7 rhel-server-7:gui rhel-server-7:gui:ose-3.0 \
+  rhel-server-7:gui:ose-3.0:vagrant-libvirt
 ```
-
-### Notes
-
-1. If you get the following libguestfs errors, running `yum -y update` appears to resolve the problem.
-
-   ```bash
-   libguestfs: warning: supermin-helper -f checksum returned a short string
-   libguestfs: error: cannot find any suitable libguestfs supermin, fixed or old-style appliance on LIBGUESTFS_PATH (search path: /usr/lib64/guestfs)
-   ```
