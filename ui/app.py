@@ -54,14 +54,27 @@ def root():
         if not layer in layers:
             layers[layer] = Layer(layer)
 
-        layers[layer].images.append({"target": Target(f), "link": "releases/" + f, "size": os.stat("releases/" + f).st_size})
+        layers[layer].images.append({"target": Target(f),
+                                     "link": "releases/" + f,
+                                     "size": os.stat("releases/" + f).st_size,
+                                     "docs": "layers/%s/@docs/index.html" % f.rsplit(":", 1)[0]})
 
     return {"layers": layers}
 
 
-@route("/<path:path>")
+@route("/contrib/strapdown/<path:path>")
 def download(path):
-    return static_file(path, ".")
+    return static_file(path, "contrib/strapdown")
+
+
+@route("/layers/<path:path>")
+def download(path):
+    return static_file(path, "layers")
+
+
+@route("/releases/<path:path>")
+def download(path):
+    return static_file(path, "releases")
 
 
 if __name__ == "__main__":

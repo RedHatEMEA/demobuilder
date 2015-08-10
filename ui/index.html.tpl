@@ -27,6 +27,9 @@ function hideshow(x) {
 
   {{ !image["target"].yaml.get("description", "") }}
 
+  [Usage instructions...]({{ image["docs"] }}) (also available on the VM
+  desktop)
+
   <a href="javascript:hideshow(document.getElementById('{{ image["link"] }}'))">Installation instructions...</a>
 
   <div id="{{ image["link"] }}" style="display:none;">
