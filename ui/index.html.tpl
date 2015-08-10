@@ -16,7 +16,7 @@ function hideshow(x) {
 <xmp style="display:none;">
 # Available images
 
-% for layer in layers.values():
+% for layer in sorted(layers.values(), key=lambda l: l.yaml["name"]):
 ## {{ layer.yaml["name"] }}
 
 % if layer.yaml.get("description", ""):
