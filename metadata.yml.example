@@ -1,7 +1,0 @@
-build:
-  cpus: 4
-  mem: 4096
-layer:
-  cpus: 1
-  mem: 1024
-  disk: 20

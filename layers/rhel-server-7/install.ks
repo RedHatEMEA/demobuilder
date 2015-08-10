@@ -40,7 +40,6 @@ sed -i -e 's/^  set timeout=.*/  set timeout=0/' /boot/grub2/grub.cfg
 passwd -l root
 
 cd /root
-curl -so config http://$APILISTENER/static/config
 curl -so vm-functions http://$APILISTENER/static/utils/vm-functions
 . ./vm-functions
 
@@ -51,7 +50,7 @@ yum_remove 'NetworkManager*' firewalld
 yum_update
 cleanup
 
-rm config vm-functions
+rm vm-functions
 
 grubby --update-kernel=ALL --args=net.ifnames=0 --remove-args=console=ttyS0,115200n8
 

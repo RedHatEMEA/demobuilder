@@ -9,6 +9,7 @@ import sys
 import tempfile
 import threading
 import wsgiref.simple_server
+import yaml
 
 sys.path.append("contrib")
 import webproxycache
@@ -80,6 +81,12 @@ def gitstamp():
 @app.get("/cache")
 def cache():
     return "http://%s:%u/" % (args.ip, cacheport)
+
+
+@app.get("/config")
+def config():
+    config = yaml.load(open("config.yml").read())
+    return ["%s='%s'\n" % (k.upper(), config["config"][k]) for k in config["config"]]
 
 
 def parse_args():

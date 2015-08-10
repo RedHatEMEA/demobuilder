@@ -11,16 +11,16 @@ class Layer(object):
         self.layer = layer
         self.images = []
 
-        with open("layers/%s/metadata.yml" % self.layer) as metaf:
-            self.yaml = yaml.load(metaf.read())
+        with open("layers/%s/config.yml" % self.layer) as configf:
+            self.yaml = yaml.load(configf.read())
 
 
 class Target(object):
     def __init__(self, f):
         (self.layer, self.target, self.ext) = splitname(f)
 
-        with open("targets/%s/metadata.yml" % self.target) as metaf:
-            self.yaml = yaml.load(metaf.read())
+        with open("targets/%s/config.yml" % self.target) as configf:
+            self.yaml = yaml.load(configf.read())
 
         if "description" in self.yaml:
             x = self.yaml["description"]

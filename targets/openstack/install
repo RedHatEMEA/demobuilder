@@ -10,7 +10,7 @@ fi
 BASE=$1
 TARGET=$(basename $(dirname $0))
 
-read_metadata $BASE $TARGET
+read_config $BASE $TARGET
 
 if [ -e releases/$BASE:$TARGET.qcow2 ]; then
   echo "$0: releases/$BASE:$TARGET.qcow2 already exists, not rebuilding"

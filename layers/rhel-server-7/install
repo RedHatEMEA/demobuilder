@@ -14,7 +14,7 @@ if [ ! -e $ISO ]; then
   exit 1
 fi
 
-read_metadata $LAYER
+read_config $LAYER
 
 stop() {
   rm -rf $TEMPDIR
@@ -38,7 +38,7 @@ utils/sigwrap /usr/bin/qemu-kvm -nodefaults \
   -device virtio-scsi-pci \
   -drive discard=unmap,file=tmp/$LAYER.qcow2,id=disk1,if=none,cache=unsafe \
   -device scsi-disk,drive=disk1 \
-  -net bridge,br=$BRIDGE \
+  -net bridge,br=$BUILD_BRIDGE \
   -net nic,model=virtio,macaddr=$(utils/random-mac.py) \
   -cdrom $ISO \
   -display none \

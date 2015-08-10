@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-. ./config
+eval $(curl -so $APILISTENER/config)
 
 register_channels() {
   if [ -n "$RHN_USER" -a -x /sbin/subscription-manager -a ! -e /etc/pki/consumer/cert.pem ]; then

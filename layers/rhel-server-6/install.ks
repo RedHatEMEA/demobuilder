@@ -42,7 +42,6 @@ sed -i -e 's/^timeout=.*/timeout=0/' /boot/grub/grub.conf
 passwd -l root
 
 cd /root
-curl -so config http://$APILISTENER/static/config
 curl -so vm-functions http://$APILISTENER/static/utils/vm-functions
 . ./vm-functions
 
@@ -50,7 +49,7 @@ register_channels rhel-6-server-rpms
 yum_update
 cleanup
 
-rm config vm-functions
+rm vm-functions
 
 grubby --update-kernel=ALL --remove-args=console=ttyS0,115200n8
 

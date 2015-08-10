@@ -1,13 +1,13 @@
 #!/bin/bash -e
 
-. config
+eval $(utils/readconfig.py)
 
 interface_ip() {
   ip addr show dev $1 | sed -n '/inet / { s!.*inet !!; s!/.*!!; p; }'
 }
 
 apiserver_start() {
-  eval $(utils/apiserver.py $(interface_ip $BRIDGE))
+  eval $(utils/apiserver.py $(interface_ip $BUILD_BRIDGE))
   export APILISTENER
 
   export PROXY=$(curl -s http://$APILISTENER/cache)
@@ -40,8 +40,8 @@ wait_pid() {
   done
 }
 
-read_metadata() {
-  eval $(utils/read-metadata.py $1 $2)
+read_config() {
+  eval $(utils/read-config.py $1 $2)
 }
 
 if [ "$DEBUG" ]; then

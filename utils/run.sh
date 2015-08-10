@@ -7,7 +7,7 @@ if [ $# -eq 0 ]; then
   exit 1
 fi
 
-read_metadata
+read_config
 
 TMPDIR=$(mktemp -d)
 VNC=${VNC:-:0}
@@ -19,7 +19,7 @@ utils/sigwrap /usr/bin/qemu-kvm -nodefaults \
   -drive discard=unmap,file=$1,id=disk1,if=none,cache=unsafe \
   -device virtio-scsi-pci \
   -device scsi-disk,drive=disk1 \
-  -netdev bridge,id=net0,br=$BRIDGE \
+  -netdev bridge,id=net0,br=$BUILD_BRIDGE \
   -device virtio-net-pci,netdev=net0,mac=$(utils/random-mac.py) \
   -chardev socket,id=chan0,path=$TMPDIR/rhev.sock,server,nowait \
   -chardev socket,id=chan1,path=$TMPDIR/qemu.sock,server,nowait \

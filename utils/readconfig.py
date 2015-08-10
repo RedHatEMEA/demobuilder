@@ -19,9 +19,9 @@ def layers(layer, target):
     if target:
         yield "targets/" + target
 
-def read_metadata(layer):
+def read_config(layer):
     try:
-        return yaml.load(open(layer + "/metadata.yml").read())
+        return yaml.load(open(layer + "/config.yml").read())
     except IOError:
         return {}
 
@@ -35,13 +35,16 @@ def update(dst, src):
 
 def main():
     args = parse_args()
-    metadata = read_metadata(".")
+    config = read_config(".")
     for layer in layers(args.layer, args.target):
-        update(metadata, read_metadata(layer))
+        update(config, read_config(layer))
+
+    for k in config["config"]:
+        print "%s='%s'" % (k.upper(), config["config"][k])
 
     for k in ["build", "layer"]:
-        for kk in metadata[k]:
-            print "export %s_%s='%s'" % (k.upper(), kk.upper(), metadata[k][kk])
+        for kk in config[k]:
+            print "export %s_%s='%s'" % (k.upper(), kk.upper(), config[k][kk])
 
 if __name__ == "__main__":
     main()
