@@ -86,7 +86,7 @@ def cache():
 @app.get("/config")
 def config():
     config = yaml.load(open("config.yml").read())
-    return ["%s='%s'\n" % (k.upper(), config["config"][k]) for k in config["config"]]
+    return ["%s='%s'\n" % (k.upper(), config["config"][k]) for k in config["config"] if config["config"][k]]
 
 
 def parse_args():
