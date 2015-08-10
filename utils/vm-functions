@@ -56,12 +56,6 @@ docker_pull() {
   fi
 }
 
-register_https_proxy_ca() {
-  http_proxy=$PROXY curl -so /etc/pki/ca-trust/source/anchors/demobuilder-insecure-CA.crt http://cacert/
-  update-ca-trust enable
-  update-ca-trust
-}
-
 cleanup() {
   http_proxy= curl -s "http://$APILISTENER/gitstamp?msg=$LAYER" >>/etc/demobuilder
 
@@ -133,3 +127,9 @@ setenforce 0
 swapoff -a
 
 export PROXY=$(curl -s http://$APILISTENER/cache)
+
+if [ ! -e /etc/pki/ca-trust/source/anchors/demobuilder-insecure-CA.crt ]; then
+  http_proxy=$PROXY curl -so /etc/pki/ca-trust/source/anchors/demobuilder-insecure-CA.crt http://cacert/
+  update-ca-trust enable
+  update-ca-trust
+fi

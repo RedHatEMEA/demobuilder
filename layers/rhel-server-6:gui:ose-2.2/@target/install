@@ -49,8 +49,6 @@ register_channels jb-eap-6-for-rhel-6-server-rpms jb-ews-2-for-rhel-6-server-rpm
 
 yum_remove rsyslog
 
-register_https_proxy_ca
-
 openshift_install
 openshift_enable_admin_console
 openshift_configure_node
