@@ -7,8 +7,11 @@ if [ $# -eq 0 ]; then
   exit 1
 fi
 
-read_config
+stop() {
+  rm -rf $TMPDIR
+}
 
+trap stop EXIT
 TMPDIR=$(mktemp -d)
 VNC=${VNC:-:0}
 
@@ -35,5 +38,3 @@ QEMUPID=$!
 echo QEMUPID=$QEMUPID
 
 utils/wait-ip.py $TMPDIR $QEMUPID
-
-rm -rf $TMPDIR

@@ -12,11 +12,6 @@ TARGET=$(basename $(dirname $0))
 
 read_config $BASE $TARGET
 
-if [ -e releases/$BASE:$TARGET.box ]; then
-  echo "$0: releases/$BASE:$TARGET.box already exists, not rebuilding"
-  exit
-fi
-
 utils/addlayer.sh build/$BASE.qcow2 targets/$TARGET tmp/$BASE:$TARGET.qcow2
 convert_qcow2 tmp/$BASE:$TARGET.qcow2 vmdk
 

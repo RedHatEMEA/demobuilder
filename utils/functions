@@ -1,7 +1,5 @@
 #!/bin/bash -e
 
-eval $(utils/readconfig.py)
-
 interface_ip() {
   ip addr show dev $1 | sed -n '/inet / { s!.*inet !!; s!/.*!!; p; }'
 }
@@ -41,9 +39,11 @@ wait_pid() {
 }
 
 read_config() {
-  eval $(utils/read-config.py $1 $2)
+  eval $(utils/readconfig.py $1 $2)
 }
 
 if [ "$DEBUG" ]; then
   set -x
 fi
+
+read_config

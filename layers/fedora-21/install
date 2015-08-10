@@ -3,10 +3,6 @@
 . utils/functions
 
 LAYER=$(basename $(dirname $0))
-if [ -e build/$LAYER.qcow2 ]; then
-  echo "$0: build/$LAYER.qcow2 already exists, not rebuilding"
-  exit
-fi
 
 ISO=isos/Fedora-Server-DVD-x86_64-21.iso
 if [ ! -e $ISO ]; then

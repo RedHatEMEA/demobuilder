@@ -14,10 +14,13 @@ TARGET=$3
 utils/createsnap.sh $BASE $TARGET
 
 eval $(utils/run.sh $TARGET)
+if [ -z "$IP" ]; then
+  exit 1
+fi
 
 echo $IP
 
-RSYNC_RSH=utils/ssh.sh rsync -rL $LAYER/@target/ config utils/{install_wrapper,vm-functions} root@$IP:demobuilder
+RSYNC_RSH=utils/ssh.sh rsync -rL $LAYER/@target/ utils/{install_wrapper,vm-functions} root@$IP:demobuilder
 if ! utils/ssh.sh root@$IP "APILISTENER=$APILISTENER LAYER=${LAYER//layers\//} demobuilder/install_wrapper" </dev/null; then
   kill $QEMUPID
   wait_pid $QEMUPID

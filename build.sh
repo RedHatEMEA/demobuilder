@@ -13,29 +13,25 @@ stop() {
 install_layer() {
   echo "Building $1..."
 
-  if [[ $1 =~ : ]]; then
-    utils/install-layer.sh $1
+  if [ -d layers/$1 ]; then
+    if [ -x layers/$1/install ]; then
+      layers/$1/install
+    else
+      utils/install-layer.sh $1
+    fi
+
   else
-    layers/$1/install
-  fi
-
-  if [ "$2" = "-a" ]; then
-    for TARGET in $(ls targets); do
-      targets/$TARGET/install $1
-    done
-
-  elif [ $# -eq 2 ]; then
-    targets/$2/install $1
+    targets/${1##*:}/install ${1%:*}
   fi
 }
 
 utils/init.sh
 
-trap stop ERR
+trap stop EXIT
 start
 
 if [ $# -eq 0 ]; then
-  echo "Usage: $0 layer|-a [target|-a]"
+  echo "Usage: $0 layer[:target]"
   echo
   echo "Valid layers:"
   ls layers | grep -v \@ | sed -e 's/^/  /'
@@ -44,15 +40,8 @@ if [ $# -eq 0 ]; then
   ls targets | sed -e 's/^/  /'
   echo
 
-elif [ $1 = "-a" ]; then
-  for i in $( ls layers | grep -v \@ ); do
-    install_layer $i $2
-  done
-
 else
-  install_layer $1 $2
+  install_layer $1
 fi
-
-stop
 
 echo "$0: Done."

@@ -14,11 +14,6 @@ read_config $BASE $TARGET
 
 export BASE
 
-if [ -e releases/$BASE:$TARGET.ova ]; then
-  echo "$0: releases/$BASE:$TARGET.ova already exists, not rebuilding"
-  exit
-fi
-
 utils/addlayer.sh build/$BASE.qcow2 targets/$TARGET tmp/$BASE:$TARGET.qcow2
 convert_qcow2 tmp/$BASE:$TARGET.qcow2 qcow2
 
