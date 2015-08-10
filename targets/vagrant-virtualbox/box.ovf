@@ -119,7 +119,7 @@
         <ExtraDataItem name="GUI/LastNormalWindowPosition" value="84,84,640,501"/>
       </ExtraData>
       <Hardware version="2">
-        <CPU count="$CPUS" hotplug="false">
+        <CPU count="$LAYER_CPUS" hotplug="false">
           <HardwareVirtEx enabled="true" exclusive="false"/>
           <HardwareVirtExNestedPaging enabled="true"/>
           <HardwareVirtExVPID enabled="true"/>
@@ -127,7 +127,7 @@
           <HardwareVirtExLargePages enabled="true"/>
           <HardwareVirtForce enabled="false"/>
         </CPU>
-        <Memory RAMSize="$MEM" PageFusion="false"/>
+        <Memory RAMSize="$LAYER_MEM" PageFusion="false"/>
         <HID Pointing="PS2Mouse" Keyboard="PS2Keyboard"/>
         <HPET enabled="false"/>
         <Chipset type="PIIX3"/>

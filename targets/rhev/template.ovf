@@ -10,7 +10,7 @@
   </Section>
   <Section xsi:type="ovf:DiskSection_Type">
     <Info>List of Virtual Disks</Info>
-    <Disk ovf:diskId="$DISK_UUID" ovf:size="$DISK" ovf:actual_size="$DISK" ovf:vm_snapshot_id="$UUID_1" ovf:parentRef="" ovf:fileRef="$IMAGE_UUID/$DISK_UUID" ovf:format="http://www.gnome.org/~markmc/qcow-image-format.html" ovf:volume-format="COW" ovf:volume-type="Sparse" ovf:disk-interface="VirtIO" ovf:boot="true" ovf:disk-alias="$BASE_Disk1" ovf:wipe-after-delete="false"/>
+    <Disk ovf:diskId="$DISK_UUID" ovf:size="$LAYER_DISK" ovf:actual_size="$LAYER_DISK" ovf:vm_snapshot_id="$UUID_1" ovf:parentRef="" ovf:fileRef="$IMAGE_UUID/$DISK_UUID" ovf:format="http://www.gnome.org/~markmc/qcow-image-format.html" ovf:volume-format="COW" ovf:volume-type="Sparse" ovf:disk-interface="VirtIO" ovf:boot="true" ovf:disk-alias="$BASE_Disk1" ovf:wipe-after-delete="false"/>
   </Section>
   <Content ovf:id="out" xsi:type="ovf:VirtualSystem_Type">
     <Description/>
@@ -23,7 +23,7 @@
     <default_boot_sequence>0</default_boot_sequence>
     <Generation>2</Generation>
     <VmType>1</VmType>
-    <MinAllocatedMem>$MEM</MinAllocatedMem>
+    <MinAllocatedMem>$LAYER_MEM</MinAllocatedMem>
     <IsStateless>false</IsStateless>
     <IsRunAndPause>false</IsRunAndPause>
     <AutoStartup>false</AutoStartup>
@@ -44,25 +44,25 @@
       <Description>rhel_6x64</Description>
     </Section>
     <Section xsi:type="ovf:VirtualHardwareSection_Type">
-      <Info>$CPUS CPU, $MEM Memeory</Info>
+      <Info>$LAYER_CPUS CPU, $LAYER_MEM Memeory</Info>
       <System>
         <vssd:VirtualSystemType>RHEVM 3.4.0.0</vssd:VirtualSystemType>
       </System>
       <Item>
-        <rasd:Caption>$CPUS virtual cpu</rasd:Caption>
+        <rasd:Caption>$LAYER_CPUS virtual cpu</rasd:Caption>
         <rasd:Description>Number of virtual CPU</rasd:Description>
         <rasd:InstanceId>1</rasd:InstanceId>
         <rasd:ResourceType>3</rasd:ResourceType>
-        <rasd:num_of_sockets>$CPUS</rasd:num_of_sockets>
+        <rasd:num_of_sockets>$LAYER_CPUS</rasd:num_of_sockets>
         <rasd:cpu_per_socket>1</rasd:cpu_per_socket>
       </Item>
       <Item>
-        <rasd:Caption>$MEM MB of memory</rasd:Caption>
+        <rasd:Caption>$LAYER_MEM MB of memory</rasd:Caption>
         <rasd:Description>Memory Size</rasd:Description>
         <rasd:InstanceId>2</rasd:InstanceId>
         <rasd:ResourceType>4</rasd:ResourceType>
         <rasd:AllocationUnits>MegaBytes</rasd:AllocationUnits>
-        <rasd:VirtualQuantity>$MEM</rasd:VirtualQuantity>
+        <rasd:VirtualQuantity>$LAYER_MEM</rasd:VirtualQuantity>
       </Item>
       <Item>
         <rasd:Caption>$BASE_Disk1</rasd:Caption>

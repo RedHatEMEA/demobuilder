@@ -7,7 +7,7 @@ if [ $# -eq 0 ]; then
   exit 1
 fi
 
-read_properties
+read_metadata
 
 TMPDIR=$(mktemp -d)
 VNC=${VNC:-:0}

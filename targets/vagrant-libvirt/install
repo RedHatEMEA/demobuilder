@@ -10,7 +10,7 @@ fi
 BASE=$1
 TARGET=$(basename $(dirname $0))
 
-read_properties $BASE $TARGET
+read_metadata $BASE $TARGET
 
 if [ -e releases/$BASE:$TARGET.box ]; then
   echo "$0: releases/$BASE:$TARGET.box already exists, not rebuilding"

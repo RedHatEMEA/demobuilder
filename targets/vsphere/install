@@ -10,7 +10,7 @@ fi
 BASE=$1
 TARGET=$(basename $(dirname $0))
 
-read_properties $BASE $TARGET
+read_metadata $BASE $TARGET
 
 export BASE
 

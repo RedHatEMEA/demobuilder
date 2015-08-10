@@ -10,7 +10,7 @@ fi
 BASE=$1
 TARGET=$(basename $(dirname $0))
 
-read_properties $BASE $TARGET
+read_metadata $BASE $TARGET
 
 if [ -e releases/$BASE:$TARGET.qcow2 ]; then
   echo "$0: releases/$BASE:$TARGET.qcow2 already exists, not rebuilding"
@@ -23,4 +23,4 @@ compress_qcow2 tmp/$BASE:$TARGET.qcow2
 
 mv tmp/$BASE:$TARGET.qcow2 releases/$BASE:$TARGET.qcow2
 
-echo \$ glance image-create --name $BASE --file releases/$BASE:$TARGET.qcow2 --disk-format qcow2 --container-format bare --min-disk $DISK --is-public True
+echo \$ glance image-create --name $BASE --file releases/$BASE:$TARGET.qcow2 --disk-format qcow2 --container-format bare --min-disk $LAYER_DISK --is-public True

@@ -1,7 +1,7 @@
 Vagrant::Config.run("2") do |config|
   config.vm.provider :libvirt do |libvirt|
-    libvirt.memory = $MEM
-    libvirt.cpus = $CPUS
+    libvirt.memory = $LAYER_MEM
+    libvirt.cpus = $LAYER_CPUS
   end
 end
 

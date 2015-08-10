@@ -1,11 +1,11 @@
-/dockercache
 /build
 /cache
 /certs
 /config
+/dockercache
 /isos
 /keys
-/tmp
-/properties
+/metadata.yml
 /releases
+/tmp
 *.pyc

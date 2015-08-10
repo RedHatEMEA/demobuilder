@@ -1,6 +1,7 @@
 #!/bin/python
 
 import argparse
+import yaml
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -18,30 +19,29 @@ def layers(layer, target):
     if target:
         yield "targets/" + target
 
-def read_properties(layer):
-    properties = {}
-
+def read_metadata(layer):
     try:
-        for l in open(layer + "/properties"):
-            if l[0] in ["#", "\n"]: continue
-            (k, v) = l.strip().split("=", 1)
-            if v and v[0] in ["'", '"'] and v[-1] == v[0]:
-                v = v[1:-1]
-            properties[k] = v
+        return yaml.load(open(layer + "/metadata.yml").read())
     except IOError:
-        pass
+        return {}
 
-    return properties
+def update(dst, src):
+    for (k, v) in src.items():
+        if isinstance(v, dict):
+            dst[k] = dst.get(k, {})
+            update(dst[k], src[k])
+        else:
+            dst[k] = src[k]
 
 def main():
     args = parse_args()
-    properties = read_properties(".")
+    metadata = read_metadata(".")
     for layer in layers(args.layer, args.target):
-        properties.update(read_properties(layer))
+        update(metadata, read_metadata(layer))
 
-    for k in sorted(properties):
-        print "export %s='%s'" % (k, properties[k])
-
+    for k in ["build", "layer"]:
+        for kk in metadata[k]:
+            print "export %s_%s='%s'" % (k.upper(), kk.upper(), metadata[k][kk])
 
 if __name__ == "__main__":
     main()

@@ -5,7 +5,7 @@
   </References>
   <DiskSection>
     <Info>Virtual disk information</Info>
-    <Disk ovf:capacity="$DISK" ovf:capacityAllocationUnits="byte * 2^30" ovf:diskId="vmdisk1" ovf:fileRef="file1" ovf:format="http://www.vmware.com/interfaces/specifications/vmdk.html#streamOptimized" ovf:populatedSize="$DISK" />
+    <Disk ovf:capacity="$LAYER_DISK" ovf:capacityAllocationUnits="byte * 2^30" ovf:diskId="vmdisk1" ovf:fileRef="file1" ovf:format="http://www.vmware.com/interfaces/specifications/vmdk.html#streamOptimized" ovf:populatedSize="$LAYER_DISK" />
   </DiskSection>
   <NetworkSection>
     <Info>The list of logical networks</Info>
@@ -31,18 +31,18 @@
       <Item>
         <rasd:AllocationUnits>hertz * 10^6</rasd:AllocationUnits>
         <rasd:Description>Number of Virtual CPUs</rasd:Description>
-        <rasd:ElementName>$CPUS virtual CPU(s)</rasd:ElementName>
-        <rasd:InstanceID>$CPUS</rasd:InstanceID>
+        <rasd:ElementName>$LAYER_CPUS virtual CPU(s)</rasd:ElementName>
+        <rasd:InstanceID>$LAYER_CPUS</rasd:InstanceID>
         <rasd:ResourceType>3</rasd:ResourceType>
-        <rasd:VirtualQuantity>$CPUS</rasd:VirtualQuantity>
+        <rasd:VirtualQuantity>$LAYER_CPUS</rasd:VirtualQuantity>
       </Item>
       <Item>
         <rasd:AllocationUnits>byte * 2^20</rasd:AllocationUnits>
         <rasd:Description>Memory Size</rasd:Description>
-        <rasd:ElementName>$MEM MB of memory</rasd:ElementName>
+        <rasd:ElementName>$LAYER_MEM MB of memory</rasd:ElementName>
         <rasd:InstanceID>2</rasd:InstanceID>
         <rasd:ResourceType>4</rasd:ResourceType>
-        <rasd:VirtualQuantity>$MEM</rasd:VirtualQuantity>
+        <rasd:VirtualQuantity>$LAYER_MEM</rasd:VirtualQuantity>
       </Item>
       <Item>
         <rasd:Address>0</rasd:Address>
