@@ -43,6 +43,7 @@ curl -so vm-functions http://$APILISTENER/static/utils/vm-functions
 . ./vm-functions
 
 systemctl enable iptables.service
+systemctl enable network.service
 
 register_channels
 yum_remove 'NetworkManager*' firewalld

@@ -74,7 +74,7 @@ def static(path):
 
 
 @app.get("/gitstamp")
-def gitstamp():
+def _gitstamp():
     return gitstamp.gitstamp(bottle.request.query.msg)
 
 
