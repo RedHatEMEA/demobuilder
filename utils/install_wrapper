@@ -19,4 +19,4 @@ rm -rf demobuilder
 cleanup
 
 echo "$0: Done."
-nohup bash -c 'sleep 1; poweroff' &>/dev/null &
+( sleep 1; poweroff ) </dev/null &>/dev/null &
