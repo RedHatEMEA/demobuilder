@@ -10,9 +10,9 @@ howto: |
 
   # Ensure your firewall allows your Vagrant VMs to access your host (e.g. for
   # NFS).  Note that out of the box with vagrant-libvirt your VMs will come up
-  # on interface virbr1, not virbr0.
+  # on interface virbr1, not virbr0
 
-  # Example if using firewalld:
+  # Example using firewalld
   sudo firewall-cmd --permanent --add-interface=virbr1 --zone=trusted
   sudo firewall-cmd --reload
 

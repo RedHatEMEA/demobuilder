@@ -20,5 +20,5 @@ howto: |
   # Launch the image
   vagrant up
 
-  # Then connect to your vagrant box via the VirtualBox console.
+  # Then connect to your vagrant box via the VirtualBox console
   ```
