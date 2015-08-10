@@ -3,32 +3,34 @@ maintainers:
 - Jim Minter <jminter@redhat.com>
 description: |
   This image requires vagrant-libvirt and is suitable for recent Fedora hosts.
-  To use this image, do the following:
-
+howto: |
+  ```sh
   # Install nfs-utils, tigervnc and vagrant-libvirt
-  $ sudo dnf -y install nfs-utils tigervnc vagrant-libvirt
+  sudo dnf -y install nfs-utils tigervnc vagrant-libvirt
 
   # Ensure your firewall allows your Vagrant VMs to access your host (e.g. for
   # NFS).  Note that out of the box with vagrant-libvirt your VMs will come up
   # on interface virbr1, not virbr0.
 
   # Example if using firewalld:
-  $ sudo firewall-cmd --permanent --add-interface=virbr1 --zone=trusted
-  $ sudo firewall-cmd --reload
+  sudo firewall-cmd --permanent --add-interface=virbr1 --zone=trusted
+  sudo firewall-cmd --reload
 
   # Download and install the box image
-  $ vagrant box add $IMAGE $URL
+  vagrant box add $IMAGE \
+    $URL
 
   # Create a clean working directory for the image
-  $ mkdir -p $HOME/vagrant/$IMAGE-SHORT
-  $ cd $HOME/vagrant/$IMAGE-SHORT
-  $ vagrant init $IMAGE
+  mkdir -p $HOME/vagrant/$IMAGE-SHORT
+  cd $HOME/vagrant/$IMAGE-SHORT
+  vagrant init $IMAGE
 
   # Launch the image
-  $ vagrant up
+  vagrant up
 
   # SSH into the image to find its IP address
-  $ vagrant ssh -c 'ip -4 address show dev eth0'
+  vagrant ssh -c 'ip -4 address show dev eth0'
 
   # VNC to your vagrant box IP address
-  $ vncviewer 192.168.121.xxx
+  vncviewer 192.168.121.xxx
+  ```

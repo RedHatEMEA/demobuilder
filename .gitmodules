@@ -1,3 +1,6 @@
 [submodule "contrib/webproxycache"]
 	path = contrib/webproxycache
 	url = https://github.com/RedHatEMEA/webproxycache.git
+[submodule "contrib/strapdown"]
+	path = contrib/strapdown
+	url = https://github.com/arturadib/strapdown.git

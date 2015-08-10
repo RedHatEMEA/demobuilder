@@ -23,11 +23,17 @@ class Target(object):
             self.yaml = yaml.load(metaf.read())
 
         if "description" in self.yaml:
-            d = self.yaml["description"]
-            d = d.replace("$IMAGE-SHORT", self.layer.rsplit(":", 1)[1])
-            d = d.replace("$IMAGE", self.layer + ":" + self.target)
-            d = d.replace("$URL", "http://%s/releases/%s" % (socket.gethostname(), f))
-            self.yaml["description"] = d
+            x = self.yaml["description"]
+            x = x.replace("\n", "\n  ").strip()
+            self.yaml["description"] = x
+
+        if "howto" in self.yaml:
+            x = self.yaml["howto"]
+            x = x.replace("$IMAGE-SHORT", self.layer.rsplit(":", 1)[1])
+            x = x.replace("$IMAGE", self.layer + ":" + self.target)
+            x = x.replace("$URL", "http://%s/releases/%s" % (socket.gethostname(), f))
+            x = x.replace("\n", "\n  ").strip()
+            self.yaml["howto"] = x
 
 
 def splitname(f):

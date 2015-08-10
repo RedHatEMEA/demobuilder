@@ -1,10 +1,8 @@
 % import socket
 
+<!DOCTYPE html>
 <html>
-
-<head>
-  <title>Welcome to {{ socket.gethostname() }}!</title>
-</head>
+<title>Welcome to {{ socket.gethostname() }}!</title>
 
 <script type="text/javascript">
 function hideshow(x) {
@@ -15,36 +13,39 @@ function hideshow(x) {
 }
 </script>
 
-<body>
-  <h1>Welcome to {{ socket.gethostname() }}!</h1>
+<xmp style="display:none;">
+# Available images
 
-  <h2>Available images</h2>
-  <ul>
-    % for layer in layers.values():
-    <h3>{{ layer.yaml["name"] }}</h3>
-    % if layer.yaml.get("description", ""):
-    <p>{{ layer.yaml["description"] }}
-    % end
-    <ul>
-      % for image in layer.images:
-      <li><b>{{ image["target"].yaml["name"] }}</b>
-      <p><a href="{{ image["link"] }}">Download</a> ({{ "%0.2fGB" % (image["size"] / 1e9) }})
-      <p><a href="javascript:hideshow(document.getElementById('{{ image["link"] }}'))">More details...</a>
-      % if image["target"].yaml.get("description", ""):
-      <div id="{{ image["link"] }}" style="display: none">
-      <p>{{ !image["target"].yaml.get("description", "").replace("\n", "<br>") }}
-      </div>
-      % end
-      % end
-    </ul>
-    % end
-  </ul>
+% for layer in layers.values():
+## {{ layer.yaml["name"] }}
 
-  <h2>Give feedback</h2>
-  <ul>
-    Questions, comments, feature requests, patches, pull requests and cake are all welcomed on <a href="http://github.com/RedHatEMEA/demobuilder">GitHub</a> or to <a href="mailto:jminter@redhat.com">jminter@redhat.com</a>.
-  </ul>
+% if layer.yaml.get("description", ""):
+{{ layer.yaml["description"] }}
+% end
+% for image in layer.images:
+* **{{ image["target"].yaml["name"] }} ({{ "%0.2fGB" % (image["size"] / 1e9) }})**
 
-</body>
+  {{ !image["target"].yaml.get("description", "") }}
+
+  <a href="javascript:hideshow(document.getElementById('{{ image["link"] }}'))">More...</a>
+
+  <div id="{{ image["link"] }}" style="display:none;">
+
+  {{ !image["target"].yaml.get("howto", "") }}
+
+  [Manual download]({{ image["link"] }}) (for advanced users -- only use this if
+  not following the instructions above)
+
+% end
+% end
+
+# Give feedback
+
+Questions, comments, feature requests, patches, pull requests and cake are all
+welcomed on [GitHub](http://github.com/RedHatEMEA/demobuilder) or to
+[jminter@redhat.com](mailto:jminter@redhat.com).
+</xmp>
+
+<script src="/contrib/strapdown/v/0.2/strapdown.js"></script>
 
 </html>
