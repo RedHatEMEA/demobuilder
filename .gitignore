@@ -2,7 +2,6 @@
 /cache
 /certs
 /config.yml
-/dockercache
 /isos
 /keys
 /releases

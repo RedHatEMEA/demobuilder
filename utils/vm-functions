@@ -46,14 +46,15 @@ yum_install() {
 }
 
 docker_pull() {
-  if ! pidof docker >/dev/null; then
+  if ! grep -q HTTP_PROXY /etc/sysconfig/docker; then
+    cat >>/etc/sysconfig/docker <<EOF
+HTTP_PROXY=$PROXY
+HTTPS_PROXY=$PROXY
+EOF
     service docker start
   fi
 
-  if ! curl -s $APILISTENER/static/dockercache/$1 | gunzip 2>/dev/null | docker load &>/dev/null; then
-    docker pull $1
-    docker save $1 | gzip | curl -s -H 'Content-Type: application/octet-stream' --data-binary @- $APILISTENER/static/dockercache/$1
-  fi
+  docker pull $1
 }
 
 cleanup() {
@@ -98,6 +99,10 @@ Type=Application
 StartupNotify=true
 EOF
     chown -R demo:demo /home/demo/Desktop
+  fi
+
+  if [ -e /etc/sysconfig/docker ]; then
+    sed -ri -e '/^HTTPS?_PROXY/ d' /etc/sysconfig/docker
   fi
 
   fstrim /
