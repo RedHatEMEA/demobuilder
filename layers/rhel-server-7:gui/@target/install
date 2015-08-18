@@ -62,16 +62,17 @@ EOF
 
 dconf update
 
-mkdir /etc/skel/Desktop
-for shortcut in firefox gnome-terminal; do
-  cp /usr/share/applications/$shortcut.desktop /etc/skel/Desktop
-  chmod 0755 /etc/skel/Desktop/$shortcut.desktop
-done
-
 useradd demo
 passwd -d demo
 passwd -e demo
 echo 'demo ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers
+
+mkdir /home/demo/Desktop
+for shortcut in firefox gnome-terminal; do
+  install -m 0755 /usr/share/applications/$shortcut.desktop /home/demo/Desktop
+done
+echo Path=/home/demo >>/home/demo/Desktop/gnome-terminal.desktop
+chown -R demo:demo /home/demo/Desktop
 
 sed -i -e '/^#PermitEmptyPasswords/ a \
 PermitEmptyPasswords yes' /etc/ssh/sshd_config
