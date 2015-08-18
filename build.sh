@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
-. utils/functions
-
 utils/init.sh
+
+. utils/functions
 
 if [ $# -eq 0 ]; then
   echo "Usage: $0 layer[:target]..."

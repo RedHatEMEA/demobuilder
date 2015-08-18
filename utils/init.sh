@@ -1,5 +1,9 @@
 #!/bin/bash -e
 
+if [ ! -e config.yml ]; then
+  cp config.yml.example config.yml
+fi
+
 . utils/functions
 
 FATAL=0
@@ -40,10 +44,6 @@ mkdir -p build isos keys releases tmp
 
 if [ ! -e keys/demobuilder ]; then
   ssh-keygen -f keys/demobuilder -N ""
-fi
-
-if [ ! -e config.yml ]; then
-  cp config.yml.example config.yml
 fi
 
 if [ $FATAL != 0 ]; then
