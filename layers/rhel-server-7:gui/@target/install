@@ -3,7 +3,7 @@
 . vm-functions
 
 register_channels rhel-7-server-rpms
-yum_install bash-completion evince firefox gdm gnome-classic-session gnome-session gnome-terminal man nautilus tigervnc-server urw-fonts xinetd xorg-x11-drivers xorg-x11-xinit
+yum_install bash-completion control-center evince firefox gdm gnome-classic-session gnome-session gnome-terminal man nautilus tigervnc-server urw-fonts xinetd xorg-x11-drivers xorg-x11-xinit
 
 ln -sf /lib/systemd/system/graphical.target /etc/systemd/system/default.target
 

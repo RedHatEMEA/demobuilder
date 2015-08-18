@@ -3,7 +3,7 @@
 . vm-functions
 
 register_channels
-yum_install bash-completion evince firefox gdm gnome-session gnome-terminal nautilus tigervnc-server xinetd xorg-x11-drivers xorg-x11-server-Xorg
+yum_install bash-completion control-center evince firefox gdm gnome-session gnome-terminal nautilus tigervnc-server xinetd xorg-x11-drivers xorg-x11-server-Xorg
 
 useradd demo
 passwd -d demo
