@@ -29,8 +29,8 @@ done
 
 for contrib in contrib/*; do
   if [ ! -e $contrib/.git ]; then
-    echo "FATAL: please check submodules out correctly.  In the future, use the -u option"
-    echo "       to git clone.  For now, you probably need to run:"
+    echo "FATAL: please check submodules out correctly.  In the future, use the"
+    echo "        --recursive option to git clone.  For now, you probably need to run:"
     echo "git submodule init $contrib"
     echo "git submodule update $contrib"
     echo
