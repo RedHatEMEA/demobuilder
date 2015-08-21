@@ -8,7 +8,7 @@ fi
 
 FATAL=0
 
-for pkg in git libcdio libguestfs libvirt pigz pyOpenSSL python-bottle python-cherrypy PyYAML qemu-kvm; do
+for pkg in git libcdio libguestfs libvirt pigz pyOpenSSL python-apsw python-bottle python-cherrypy PyYAML qemu-kvm sqlite; do
   if ! rpm -q $pkg &>/dev/null; then
     echo "FATAL: please install $pkg.  You probably need to run:"
     echo "sudo yum -y install $pkg"

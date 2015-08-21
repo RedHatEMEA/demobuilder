@@ -51,7 +51,7 @@ docker_pull() {
 HTTP_PROXY=$PROXY
 HTTPS_PROXY=$PROXY
 EOF
-    service docker start
+    service docker restart
   fi
 
   docker pull $1
@@ -102,7 +102,7 @@ EOF
   fi
 
   if [ -e /etc/sysconfig/docker ]; then
-    sed -ri -e '/^HTTPS?_PROXY/ d' /etc/sysconfig/docker
+    sed -ri -e '/^HTTPS?_PROXY/ d; /^NO_PROXY/ d;' /etc/sysconfig/docker
   fi
 
   fstrim /

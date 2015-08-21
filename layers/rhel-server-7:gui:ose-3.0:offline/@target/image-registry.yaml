@@ -1,0 +1,40 @@
+kind: List
+apiVersion: v1
+items:
+- kind: ReplicationController
+  apiVersion: v1
+  metadata:
+    name: image-registry
+  spec:
+    replicas: 1
+    selector:
+      name: image-registry
+    template:
+      metadata:
+        labels:
+          name: image-registry
+      spec:
+        containers:
+        - name: image-registry
+          image: docker.io/registry:latest
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+          - mountPath: /tmp
+            name: image-registry
+          securityContext:
+            runAsUser: 0
+        volumes:
+        - hostPath:
+            path: /image-registry
+          name: image-registry
+        serviceAccount: infra
+
+- kind: Service
+  apiVersion: v1
+  metadata:
+    name: image-registry
+  spec:
+    ports:
+    - port: 5000
+    selector:
+      name: image-registry

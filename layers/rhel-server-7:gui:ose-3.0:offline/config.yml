@@ -1,0 +1,7 @@
+name: OpenShift 3.0.1 all-in-one image
+maintainers:
+- Jim Minter <jminter@redhat.com>
+description: |
+  This image provides an all-in-one instance of OpenShift 3.0.1, including the
+  master and node components, examples, GUI and web browser.  All S2I builder
+  images are also included, so nothing extra is needed.

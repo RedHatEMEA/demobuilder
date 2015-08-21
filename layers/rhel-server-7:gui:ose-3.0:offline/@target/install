@@ -1,0 +1,126 @@
+#!/bin/bash -ex
+
+. vm-functions
+
+register_channels rhel-7-server-rpms rhel-7-server-optional-rpms
+
+yum_install git-daemon
+
+semodule -i gitdaemon-rw-net.pp
+cp gitconfig /etc
+
+# bz1135071
+rm /lib/systemd/system/git.service
+cp git@.service /lib/systemd/system
+
+systemctl enable git.socket
+systemctl start git.socket
+
+for image in \
+    docker.io/registry:latest \
+    ; do
+  docker_pull $image
+done
+
+mkdir /image-registry
+chcon -t svirt_sandbox_file_t /image-registry
+oc create -f image-registry.yaml
+
+yum_install gcc python-devel sqlite-devel
+https_proxy=$PROXY curl -sO https://github.com/rogerbinns/apsw/archive/3.7.17-r1.zip
+unzip -q 3.7.17-r1.zip
+pushd apsw-3.7.17-r1
+python setup.py install
+popd
+yum -y history undo $(yum history list | grep -A1 ^- | tail -1 | awk '{print $1;}')
+
+https_proxy=$PROXY curl -sO https://github.com/RedHatEMEA/webproxycache/archive/master.zip
+unzip -q master.zip
+mv webproxycache-master /usr/local/webproxycache
+mv /usr/local/webproxycache/webproxycache.service /lib/systemd/system
+mkdir /var/cache/webproxycache
+systemctl enable webproxycache.service
+systemctl start webproxycache.service
+
+DRIP=$(oc get svc docker-registry -o template --template='{{.spec.portalIP}}')
+IRIP=$(oc get svc image-registry -o template --template='{{.spec.portalIP}}')
+
+cat >>/etc/sysconfig/docker <<EOF
+NO_PROXY=$IRIP,$DRIP
+EOF
+service docker restart
+
+# proxy on git clones?
+./install.py
+
+git clone git://localhost/github.com/openshift/django-ex.git
+pushd django-ex
+mkdir -p .sti/bin
+cat >.sti/bin/assemble <<'EOF'
+#!/bin/bash
+cp /usr/local/sti/assemble /tmp/assemble
+if [ -n "$ca_cert" ]; then
+  echo "$ca_cert" >/tmp/ca_cert
+  sed -i -e 's!pip install!pip install --cert /tmp/ca_cert!' /tmp/assemble
+fi
+exec /tmp/assemble "$@"
+EOF
+chmod 0755 .sti/bin/assemble
+git add .sti/bin/assemble
+git config user.email $USER@$HOSTNAME
+git config user.name $USER
+git commit -m 'cacert fix-up'
+git push
+popd
+
+git clone git://localhost/github.com/openshift/nodejs-ex.git
+pushd nodejs-ex
+mkdir -p .sti/bin
+cat >.sti/bin/assemble <<'EOF'
+#!/bin/bash
+if [ -n "$ca_cert" ]; then
+  echo "$ca_cert" >/tmp/ca_cert
+  npm config set cafile /tmp/ca_cert
+fi
+exec /usr/local/sti/assemble "$@"
+EOF
+chmod 0755 .sti/bin/assemble
+git add .sti/bin/assemble
+git config user.email $USER@$HOSTNAME
+git config user.name $USER
+git commit -m 'cacert fix-up'
+git push
+popd
+
+git clone git://localhost/github.com/openshift/rails-ex.git
+pushd rails-ex
+mkdir -p .sti/bin
+cat >.sti/bin/assemble <<'EOF'
+#!/bin/bash
+if [ -n "$ca_cert" ]; then
+  echo "$ca_cert" >/tmp/ca_cert
+  export SSL_CERT_FILE=/tmp/ca_cert
+fi
+exec /usr/local/sti/assemble "$@"
+EOF
+chmod 0755 .sti/bin/assemble
+git add .sti/bin/assemble
+git config user.email $USER@$HOSTNAME
+git config user.name $USER
+git commit -m 'cacert fix-up'
+git push
+popd
+
+# /usr/lib/jvm/jre-1.8.0/bin/keytool -importcert -file /path/to/ca.crt -noprompt -keystore /tmp/trust.jks -storepass password
+# MAVEN_OPTS='-Djavax.net.ssl.trustStore=/tmp/trust.jks -Djavax.net.ssl.trustStorePassword=password' mvn clean package
+
+# fix up java builders
+./dobuilds.sh
+
+systemctl stop openshift-node.service
+oc delete pods --all
+docker ps -aq | xargs docker rm -f
+docker images | grep :5000 | awk '{print $3;}' | xargs docker rmi
+rm -rf /registry/*
+
+# clear /var/log?

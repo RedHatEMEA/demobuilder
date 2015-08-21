@@ -2,5 +2,6 @@
 
 . utils/functions
 
-find -L cache -name repodata -type d | xargs rm -rf
-rm -rf cache/registry.access.redhat.com:443/v1/repositories cache/registry-1.docker.io:443/v2/*/*/manifests
+sqlite3 webproxycache.db 'DELETE FROM cache WHERE url LIKE "%/repodata/%";'
+sqlite3 webproxycache.db 'DELETE FROM cache WHERE url LIKE "https://registry-1.docker.io:443/v2/%/manifests/%";'
+sqlite3 webproxycache.db 'DELETE FROM cache WHERE url LIKE "https://registry.access.redhat.com:443/v1/repositories/%";'

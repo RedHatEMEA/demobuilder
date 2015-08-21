@@ -13,20 +13,11 @@ yum_install bind-utils git httpd-tools iptables-services lsof openshift-master o
 OPENSHIFTVERSION=$(rpm -q openshift --qf '%{VERSION}')
 
 for image in \
-    docker.io/openshift/hello-openshift:latest \
-    docker.io/openshift/mysql-55-centos7:latest \
-    registry.access.redhat.com/jboss-amq-6/amq-openshift:latest \
-    registry.access.redhat.com/jboss-eap-6/eap-openshift:latest \
-    registry.access.redhat.com/jboss-webserver-3/tomcat7-openshift:latest \
-    registry.access.redhat.com/jboss-webserver-3/tomcat8-openshift:latest \
-    registry.access.redhat.com/openshift3/mysql-55-rhel7:latest \
     registry.access.redhat.com/openshift3/ose-deployer:v$OPENSHIFTVERSION \
     registry.access.redhat.com/openshift3/ose-docker-registry:v$OPENSHIFTVERSION \
     registry.access.redhat.com/openshift3/ose-haproxy-router:v$OPENSHIFTVERSION \
     registry.access.redhat.com/openshift3/ose-pod:v$OPENSHIFTVERSION \
     registry.access.redhat.com/openshift3/ose-sti-builder:v$OPENSHIFTVERSION \
-    registry.access.redhat.com/openshift3/php-55-rhel7:latest \
-    registry.access.redhat.com/openshift3/python-33-rhel7:latest \
     ; do
   docker_pull $image
 done
@@ -37,8 +28,8 @@ yum_install ansible
 yum_remove epel-release-7-5
 rm /etc/yum.repos.d/epel.repo.rpmsave
 
-https_proxy=$PROXY curl -so openshift-ansible.zip https://codeload.github.com/openshift/openshift-ansible/zip/v$ANSIBLE_TAG
-unzip -q openshift-ansible.zip
+https_proxy=$PROXY curl -sO https://github.com/openshift/openshift-ansible/archive/v$ANSIBLE_TAG.zip
+unzip -q v$ANSIBLE_TAG.zip
 
 hostname $MY_HOSTNAME
 echo $MY_HOSTNAME >/etc/hostname

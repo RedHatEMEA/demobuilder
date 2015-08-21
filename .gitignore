@@ -1,9 +1,9 @@
 /build
-/cache
 /certs
 /config.yml
 /isos
 /keys
 /releases
 /tmp
+/webproxycache.db
 *.pyc
