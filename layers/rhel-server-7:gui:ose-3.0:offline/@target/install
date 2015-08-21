@@ -121,6 +121,7 @@ systemctl stop openshift-node.service
 oc delete pods --all
 docker ps -aq | xargs docker rm -f
 docker images | grep :5000 | awk '{print $3;}' | xargs docker rmi
+docker images | grep '<none>' | awk '{print $3;}' | xargs docker rmi
 rm -rf /registry/*
 
 # clear /var/log?
