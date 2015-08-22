@@ -1,12 +1,42 @@
-name: Vagrant image (Fedora / libvirt)
+name: Vagrant image (RHEL7/Fedora / libvirt)
 maintainers:
 - Jim Minter <jminter@redhat.com>
 description: |
-  This image requires vagrant-libvirt and is suitable for recent Fedora hosts.
+  This image requires vagrant-libvirt and is suitable for recent RHEL7 and
+  Fedora hosts.
 howto: |
   ```sh
+  # -------------------------------------------------------
+  # RHEL 7 instructions (see below for Fedora instructions)
+  # -------------------------------------------------------
+
+  # Install gcc, libvirt, libvirt-devel, qemu-kvm and tigervnc
+  sudo yum -y install gcc libvirt libvirt-devel qemu-kvm tigervnc
+
+  # Install Vagrant RPM from http://www.vagrantup.com/downloads.html
+  sudo rpm -i https://dl.bintray.com/mitchellh/vagrant/vagrant_1.7.4_x86_64.rpm
+
+  # Install vagrant-libvirt
+  vagrant plugin install vagrant-libvirt
+
+  # Start libvirtd
+  sudo systemctl enable libvirtd.service
+  sudo systemctl start libvirtd.service
+
+  # Now follow RHEL 7 and Fedora instructions (see below)
+
+  # -------------------
+  # Fedora instructions
+  # -------------------
+
   # Install nfs-utils, tigervnc and vagrant-libvirt
   sudo dnf -y install nfs-utils tigervnc vagrant-libvirt
+
+  # Now follow RHEL 7 and Fedora instructions (see below)
+
+  # ------------------------------
+  # RHEL 7 and Fedora instructions
+  # ------------------------------
 
   # Ensure your firewall allows your Vagrant VMs to access your host (e.g. for
   # NFS).  Note that out of the box with vagrant-libvirt your VMs will come up
