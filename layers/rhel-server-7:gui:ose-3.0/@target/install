@@ -2,7 +2,7 @@
 
 . vm-functions
 
-ANSIBLE_TAG=3.0.0-3
+ANSIBLE_TAG=3.0.0-8
 MY_HOSTNAME=openshift.example.com
 
 # rhel-7-server-optional-rpms is required for python-jinja2, required by ansible

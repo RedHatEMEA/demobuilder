@@ -41,6 +41,11 @@ def download_referenced_images():
                             break
                     else:
                         images.add(c.image)
+                        c.imagePullPolicy = "IfNotPresent"
+
+        t.kind = "Template"
+        t.apiVersion = "v1"
+        oapi.put("/namespaces/openshift/templates/" + t.metadata.name, t)
 
     for i in images:
         system("docker pull " + i)
@@ -139,20 +144,6 @@ def download_git_repos():
                     if p.name == m.group(1) and "value" in p and \
                        not p.value.startswith("git://" + hostname):
                         p.value = uris[p.value]
-
-                if o.spec.strategy.type != "Source":
-                    raise Exception
-
-                env = o.spec.strategy.sourceStrategy.get("env", [])
-                env = [x for x in env if x.name not in ("ca_cert", "http_proxy", "https_proxy")]
-                env.append(k8s.AttrDict({"name": "ca_cert",
-                                         "value": ca_cert}))
-                env.append(k8s.AttrDict({"name": "http_proxy",
-                                         "value": "http://%s:8080/" % hostname}))
-                env.append(k8s.AttrDict({"name": "https_proxy",
-                                         "value": "http://%s:8080/" % hostname}))
-
-                o.spec.strategy.sourceStrategy.env = env
 
         t.kind = "Template"
         t.apiVersion = "v1"
