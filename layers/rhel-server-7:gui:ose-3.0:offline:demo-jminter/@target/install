@@ -2,19 +2,15 @@
 
 . vm-functions
 
-register_channels rhel-7-server-rpms rhel-7-server-optional-rpms rhel-server-rhscl-7-rpms
+register_channels rhel-7-server-rpms rhel-server-rhscl-7-rpms
 
-yum_install git-daemon maven30
+yum_install maven30
 
-semodule -i gitdaemon-rw-net.pp
-cp gitconfig /etc
-
-# bz1135071
-rm /lib/systemd/system/git.service
-cp git@.service /lib/systemd/system
-
-systemctl enable git.socket
-systemctl start git.socket
+for image in \
+    docker.io/openshift/hello-openshift:latest \
+    ; do
+  docker_pull $image
+done
 
 mkdir /home/demo/git
 unzip -q -d /home/demo/git openshift-demos.zip
@@ -49,10 +45,7 @@ install -m 0755 -o demo 'Red Hat JBoss Developer Studio 8.1.0.GA.desktop' /home/
 unzip -q -d /home/demo recipes.zip
 chown -R demo:demo /home/demo
 
-#for image in \
-#    docker.io/jimminter/sti-wildfly:latest \
-#    ; do
-#  docker_pull $image
-#done
-
-# imagestream for sti-wildfly
+systemctl stop openshift-node.service
+oc delete pods --all
+docker ps -aq | xargs docker rm -f
+rm -rf /registry/*
