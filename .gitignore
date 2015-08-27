@@ -3,6 +3,7 @@
 /config.yml
 /isos
 /keys
+/log
 /releases
 /tmp
 /webproxycache.db
