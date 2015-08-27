@@ -12,6 +12,14 @@ for image in \
   docker_pull $image
 done
 
+mkdir -p /home/demo/.m2
+cp settings.xml /home/demo/.m2
+sed -i -e "/<proxies>/ a \
+<proxy><host>$HOSTNAME</host></proxy>" /home/demo/.m2/settings.xml
+
+http_proxy=http://$HOSTNAME:8080/ curl -so /etc/pki/ca-trust/source/anchors/ca-webproxycache.crt http://cacert/
+update-ca-trust
+
 mkdir /home/demo/git
 unzip -q -d /home/demo/git openshift-demos.zip
 for i in /home/demo/git/*; do
@@ -22,15 +30,19 @@ for i in /home/demo/git/*; do
   git init
   git add -A
   git commit -m 'Initial commit'
-  git remote add origin git://$(hostname)/demo/$(basename $i)
+  git remote add origin git://$HOSTNAME/demo/$(basename $i)
   git push -u origin master
+
+  scl enable maven30 'mvn clean package' || true
+  git clean -fdx
+
   popd
 
   cat >/var/lib/git/demo/$(basename $i)/hooks/post-receive <<EOF
 #!/bin/bash
 
 echo 'Triggering OSE3 build...'
-curl -sX POST 'https://$(hostname):8443/osapi/v1beta3/namespaces/demo/buildconfigs/$(basename $i)-build/webhooks/secret/generic'
+curl -sX POST 'https://$HOSTNAME:8443/osapi/v1beta3/namespaces/demo/buildconfigs/$(basename $i)/webhooks/secret/generic'
 EOF
   chmod 0755 /var/lib/git/demo/$(basename $i)/hooks/post-receive
   chown -R nobody:nobody /var/lib/git
@@ -39,12 +51,12 @@ done
 https_proxy=$PROXY curl -sO https://download.eng.rdu2.redhat.com/released/jbdevstudio/8.1.0/jboss-devstudio-8.1.0.GA-installer-standalone.jar
 java -jar jboss-devstudio-8.1.0.GA-installer-standalone.jar InstallConfigRecord.xml
 cp 'Red Hat JBoss Developer Studio 8.1.0.GA.desktop' /usr/share/applications
-install -m 0755 'Red Hat JBoss Developer Studio 8.1.0.GA.desktop' /etc/skel/Desktop
 install -m 0755 -o demo 'Red Hat JBoss Developer Studio 8.1.0.GA.desktop' /home/demo/Desktop
 
 unzip -q -d /home/demo recipes.zip
-chown -R demo:demo /home/demo
 
+rm -rf /home/demo/.m2/repository
+chown -R demo:demo /home/demo
 systemctl stop openshift-node.service
 oc delete pods --all
 docker ps -aq | xargs docker rm -f
