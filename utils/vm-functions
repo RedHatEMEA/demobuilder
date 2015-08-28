@@ -58,6 +58,8 @@ EOF
 }
 
 cleanup() {
+  [ -x /usr/local/bin/demobuilder-cleanup.sh ] && /usr/local/bin/demobuilder-cleanup.sh
+
   http_proxy= curl -s "http://$APILISTENER/gitstamp?msg=$LAYER" >>/etc/demobuilder
 
   # running kernel, so must use rpm -e

@@ -4,6 +4,11 @@ cd demobuilder
 
 . vm-functions
 
+if ! [ -e /usr/local/bin/demobuilder-cleanup.sh ]; then
+  echo '#!/bin/bash -x' >/usr/local/bin/demobuilder-cleanup.sh
+  chmod 0755 /usr/local/bin/demobuilder-cleanup.sh
+fi
+
 if ! ./install; then
   if [ -n "$RHN_USER" -a -x /sbin/subscription-manager -a -e /etc/pki/consumer/cert.pem ]; then
     subscription-manager unregister

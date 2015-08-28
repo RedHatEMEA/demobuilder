@@ -20,8 +20,11 @@ sed -i -e "/<proxies>/ a \
 http_proxy=http://$HOSTNAME:8080/ curl -so /etc/pki/ca-trust/source/anchors/ca-webproxycache.crt http://cacert/
 update-ca-trust
 
-mkdir /home/demo/git
-unzip -q -d /home/demo/git openshift-demos.zip
+COMMIT=95b1d279722087dcafc3a361a1659f31f9a627bc
+https_proxy=$PROXY curl -sO https://github.com/jim-minter/ose3-demos/archive/$COMMIT.zip
+unzip -q $COMMIT.zip
+mv ose3-demos-$COMMIT/* /home/demo
+
 for i in /home/demo/git/*; do
   git init --bare /var/lib/git/demo/$(basename $i)
   chown -R nobody:nobody /var/lib/git
@@ -53,11 +56,5 @@ java -jar jboss-devstudio-8.1.0.GA-installer-standalone.jar InstallConfigRecord.
 cp 'Red Hat JBoss Developer Studio 8.1.0.GA.desktop' /usr/share/applications
 install -m 0755 -o demo 'Red Hat JBoss Developer Studio 8.1.0.GA.desktop' /home/demo/Desktop
 
-unzip -q -d /home/demo recipes.zip
-
 rm -rf /home/demo/.m2/repository
 chown -R demo:demo /home/demo
-systemctl stop openshift-node.service
-oc delete pods --all
-docker ps -aq | xargs docker rm -f
-rm -rf /registry/*

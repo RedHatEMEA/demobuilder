@@ -67,6 +67,7 @@ for svc in auth dns-intercept master-ipcfg node-ipcfg routewatcher; do
   cp openshift-$svc.service /lib/systemd/system
   systemctl enable openshift-$svc
 done
+systemctl start openshift-dns-intercept.service
 
 cp dhclient-eth0-up-hooks /etc/dhcp
 semanage fcontext --add -t net_conf_t /etc/hosts
@@ -89,8 +90,6 @@ current-context: ${MY_HOSTNAME//./-}:8443
 EOF
 chown -R demo:demo /home/demo/.kube
 
-systemctl stop openshift-node
-
 echo '{"kind": "ServiceAccount", "apiVersion": "v1", "metadata": {"name": "infra"}}' | oc create -f -
 (oc get -o yaml scc privileged; echo - system:serviceaccount:default:infra) | oc replace scc privileged -f -
 mkdir /registry
@@ -98,8 +97,13 @@ oadm registry --config=/etc/openshift/master/admin.kubeconfig --credentials=/etc
 
 oadm router --credentials=/etc/openshift/master/openshift-router.kubeconfig --service-account=infra --images='registry.access.redhat.com/openshift3/ose-${component}:${version}'
 
-rm /root/.ssh/id_rsa
-rm /root/.ssh/known_hosts
+for ((i = 0; i < 12; i++)); do
+  [ $(oc get pods | grep -v -- -deploy | grep Running | wc -l) = 2 -a $(oc get pods | grep -- -deploy | wc -l) = 0 ] && break
+  sleep 10
+done
+[ $(oc get pods | grep -v -- -deploy | grep Running | wc -l) = 2 -a $(oc get pods | grep -- -deploy | wc -l) = 0 ] || exit 1
+
+rm /root/.ssh/id_rsa /root/.ssh/known_hosts
 
 cp /etc/openshift/master/ca.crt /etc/pki/ca-trust/source/anchors/
 update-ca-trust
@@ -108,3 +112,9 @@ firefox_set_homepage https://$MY_HOSTNAME:8443/
 
 sed -i -e '/FORWARD/ a\
 -A OS_FIREWALL_ALLOW -p tcp -m state --state NEW -m tcp --dport 5900 -j ACCEPT' /etc/sysconfig/iptables
+
+cat >>/usr/local/bin/demobuilder-cleanup.sh <<'EOF'
+systemctl stop openshift-node.service
+oc delete pods --all
+docker ps -aq | xargs docker rm -f
+EOF

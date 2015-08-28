@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ -n "$ca_cert" ]; then
+  echo "$ca_cert" >>/tmp/ca_cert
+  npm config set cafile /tmp/ca_cert
+fi
+
+exec /usr/local/sti/_assemble "$@"

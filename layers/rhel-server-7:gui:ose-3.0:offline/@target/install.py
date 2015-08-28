@@ -84,8 +84,8 @@ def download_referenced_images_imagestreams(repo):
     for i in images:
         newi = repo + "/" + i.split("/", 1)[1]
         if i != newi:
-            if i == "registry.access.redhat.com/openshift3/python-33-rhel7:latest":
-                system("docker build -t " + newi + " bz1255516")
+            if os.path.exists(i.split("/", 1)[1].split(":")[0]):
+                system("docker build -t " + newi + " " + i.split("/", 1)[1].split(":")[0])
                 system("docker push " + newi)
                 system("docker rmi " + newi)
                 system("docker rmi " + i, False)
@@ -144,6 +144,20 @@ def download_git_repos():
                     if p.name == m.group(1) and "value" in p and \
                        not p.value.startswith("git://" + hostname):
                         p.value = uris[p.value]
+
+                if o.spec.strategy.type != "Source":
+                    raise Exception
+
+                env = o.spec.strategy.sourceStrategy.get("env", [])
+                env = [x for x in env if x.name not in ("ca_cert", "http_proxy", "https_proxy")]
+                env.append(k8s.AttrDict({"name": "ca_cert",
+                                         "value": ca_cert}))
+                env.append(k8s.AttrDict({"name": "http_proxy",
+                                         "value": "http://%s:8080/" % hostname}))
+                env.append(k8s.AttrDict({"name": "https_proxy",
+                                         "value": "http://%s:8080/" % hostname}))
+
+                o.spec.strategy.sourceStrategy.env = env
 
         t.kind = "Template"
         t.apiVersion = "v1"

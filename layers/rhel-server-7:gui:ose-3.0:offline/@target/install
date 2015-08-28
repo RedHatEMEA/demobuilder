@@ -34,9 +34,10 @@ python setup.py install
 popd
 yum -y history undo $(yum history list | grep -A1 ^- | tail -1 | awk '{print $1;}')
 
-https_proxy=$PROXY curl -sO https://github.com/RedHatEMEA/webproxycache/archive/master.zip
-unzip -q master.zip
-mv webproxycache-master /usr/local/webproxycache
+COMMIT=07336c52112053b32b1dd8ea065e134336672bde
+https_proxy=$PROXY curl -sO https://github.com/RedHatEMEA/webproxycache/archive/$COMMIT.zip
+unzip -q $COMMIT.zip
+mv webproxycache-$COMMIT /usr/local/webproxycache
 mv /usr/local/webproxycache/webproxycache.service /lib/systemd/system
 mkdir /var/cache/webproxycache
 systemctl enable webproxycache.service
@@ -52,141 +53,12 @@ service docker restart
 
 # proxy on git clones?
 ./install.py
-
-git clone git://localhost/github.com/jboss-developer/jboss-eap-quickstarts -b 6.4.x
-pushd jboss-eap-quickstarts
-mkdir -p kitchensink/.sti/bin
-cat >kitchensink/.sti/bin/assemble <<EOF
-#!/bin/bash
-export http_proxy=http://$HOSTNAME:8080/
-export https_proxy=http://$HOSTNAME:8080/
-curl -so /tmp/cacert http://cacert/
-
-cp /usr/local/sti/assemble /tmp/assemble
-/usr/lib/jvm/jre-1.8.0/bin/keytool -importcert -file /tmp/cacert -noprompt -keystore /tmp/trust.jks -storepass password
-sed -i -e 's!mvn !mvn -Djavax.net.ssl.trustStore=/tmp/trust.jks -Djavax.net.ssl.trustStorePassword=password !' /tmp/assemble
-sed -i -e "/<profiles>/ i \
-<proxies><proxy><host>$HOSTNAME</host></proxy></proxies>" \$HOME/.m2/settings.xml
-exec /tmp/assemble "\$@"
-EOF
-chmod 0755 kitchensink/.sti/bin/assemble
-git add -f kitchensink/.sti/bin/assemble
-git config user.email $USER@$HOSTNAME
-git config user.name $USER
-git commit -m 'cacert fix-up'
-git push
-popd
-
-git clone git://localhost/github.com/openshift/cakephp-ex.git
-pushd cakephp-ex
-mkdir -p .sti/bin
-cat >.sti/bin/assemble <<EOF
-#!/bin/bash
-export http_proxy=http://$HOSTNAME:8080/
-export https_proxy=http://$HOSTNAME:8080/
-curl -so /tmp/cacert http://cacert/
-
-cp /usr/local/sti/assemble /tmp/assemble
-exec /tmp/assemble "\$@"
-EOF
-chmod 0755 .sti/bin/assemble
-git add .sti/bin/assemble
-git config user.email $USER@$HOSTNAME
-git config user.name $USER
-git commit -m 'cacert fix-up'
-git push
-popd
-
-git clone git://localhost/github.com/openshift/dancer-ex.git
-pushd dancer-ex
-mkdir -p .sti/bin
-cat >.sti/bin/assemble <<EOF
-#!/bin/bash
-export http_proxy=http://$HOSTNAME:8080/
-export https_proxy=http://$HOSTNAME:8080/
-curl -so /tmp/cacert http://cacert/
-
-cp /usr/local/sti/assemble /tmp/assemble
-exec /tmp/assemble "\$@"
-EOF
-chmod 0755 .sti/bin/assemble
-git add .sti/bin/assemble
-git config user.email $USER@$HOSTNAME
-git config user.name $USER
-git commit -m 'cacert fix-up'
-git push
-popd
-
-git clone git://localhost/github.com/openshift/django-ex.git
-pushd django-ex
-mkdir -p .sti/bin
-cat >.sti/bin/assemble <<EOF
-#!/bin/bash
-export http_proxy=http://$HOSTNAME:8080/
-export https_proxy=http://$HOSTNAME:8080/
-curl -so /tmp/cacert http://cacert/
-
-cp /usr/local/sti/assemble /tmp/assemble
-sed -i -e 's!pip install!pip install --cert /tmp/cacert!' /tmp/assemble
-exec /tmp/assemble "\$@"
-EOF
-chmod 0755 .sti/bin/assemble
-git add .sti/bin/assemble
-git config user.email $USER@$HOSTNAME
-git config user.name $USER
-git commit -m 'cacert fix-up'
-git push
-popd
-
-git clone git://localhost/github.com/openshift/nodejs-ex.git
-pushd nodejs-ex
-mkdir -p .sti/bin
-cat >.sti/bin/assemble <<EOF
-#!/bin/bash
-export http_proxy=http://$HOSTNAME:8080/
-export https_proxy=http://$HOSTNAME:8080/
-curl -so /tmp/cacert http://cacert/
-
-cp /usr/local/sti/assemble /tmp/assemble
-npm config set cafile /tmp/cacert
-exec /tmp/assemble "\$@"
-EOF
-chmod 0755 .sti/bin/assemble
-git add .sti/bin/assemble
-git config user.email $USER@$HOSTNAME
-git config user.name $USER
-git commit -m 'cacert fix-up'
-git push
-popd
-
-git clone git://localhost/github.com/openshift/rails-ex.git
-pushd rails-ex
-mkdir -p .sti/bin
-cat >.sti/bin/assemble <<EOF
-#!/bin/bash
-export http_proxy=http://$HOSTNAME:8080/
-export https_proxy=http://$HOSTNAME:8080/
-curl -so /tmp/cacert http://cacert/
-
-cp /usr/local/sti/assemble /tmp/assemble
-export SSL_CERT_FILE=/tmp/cacert
-exec /tmp/assemble "\$@"
-EOF
-chmod 0755 .sti/bin/assemble
-git add .sti/bin/assemble
-git config user.email $USER@$HOSTNAME
-git config user.name $USER
-git commit -m 'cacert fix-up'
-git push
-popd
-
 ./dobuilds.sh
 
-systemctl stop openshift-node.service
-oc delete pods --all
-docker ps -aq | xargs docker rm -f
+cat >>/usr/local/bin/demobuilder-cleanup.sh <<'EOF'
 docker images | grep :5000 | awk '{print $3;}' | xargs docker rmi
 docker images | grep '<none>' | awk '{print $3;}' | xargs docker rmi
 rm -rf /registry/*
+EOF
 
 # clear /var/log?

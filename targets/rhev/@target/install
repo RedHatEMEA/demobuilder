@@ -2,4 +2,5 @@
 
 . vm-functions
 
+echo 'rm /usr/local/bin/demobuilder-cleanup.sh' >>/usr/local/bin/demobuilder-cleanup.sh
 rm /root/.ssh/authorized_keys

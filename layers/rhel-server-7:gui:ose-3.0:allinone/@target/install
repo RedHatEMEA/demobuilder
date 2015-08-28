@@ -22,7 +22,3 @@ for image in \
     ; do
   docker_pull $image
 done
-
-systemctl stop openshift-node.service
-oc delete pods --all
-docker ps -aq | xargs docker rm -f
