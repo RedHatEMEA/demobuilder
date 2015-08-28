@@ -21,6 +21,7 @@ class RouteWatcher(object):
         self.url = "https://%s:%s" % (args.host, args.port)
         self.cert = (args.cert, args.key)
         self.ca = args.ca
+        self.m = {}
         self.o = o
 
     def get(self, url, **kwargs):
@@ -36,6 +37,7 @@ class RouteWatcher(object):
 
         self.o.clear()
         for i in j["items"]:
+            self.m[i["metadata"]["uid"]] = i["spec"]["host"]
             self.o.add(i["spec"]["host"])
 
         self.o.commit()
@@ -57,10 +59,18 @@ class RouteWatcher(object):
                     j = json.loads(l)
 
                     if j["type"] == "ADDED":
+                        self.m[j["object"]["metadata"]["uid"]] = j["object"]["spec"]["host"]
+                        self.o.add(j["object"]["spec"]["host"])
+                        self.o.commit()
+
+                    if j["type"] == "MODIFIED":
+                        self.o.delete(self.m[j["object"]["metadata"]["uid"]])
+                        self.m[j["object"]["metadata"]["uid"]] = j["object"]["spec"]["host"]
                         self.o.add(j["object"]["spec"]["host"])
                         self.o.commit()
 
                     elif j["type"] == "DELETED":
+                        del self.m[j["object"]["metadata"]["uid"]]
                         self.o.delete(j["object"]["spec"]["host"])
                         self.o.commit()
 
