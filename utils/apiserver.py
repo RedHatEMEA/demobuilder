@@ -131,7 +131,7 @@ def main():
         if not pid:
             os.closerange(0, 3)
             os.open("/dev/null", os.O_RDONLY)
-            os.open("log", os.O_WRONLY | os.O_CREAT | os.O_TRUNC)
+            os.open("log", os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0666)
             os.open("log", os.O_WRONLY)
 
             t = threading.Thread(target=cacheserver.serve_forever)
