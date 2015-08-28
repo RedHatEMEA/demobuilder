@@ -1,8 +1,8 @@
 #!/bin/bash
 
 cp /usr/local/sti/_assemble /tmp/assemble
-if [ -n "$ca_cert" ]; then
-  echo "$ca_cert" >>/tmp/ca_cert
+if [ -n "$http_proxy" ]; then
+  curl -so /tmp/ca_cert http://cacert/
   sed -i -e 's!pip install!pip install --cert /tmp/ca_cert!' /tmp/assemble
 fi
 

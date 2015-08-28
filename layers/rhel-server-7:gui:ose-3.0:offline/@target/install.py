@@ -40,7 +40,7 @@ def download_referenced_images():
                            c.name in tr.imageChangeParams.containerNames:
                             break
                     else:
-                        images.add(c.image)
+                        images.add(resolve_values(t, c.image))
                         c.imagePullPolicy = "IfNotPresent"
 
         t.kind = "Template"
@@ -131,8 +131,6 @@ def download_git_repos():
 
     system("chown -R nobody:nobody /var/lib/git")
 
-    ca_cert = open("/var/cache/webproxycache/certs/ca.crt").read()
-
     for t in oapi.get("/namespaces/openshift/templates")._items:
         for o in t.objects:
             if o.kind == "BuildConfig":
@@ -149,9 +147,7 @@ def download_git_repos():
                     raise Exception
 
                 env = o.spec.strategy.sourceStrategy.get("env", [])
-                env = [x for x in env if x.name not in ("ca_cert", "http_proxy", "https_proxy")]
-                env.append(k8s.AttrDict({"name": "ca_cert",
-                                         "value": ca_cert}))
+                env = [x for x in env if x.name not in ["http_proxy", "https_proxy"]]
                 env.append(k8s.AttrDict({"name": "http_proxy",
                                          "value": "http://%s:8080/" % hostname}))
                 env.append(k8s.AttrDict({"name": "https_proxy",

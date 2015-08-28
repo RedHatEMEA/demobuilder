@@ -20,7 +20,7 @@ sed -i -e "/<proxies>/ a \
 http_proxy=http://$HOSTNAME:8080/ curl -so /etc/pki/ca-trust/source/anchors/ca-webproxycache.crt http://cacert/
 update-ca-trust
 
-COMMIT=95b1d279722087dcafc3a361a1659f31f9a627bc
+COMMIT=f7bdc4208ca191131e35681553c0c42c43d7ad89
 https_proxy=$PROXY curl -sO https://github.com/jim-minter/ose3-demos/archive/$COMMIT.zip
 unzip -q $COMMIT.zip
 mv ose3-demos-$COMMIT/* /home/demo

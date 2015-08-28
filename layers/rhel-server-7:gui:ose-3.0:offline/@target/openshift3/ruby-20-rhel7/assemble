@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [ -n "$ca_cert" ]; then
-  echo "$ca_cert" >>/tmp/ca_cert
+if [ -n "$http_proxy" ]; then
+  curl -so /tmp/ca_cert http://cacert/
   export SSL_CERT_FILE=/tmp/ca_cert
 fi
 

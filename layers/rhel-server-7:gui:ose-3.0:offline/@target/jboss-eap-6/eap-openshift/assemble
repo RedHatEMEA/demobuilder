@@ -2,14 +2,13 @@
 
 sed -i -e "s/port=8778,host=127.0.0.1/port=8778,host=0.0.0.0/" $JBOSS_HOME/bin/standalone.conf
 
-if [ -n "$http_proxy" ]; then
-  sed -i -e "/<profiles>/ i \
-  <proxies><proxy><host>$http_proxy</host></proxy></proxies>" $HOME/.m2/settings.xml
-fi
-
 cp /usr/local/sti/_assemble /tmp/assemble
-if [ -n "$ca_cert" ]; then
-  echo "$ca_cert" >>/tmp/ca_cert
+if [ -n "$http_proxy" ]; then
+  read host port <<< $(python -c "import urlparse; print ' '.join(urlparse.urlparse('$http_proxy').netloc.split(':'))")
+  sed -i -e "/<profiles>/ i \
+  <proxies><proxy><host>$host</host><port>$port</port></proxy></proxies>" $HOME/.m2/settings.xml
+
+  curl -so /tmp/ca_cert http://cacert/
   /usr/lib/jvm/jre-1.8.0/bin/keytool -importcert -file /tmp/ca_cert -noprompt -keystore /tmp/trust.jks -storepass password
   sed -i -e 's!mvn !mvn -Djavax.net.ssl.trustStore=/tmp/trust.jks -Djavax.net.ssl.trustStorePassword=password !' /tmp/assemble
 fi

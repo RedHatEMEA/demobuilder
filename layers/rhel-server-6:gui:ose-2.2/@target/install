@@ -3,7 +3,7 @@
 . vm-functions
 
 openshift_install() {
-  https_proxy=$PROXY curl -so openshift.sh https://raw.githubusercontent.com/openshift/openshift-extras/enterprise-2.2/enterprise/install-scripts/generic/openshift.sh
+  https_proxy=$PROXY curl -sLo openshift.sh https://github.com/openshift/openshift-extras/raw/enterprise-2.2/enterprise/install-scripts/generic/openshift.sh
   chmod 0755 ./openshift.sh
   ./openshift.sh
 }

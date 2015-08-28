@@ -34,7 +34,7 @@ python setup.py install
 popd
 yum -y history undo $(yum history list | grep -A1 ^- | tail -1 | awk '{print $1;}')
 
-COMMIT=07336c52112053b32b1dd8ea065e134336672bde
+COMMIT=0b7b8e2f247e3766413ab38bf9e5ebb93ac89b28
 https_proxy=$PROXY curl -sO https://github.com/RedHatEMEA/webproxycache/archive/$COMMIT.zip
 unzip -q $COMMIT.zip
 mv webproxycache-$COMMIT /usr/local/webproxycache
