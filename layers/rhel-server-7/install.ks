@@ -53,5 +53,6 @@ cleanup
 rm vm-functions
 
 grubby --update-kernel=ALL --args=net.ifnames=0 --remove-args=console=ttyS0,115200n8
+grubby --update-kernel=DEFAULT --remove-args=systemd.debug
 
 %end
