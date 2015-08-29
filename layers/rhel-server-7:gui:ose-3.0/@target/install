@@ -117,4 +117,5 @@ cat >>/usr/local/bin/demobuilder-cleanup.sh <<'EOF'
 systemctl stop openshift-node.service
 oc delete pods --all
 docker ps -aq | xargs docker rm -f
+true
 EOF
