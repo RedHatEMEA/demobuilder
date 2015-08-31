@@ -3,6 +3,7 @@
 from bottle import *
 import os
 import socket
+import time
 import yaml
 
 
@@ -54,9 +55,13 @@ def root():
         if not layer in layers:
             layers[layer] = Layer(layer)
 
+        st = os.stat("releases/" + f)
+
         layers[layer].images.append({"target": Target(f),
                                      "link": "releases/" + f,
-                                     "size": os.stat("releases/" + f).st_size,
+                                     "size": "built %s, size %0.2fGB" %
+                                     (time.strftime("%d/%m/%Y %H:%M:%S UTC", time.gmtime(st.st_mtime)),
+                                      st.st_size / 1e9),
                                      "docs": "layers/%s/@docs/index.html" % f.rsplit(":", 1)[0]})
 
     return {"layers": layers}

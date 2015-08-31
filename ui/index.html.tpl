@@ -23,7 +23,7 @@ function hideshow(x) {
 {{ layer.yaml["description"] }}
 % end
 % for image in layer.images:
-* **{{ image["target"].yaml["name"] }} ({{ "%0.2fGB" % (image["size"] / 1e9) }})**
+* **{{ image["target"].yaml["name"] }} ({{ image["size"] }})**
 
   {{ !image["target"].yaml.get("description", "") }}
 
