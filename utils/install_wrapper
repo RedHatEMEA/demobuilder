@@ -23,5 +23,10 @@ rm -rf demobuilder
 
 cleanup
 
+if [ "${LAYER%/*}" = "targets" ]; then
+  rm /usr/local/bin/demobuilder-cleanup.sh
+  rm /root/.ssh/authorized_keys
+fi
+
 echo "$0: Done."
 ( sleep 1; poweroff ) </dev/null &>/dev/null &
