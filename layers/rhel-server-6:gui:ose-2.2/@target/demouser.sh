@@ -3,13 +3,7 @@
 mkdir -m 0700 .ssh
 ssh-keygen -f .ssh/id_rsa -N ""
 
-cat >.ssh/config <<EOF
-Host *.example.com
-  StrictHostKeyChecking no
-  UserKnownHostsFile /dev/null
-  StrictHostKeyChecking no
-  LogLevel QUIET
-EOF
+cp config .ssh
 chmod 0600 .ssh/config
 
 mkdir .openshift

@@ -90,7 +90,7 @@ cleanup() {
 
   if [ -e /usr/share/doc/demobuilder/index.html ]; then
     mkdir -p /home/demo/Desktop
-    cat <<'EOF' >/home/demo/Desktop/demobuilder.desktop
+    cat >/home/demo/Desktop/demobuilder.desktop <<EOF
 [Desktop Entry]
 Version=1.0
 Name=About this demo

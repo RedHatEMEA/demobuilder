@@ -1,0 +1,14 @@
+[org/gnome/shell]
+favorite-apps=['firefox.desktop', 'org.gnome.Nautilus.desktop', 'gnome-terminal.desktop']
+
+[org/gnome/shell/overrides]
+dynamic-workspaces=false
+
+[org/gnome/desktop/screensaver]
+lock-enabled=false
+
+[org/gnome/desktop/session]
+idle-delay=uint32 0
+
+[org/gnome/desktop/wm/preferences]
+num-workspaces=1

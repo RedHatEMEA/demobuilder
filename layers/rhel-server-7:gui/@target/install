@@ -7,27 +7,7 @@ yum_install bash-completion control-center evince firefox gdm gnome-classic-sess
 
 ln -sf /lib/systemd/system/graphical.target /etc/systemd/system/default.target
 
-cat >/etc/gnome-settings-daemon/xrandr/monitors.xml <<EOF
-<monitors version="1">
-  <configuration>
-      <clone>no</clone>
-      <output name="default">
-          <vendor>???</vendor>
-          <product>0x0000</product>
-          <serial>0x00000000</serial>
-          <width>1024</width>
-          <height>768</height>
-          <rate>60</rate>
-          <x>0</x>
-          <y>0</y>
-          <rotation>normal</rotation>
-          <reflect_x>no</reflect_x>
-          <reflect_y>no</reflect_y>
-          <primary>yes</primary>
-      </output>
-  </configuration>
-</monitors>
-EOF
+cp monitors.xml /etc/gnome-settings-daemon/xrandr
 
 sed -i -e '/^\[greeter\]/ a \
 IncludeAll=false\
@@ -35,30 +15,12 @@ Include=demo
 /^\[xdmcp\]/ a \
 Enable=true' /etc/gdm/custom.conf
 
-cat >/etc/xinetd.d/rfb <<EOF
-service rfb
-{
-        protocol = tcp
-        wait = no
-        user = nobody
-        server = /usr/bin/Xvnc
-        server_args = -inetd -query localhost -once -SecurityTypes None
-}
-EOF
+cp rfb /etc/xinetd.d
 
 sed -i -e '/-A INPUT -i lo -j ACCEPT/ a\
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 5900 -j ACCEPT' /etc/sysconfig/iptables
 
-cat >/etc/dconf/db/local.d/01-fixes <<EOF
-[org/gnome/settings-daemon/plugins/xrandr]
-default-monitors-setup='do-nothing'
-
-[org/gnome/desktop/session]
-idle-delay=uint32 0
-
-[org/gnome/desktop/wm/preferences]
-num-workspaces=1
-EOF
+cp 01-fixes /etc/dconf/db/local.d
 
 dconf update
 

@@ -21,16 +21,7 @@ Include=demo
 /^\[xdmcp\]/ a \
 Enable=true' /etc/gdm/custom.conf
 
-cat >/etc/xinetd.d/vnc-server <<EOF
-service vnc-server
-{
-        protocol = tcp
-        wait = no
-        user = nobody
-        server = /usr/bin/Xvnc
-        server_args = -inetd -query localhost -once -SecurityTypes None
-}
-EOF
+cp vnc-server /etc/xinetd.d
 
 lokkit -p 22:tcp
 lokkit -p 5900:tcp

@@ -75,7 +75,7 @@ restorecon -v /etc/hosts
 
 oadm new-project demo --admin=demo
 mkdir /home/demo/.kube
-cat <<EOF >/home/demo/.kube/config
+cat >/home/demo/.kube/config <<EOF
 kind: Config
 apiVersion: v1
 clusters:
@@ -113,7 +113,7 @@ firefox_set_homepage https://$MY_HOSTNAME:8443/
 sed -i -e '/FORWARD/ a\
 -A OS_FIREWALL_ALLOW -p tcp -m state --state NEW -m tcp --dport 5900 -j ACCEPT' /etc/sysconfig/iptables
 
-cat >>/usr/local/bin/demobuilder-cleanup.sh <<'EOF'
+cat >>/usr/local/bin/demobuilder-cleanup.sh <<EOF
 systemctl stop openshift-node.service
 oc delete pods --all
 docker ps -aq | xargs docker rm -f

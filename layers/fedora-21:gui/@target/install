@@ -20,78 +20,24 @@ Include=demo
 Enable=true\
 PingIntervalSeconds=0' /etc/gdm/custom.conf
 
-cat >/etc/xinetd.d/rfb <<EOF
-service rfb
-{
-        protocol = tcp
-        wait = no
-        user = nobody
-        server = /usr/bin/Xvnc
-        server_args = -inetd -query localhost -once -SecurityTypes None
-}
-EOF
+cp rfb /etc/xinetd.d
 
 mkdir -p /var/lib/gdm/.config
-cat >/var/lib/gdm/.config/monitors.xml <<EOF
-<monitors version="1">
-  <configuration>
-    <clone>no</clone>
-    <output name="VNC-0">
-      <vendor>unknown</vendor>
-      <product>unknown</product>
-      <serial>unknown</serial>
-      <width>1024</width>
-      <height>768</height>
-      <rate>60</rate>
-      <x>0</x>
-      <y>0</y>
-      <rotation>normal</rotation>
-      <reflect_x>no</reflect_x>
-      <reflect_y>no</reflect_y>
-      <primary>yes</primary>
-      <presentation>no</presentation>
-    </output>
-  </configuration>
-</monitors>
-EOF
+cp monitors.xml /var/lib/gdm/.config
 chown -R gdm:gdm /var/lib/gdm
 
 mkdir /home/demo/.config
 cp /var/lib/gdm/.config/monitors.xml /home/demo/.config/monitors.xml
 chown -R demo:demo /home/demo/.config
 
-cat >/etc/dconf/profile/user <<EOF
-user-db:user
-system-db:local
-EOF
+cp user /etc/dconf/profile
 
 mkdir /etc/dconf/db/local.d
-cat >/etc/dconf/db/local.d/01-fixes <<EOF
-[org/gnome/shell]
-favorite-apps=['firefox.desktop', 'org.gnome.Nautilus.desktop', 'gnome-terminal.desktop']
-
-[org/gnome/shell/overrides]
-dynamic-workspaces=false
-
-[org/gnome/desktop/screensaver]
-lock-enabled=false
-
-[org/gnome/desktop/session]
-idle-delay=uint32 0
-
-[org/gnome/desktop/wm/preferences]
-num-workspaces=1
-EOF
+cp 01-fixes /etc/dconf/db/local.d
 
 dconf update
 
-cat >/etc/polkit-1/rules.d/80-color-manager.rules <<EOF
-polkit.addRule(function(action, subject) {
-  if(action.id == "org.freedesktop.color-manager.create-device") {
-    return polkit.Result.YES;
-  }
-});
-EOF
+cp 80-color-manager.rules /etc/polkit-1/rules.d
 
 sed -i -e '/-A INPUT -i lo -j ACCEPT/ a\
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 5900 -j ACCEPT' /etc/sysconfig/iptables
