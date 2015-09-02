@@ -16,9 +16,9 @@ build:
   bridge: virbr0
 
   cpus: 4
-  mem: 4096
+  mem: 8192
 
 layer:
   cpus: 1
   mem: 1024
-  disk: 20
+  disk: 40
