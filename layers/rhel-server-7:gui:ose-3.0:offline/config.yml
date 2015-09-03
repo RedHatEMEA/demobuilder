@@ -7,3 +7,7 @@ description: |
   images are also included, and source code and dependencies for all examples
   apps is pre-downloaded, so no nothing extra is needed and the image can be
   run disconnected from the internet.
+
+  This image is fairly modified to enable offline usage.  It is intended for SAs
+  and consultants to replicate issues / experiment with the product with no
+  Internet connectivity, or for SAs to demo the vanilla out-of-the-box product.

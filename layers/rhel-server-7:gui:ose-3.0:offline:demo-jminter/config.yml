@@ -8,3 +8,7 @@ description: |
   apps is pre-downloaded, so no nothing extra is needed and the image can be
   run disconnected from the internet.  This image also includes all the
   components necessary for Jim's OpenShift 3.0.1 demo.
+
+  This image is heavily modified and additionally includes JBoss Developer
+  Studio.  It is intended for SAs in order to demo the full OpenShift end-user
+  experience.
