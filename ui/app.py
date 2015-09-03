@@ -50,6 +50,9 @@ def root():
     layers = {}
 
     for f in sorted(os.listdir("releases")):
+        if f[0] == ".":
+            continue
+
         (layer, target, ext) = splitname(f)
 
         if not layer in layers:
