@@ -30,7 +30,7 @@ mv com.redhat.importer_1.0.0.201509031446.jar /usr/local/jbdevstudio/studio/plug
 
 yum_install xorg-x11-server-Xvfb
 
-COMMIT=4ff69ae54a16eba7f432bf1840c54c1f16433e8c
+COMMIT=4debd5188b7c2c244c33e8dee9605a4117a8cf37
 https_proxy=$PROXY curl -sLO https://github.com/jim-minter/ose3-demos/archive/$COMMIT.zip
 unzip -q $COMMIT.zip
 mv ose3-demos-$COMMIT/* /home/demo
@@ -66,6 +66,8 @@ EOF
   chmod 0755 /var/lib/git/demo/$(basename $i)/hooks/post-receive
   chown -R nobody:nobody /var/lib/git
 done
+
+oc create -f /home/demo/git/monster/openshift/ticket-monster-template.yaml -n openshift
 
 su - demo -c "xvfb-run /usr/local/jbdevstudio/jbdevstudio -data workspace $BUILD"
 
