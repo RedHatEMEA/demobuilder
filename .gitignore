@@ -5,6 +5,7 @@
 /keys
 /log
 /releases
+/snap
 /tmp
 /webproxycache.db*
 *.pyc
