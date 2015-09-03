@@ -27,14 +27,11 @@ Run the VM and open the GUI.  Log in as *demo* and set your password.
 
 #### Create an application hosted on OpenShift
 
-WARNING: currently you will need your VM to be connected to the Internet for
-this step to succeed.
-
 1. Follow the steps above.
 1. Click the *Add to Project* button.
 1. Click the example URL of a Git source code repository,
-   `https://github.com/openshift/nodejs-ex`, to populate the *Repository URL*
-   box and click *Next*.
+   `git://openshift.example.com/github.com/openshift/nodejs-ex`, to populate the
+   *Repository URL* box and click *Next*.
 1. Click the *nodejs* builder image.
 1. Scroll down and click *Create*.
 1. Wait for the example application to be cloned, built and deployed.  It will
@@ -53,6 +50,14 @@ this step to succeed.
 1. Type oc commands such as `oc status` and `oc get pods` to see items which you
    have created.
 1. Type `oc delete all --all` to reset your project.
+1. Type `exit` to close the terminal window.
+
+#### Use the OpenShift ("oc") command line tool as the system:admin user
+
+1. Double-click the Terminal icon on the desktop.
+1. Type `sudo -i` and press Enter to change to the root user.
+1. Type oc commands such as `oc status` and `oc get pods` as appropriate.
+1. Type `logout` to change back to the demo user.
 1. Type `exit` to close the terminal window.
 
 ## More information
