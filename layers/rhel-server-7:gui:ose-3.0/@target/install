@@ -28,7 +28,7 @@ yum_install ansible
 yum_remove epel-release-7-5
 rm /etc/yum.repos.d/epel.repo.rpmsave
 
-https_proxy=$PROXY curl -sO https://github.com/openshift/openshift-ansible/archive/$ANSIBLE_TAG.zip
+https_proxy=$PROXY curl -sLO https://github.com/openshift/openshift-ansible/archive/$ANSIBLE_TAG.zip
 unzip -q $ANSIBLE_TAG.zip
 
 hostname $MY_HOSTNAME
