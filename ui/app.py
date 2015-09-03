@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -u
 
 from bottle import *
 import os
@@ -84,6 +84,15 @@ def download(path):
 def download(path):
     return static_file(path, "releases")
 
+
+@hook('after_request')
+def log_after_request():
+    print '%s - - [%s] "%s %s %s" %s' % (request.environ.get("REMOTE_ADDR"),
+                                         time.strftime("%d/%b/%Y %H:%M:%S %z", time.gmtime()),
+                                         request.environ.get("REQUEST_METHOD"),
+                                         request.environ.get("REQUEST_URI"),
+                                         request.environ.get("SERVER_PROTOCOL"),
+                                         response.status_code)
 
 if __name__ == "__main__":
     run(host="0.0.0.0", port=80, server="cherrypy")
