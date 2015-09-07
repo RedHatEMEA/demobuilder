@@ -6,7 +6,11 @@ description: |
   hosts.
 howto: |
   ```sh
-  # Install Vagrant and VirtualBox before proceeding
+  # Install VirtualBox from https://www.virtualbox.org/wiki/Downloads before
+  # proceeding
+
+  # Install Vagrant from http://www.vagrantup.com/downloads.html before
+  # proceeding
 
   # Download and install the box image
   vagrant box add $IMAGE \
