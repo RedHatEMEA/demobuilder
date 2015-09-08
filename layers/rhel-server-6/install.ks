@@ -37,7 +37,7 @@ sed -i -e '/^HWADDR=/ d' /etc/sysconfig/network-scripts/ifcfg-eth0
 >/etc/udev/rules.d/75-persistent-net-generator.rules
 rm /etc/udev/rules.d/70-persistent-net.rules
 
-sed -i -e 's/^timeout=.*/timeout=0/' /boot/grub/grub.conf
+sed -i -e 's/^timeout=.*/timeout=0/; /^serial / d; /^terminal / d;' /boot/grub/grub.conf
 
 passwd -l root
 
