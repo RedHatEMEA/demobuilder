@@ -39,7 +39,23 @@ wait_pid() {
 }
 
 read_config() {
+  unsetx
   eval $(utils/readconfig.py $1 $2)
+  setx
+}
+
+unsetx() {
+  if [[ $- =~ x ]]; then
+    XTRACE=on
+  fi
+
+  set +x
+}
+
+setx() {
+  if [ -n "$XTRACE" ]; then
+    set -x
+  fi
 }
 
 if [ "$DEBUG" ]; then
