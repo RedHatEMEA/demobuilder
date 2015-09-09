@@ -1,5 +1,9 @@
 #!/bin/bash -e
 
+interface_ip() {
+  ip addr show dev $1 | sed -n '/inet / { s!.*inet !!; s!/.*!!; p; }'
+}
+
 register_channels() {
   if [ -n "$RHN_USER" -a -x /sbin/subscription-manager -a ! -e /etc/pki/consumer/cert.pem ]; then
     cp /etc/os-release /etc/os-release-

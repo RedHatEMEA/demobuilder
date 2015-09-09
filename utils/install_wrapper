@@ -15,6 +15,12 @@ if ! ./install; then
   fi
 
   echo "$0: FAILED."
+
+  if [ -n "$DEBUG" ]; then
+    echo "debug mode: run utils/ssh.sh root@$(interface_ip eth0) to diagnose this failure."
+    sleep 86400
+  fi
+
   exit 1
 fi
 
