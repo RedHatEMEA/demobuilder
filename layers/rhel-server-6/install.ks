@@ -21,6 +21,9 @@ rsync
 qemu-guest-agent
 yum-utils
 -kexec-tools
+# bz1161682
+authconfig
+system-config-firewall-base
 %end
 
 %post
@@ -34,7 +37,7 @@ curl -so /root/.ssh/authorized_keys http://$APILISTENER/static/keys/demobuilder.
 chcon system_u:object_r:ssh_home_t:s0 /root/.ssh /root/.ssh/authorized_keys
 
 sed -i -e '/^HWADDR=/ d' /etc/sysconfig/network-scripts/ifcfg-eth0
->/etc/udev/rules.d/75-persistent-net-generator.rules
+echo '#' >/etc/udev/rules.d/75-persistent-net-generator.rules
 rm /etc/udev/rules.d/70-persistent-net.rules
 
 sed -i -e 's/^timeout=.*/timeout=0/; /^serial / d; /^terminal / d;' /boot/grub/grub.conf
@@ -51,7 +54,7 @@ cleanup
 
 rm vm-functions
 
-grubby --update-kernel=ALL --remove-args=console=ttyS0,115200n8
+grubby --args=quiet --update-kernel=ALL --remove-args=console=ttyS0,115200n8
 grubby --update-kernel=ALL --remove-args=crashkernel=auto
 
 %end
