@@ -43,3 +43,5 @@ for dest in password-auth system-auth; do
   cp pam-auth-demobuilder /etc/pam.d/$dest-demobuilder
   ln -sf $dest-demobuilder /etc/pam.d/$dest
 done
+
+sed -i -e '/dateMenu\|volume/ s!^!//!' /usr/share/gnome-shell/js/ui/panel.js
