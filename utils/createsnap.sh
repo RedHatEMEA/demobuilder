@@ -7,4 +7,4 @@ if [ $# -ne 2 -o ! -e "$(realpath $1)" ]; then
   exit 1
 fi
 
-qemu-img create -q -f qcow2 -o backing_file=$(realpath $1) $2
+qemu-img create -q -f qcow2 -o compat=0.10 -o backing_file=$(realpath $1) $2
