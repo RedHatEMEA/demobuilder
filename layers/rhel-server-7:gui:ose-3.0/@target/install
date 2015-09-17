@@ -57,6 +57,8 @@ EOF
 
 ANSIBLE_HOST_KEY_CHECKING=0 python -u /usr/bin/ansible-playbook openshift-ansible-$ANSIBLE_TAG/playbooks/byo/config.yml
 
+sed -i -e 's/  subdomain:.*/  subdomain: apps.example.com/' /etc/openshift/master/master-config.yaml
+
 https_proxy=$PROXY curl -s https://pypi.python.org/packages/source/d/dnslib/dnslib-0.9.4.tar.gz | tar -xz
 pushd dnslib-0.9.4
 python setup.py install
