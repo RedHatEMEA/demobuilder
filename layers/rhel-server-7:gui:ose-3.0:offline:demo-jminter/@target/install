@@ -30,7 +30,7 @@ mv com.redhat.importer_1.0.0.201509031446.jar /usr/local/jbdevstudio/studio/plug
 
 yum_install xorg-x11-server-Xvfb
 
-COMMIT=fd049bde036878a850022f558f30e218db465eda
+COMMIT=c76cebc764112fcc0493855fa5983ce5ffe44508
 https_proxy=$PROXY curl -sLO https://github.com/jim-minter/ose3-demos/archive/$COMMIT.zip
 unzip -q $COMMIT.zip
 mv ose3-demos-$COMMIT/* /home/demo
