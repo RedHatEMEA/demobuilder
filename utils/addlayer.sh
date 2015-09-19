@@ -25,7 +25,7 @@ if [ -e $LAYER/@docs ]; then
   RSYNC_RSH=utils/ssh.sh rsync -rL $LAYER/@docs/* root@$IP:/usr/share/doc/demobuilder
 fi
 
-if ! utils/ssh.sh root@$IP "APILISTENER=$APILISTENER LAYER=${LAYER//layers\//} demobuilder/install_wrapper" </dev/null; then
+if ! utils/ssh.sh root@$IP "APILISTENER=$APILISTENER LAYER=${LAYER//layers\//} DEBUG=$DEBUG demobuilder/install_wrapper" </dev/null; then
   kill $QEMUPID
   wait_pid $QEMUPID
   exit 1
