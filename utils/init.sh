@@ -28,9 +28,10 @@ for svc in libvirtd; do
 done
 
 for contrib in contrib/*; do
-  if [ ! -e $contrib/.git ]; then
+  if [ ! -e $contrib/.git ] || git submodule status $contrib | grep -qv '^ '; then
     echo "FATAL: please check submodules out correctly.  In the future, use the"
-    echo "        --recursive option to git clone.  For now, you probably need to run:"
+    echo "       --recursive option to git clone / --recurse-submodules option to"
+    echo "       git pull.  For now, you probably need to run:"
     echo "git submodule init $contrib"
     echo "git submodule update $contrib"
     echo
