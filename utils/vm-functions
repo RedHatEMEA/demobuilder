@@ -12,9 +12,13 @@ register_channels() {
     subscription-manager register --username "$RHN_USER" --password "$RHN_PASS"
     setx
 
-    for pool in $RHN_POOLS; do
-      subscription-manager attach --pool=$pool
-    done
+    if [ -n "$RHN_POOLS" ]; then
+      for pool in $RHN_POOLS; do
+        subscription-manager attach --pool=$pool
+      done
+    else
+      subscription-manager attach --auto
+    fi
 
     yum-config-manager --disable &>/dev/null
 
@@ -74,7 +78,7 @@ cleanup() {
   sed -i -e '/^proxy=/ d;' /etc/yum.conf
 
   if [ -n "$RHN_USER" -a -x /sbin/subscription-manager -a -e /etc/pki/consumer/cert.pem ]; then
-    subscription-manager unregister || sleep 86400
+    subscription-manager unregister || true
     rm /var/lib/rhsm/branded_name
     mv /etc/os-release- /etc/os-release
   fi

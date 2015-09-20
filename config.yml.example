@@ -2,10 +2,12 @@ config:
   # Fedora mirror (required for local caching)
   mirror_fedora: http://www.mirrorservice.org:80/sites/dl.fedoraproject.org
 
-  # RHN credentials and space-separated subscription pool ID(s) to which builder
-  # VMs are attached
+  # RHN credentials for builder VMs
   rhn_user:
   rhn_pass:
+
+  # optional space-separated subscription pool ID(s) to which builder VMs are
+  # attached.  If empty, --auto is used
   rhn_pools:
 
   # Enable debugging
