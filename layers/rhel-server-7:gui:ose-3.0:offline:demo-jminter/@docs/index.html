@@ -79,12 +79,15 @@ instance running on OpenShift.
 1. Make a small change to the source code.
    1. Double-click the *Red Hat JBoss Developer Studio 8.1.0.GA* icon on the
       desktop.
-   1. In the *Project* tab on the left, expand *monster [monster master]*,
-      navigate to *Deployed Resources/webapp/resources/templates/desktop*, and
-      double-click *home.html*.
+   1. Press `CTRL + SHIFT + R` to open the Open Resource window, and type
+      `home.html` to select
+      *monster/src/main/webapp/resources/templates/desktop/home.html*.  Click
+      *Open*.
    1. Make a sample change to the text which is visible on the Ticket Monster
       home page, then click *File/Save*.
 1. Commit and push the source code.
+   1. Click the *Link with Editor* button in the *Project* window to find
+      *home.html* in the *Project* window.
    1. Right-click *home.html*, and select *Team/Commit...*.
    1. Enter a git commit message (e.g. "minor change"), ensure
       *src/main/webapp/resources/templates/desktop/home.html* is ticked, then
@@ -105,10 +108,10 @@ application running on OpenShift from their IDE.
 
 1. Set a breakpoint.
    1. Return to JBoss Developer Studio.
-   1. In the *Project* tab on the left, expand *monster [monster master]*,
-      navigate to
-     *Java Resources/src/main/java/org.jboss.examples.ticketmonster.rest*, and
-      double-click *BookingService.java*.
+   1. Press `CTRL + SHIFT + R` to open the Open Resource window, and type
+      `BookingService.java` to select
+      *monster/src/main/java/org/jboss/examples/ticketmonster/rest/BookingService.java*.
+      Click *Open*.
    1. Scroll down to line 124, `public Response createBooking...`.  Right-click
       in the blue bar to the left of the text and select *Toggle Breakpoint* to
       set a breakpoint on the function.
