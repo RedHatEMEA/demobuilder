@@ -80,6 +80,11 @@ def download(path):
     return static_file(path, "layers")
 
 
+@route("/misc/<path:path>")
+def download(path):
+    return static_file(path, "misc")
+
+
 @route("/releases/<path:path>")
 def download(path):
     return static_file(path, "releases")
