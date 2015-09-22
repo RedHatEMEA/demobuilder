@@ -1,0 +1,10 @@
+[Unit]
+After=network.target
+Before=openshift-master.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/libexec/openshift-master-ipcfg.py
+
+[Install]
+WantedBy=multi-user.target

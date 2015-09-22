@@ -1,0 +1,136 @@
+#!/bin/bash -ex
+
+. vm-functions
+
+ANSIBLE_TAG=fd024841598adf3c77e57f13a17ff34a9955d43a
+MY_HOSTNAME=atomic.example.com
+
+# rhel-7-server-optional-rpms is required for python-jinja2, required by ansible
+register_channels rhel-7-server-rpms rhel-7-server-extras-rpms rhel-7-server-optional-rpms
+https_proxy=$PROXY curl -o /etc/yum.repos.d/atomic-enterprise.repo https://mirror.openshift.com/atomic/mirror/.atomic-enterprise-early-2/atomic-enterprise.repo
+
+yum_install atomic bind-utils cockpit cockpit-kubernetes docker-io git httpd-tools iptables-services lsof PyPAM python-requests net-tools nmap-ncat PyYAML strace tcpdump unzip
+
+AOSVERSION=3.0.1.100
+
+for image in \
+    registry.access.redhat.com/aos3/aos-deployer:v$AOSVERSION \
+    registry.access.redhat.com/aos3/aos-docker-registry:v$AOSVERSION \
+    registry.access.redhat.com/aos3/aos-haproxy-router:v$AOSVERSION \
+    registry.access.redhat.com/aos3/aos-pod:v$AOSVERSION \
+    docker.io/atomicenterprise/hello-atomic:latest \
+    ; do
+  docker_pull $image
+done
+
+yum_install $MIRROR_FEDORA/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+sed -i -e "s!^#baseurl=http://download.fedoraproject.org/!baseurl=$MIRROR_FEDORA/!; s/^mirrorlist=/#mirrorlist=/" /etc/yum.repos.d/epel.repo
+yum_install ansible
+yum_remove epel-release-7-5
+rm /etc/yum.repos.d/epel.repo.rpmsave
+
+https_proxy=$PROXY curl -sLO https://github.com/openshift/openshift-ansible/archive/$ANSIBLE_TAG.zip
+unzip -q $ANSIBLE_TAG.zip
+
+hostname $MY_HOSTNAME
+echo $MY_HOSTNAME >/etc/hostname
+
+echo "$(ifconfig eth0 | awk '/inet / { print $2; }') $MY_HOSTNAME" >>/etc/hosts
+
+curl -so /root/.ssh/id_rsa $APILISTENER/static/keys/demobuilder
+chmod 0600 /root/.ssh/id_rsa
+
+cat >/etc/ansible/hosts <<EOF
+[OSEv3:children]
+masters
+nodes
+
+[OSEv3:vars]
+deployment_type=atomic-enterprise
+openshift_master_identity_providers=[{'name': 'basicauthpassword', 'login': 'true', 'challenge': 'true', 'kind': 'BasicAuthPasswordIdentityProvider', 'url': 'http://localhost:2305/'}]
+
+[masters]
+$MY_HOSTNAME
+
+[nodes]
+$MY_HOSTNAME openshift_hostname=$MY_HOSTNAME openshift_scheduleable=True
+EOF
+
+ANSIBLE_HOST_KEY_CHECKING=0 python -u /usr/bin/ansible-playbook openshift-ansible-$ANSIBLE_TAG/playbooks/byo/config.yml
+
+sed -i -e 's/  subdomain:.*/  subdomain: apps.example.com/' /etc/origin/master/master-config.yaml
+
+https_proxy=$PROXY curl -s https://pypi.python.org/packages/source/d/dnslib/dnslib-0.9.4.tar.gz | tar -xz
+pushd dnslib-0.9.4
+python setup.py install
+popd
+
+for svc in auth dns-intercept master-ipcfg node-ipcfg routewatcher; do
+  cp openshift-$svc.py /usr/local/libexec
+  cp openshift-$svc.service /lib/systemd/system
+  systemctl enable openshift-$svc
+done
+systemctl start openshift-dns-intercept.service
+
+cp dhclient-eth0-up-hooks /etc/dhcp
+semanage fcontext --add -t net_conf_t /etc/hosts
+restorecon -v /etc/hosts
+
+oadm new-project demo --admin=demo
+mkdir /home/demo/.kube
+cat >/home/demo/.kube/config <<EOF
+kind: Config
+apiVersion: v1
+clusters:
+- cluster:
+    server: https://$MY_HOSTNAME:8443
+  name: ${MY_HOSTNAME//./-}:8443
+contexts:
+- context:
+    cluster: ${MY_HOSTNAME//./-}:8443
+  name: ${MY_HOSTNAME//./-}:8443
+current-context: ${MY_HOSTNAME//./-}:8443
+EOF
+chown -R demo:demo /home/demo/.kube
+
+TRAININGCOMMIT=60373e0a55bbca0adadf77e23883ffbeedd035ae
+pushd /home/demo
+https_proxy=$PROXY curl -sLO https://github.com/projectatomic/atomic-enterprise-training/archive/$TRAININGCOMMIT.zip
+unzip -q $TRAININGCOMMIT.zip
+mv atomic-enterprise-training-$TRAININGCOMMIT atomic-enterprise-training
+rm $TRAININGCOMMIT.zip
+popd
+
+echo '{"kind": "ServiceAccount", "apiVersion": "v1", "metadata": {"name": "infra"}}' | oc create -f -
+(oc get -o yaml scc privileged; echo - system:serviceaccount:default:infra) | oc replace scc privileged -f -
+mkdir /registry
+oadm registry --config=/etc/origin/master/admin.kubeconfig --credentials=/etc/origin/master/openshift-registry.kubeconfig --mount-host=/registry --service-account=infra --images='registry.access.redhat.com/aos3/aos-${component}:${version}'
+
+oadm router --credentials=/etc/origin/master/openshift-router.kubeconfig --service-account=infra --images='registry.access.redhat.com/aos3/aos-${component}:${version}'
+
+for ((i = 0; i < 12; i++)); do
+  [ $(oc get pods | grep -v -- -deploy | grep Running | wc -l) = 2 -a $(oc get pods | grep -- -deploy | wc -l) = 0 ] && break
+  sleep 10
+done
+[ $(oc get pods | grep -v -- -deploy | grep Running | wc -l) = 2 -a $(oc get pods | grep -- -deploy | wc -l) = 0 ] || exit 1
+
+systemctl enable cockpit.socket
+systemctl mask NetworkManager.service
+
+rm /root/.ssh/id_rsa /root/.ssh/known_hosts
+
+cat /etc/origin/master/master.server.{crt,key} >/etc/cockpit/ws-certs.d/\~self-signed.cert
+cp /etc/origin/master/ca.crt /etc/pki/ca-trust/source/anchors/
+update-ca-trust
+
+firefox_set_homepage https://$MY_HOSTNAME:9090/
+
+sed -i -e '/FORWARD/ a\
+-A OS_FIREWALL_ALLOW -p tcp -m state --state NEW -m tcp --dport 5900 -j ACCEPT' /etc/sysconfig/iptables
+
+cat >>/usr/local/bin/demobuilder-cleanup.sh <<EOF
+systemctl stop atomic-openshift-node.service
+oc delete pods --all
+docker ps -aq | xargs docker rm -f
+true
+EOF
