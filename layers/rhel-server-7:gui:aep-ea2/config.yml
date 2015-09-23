@@ -1,0 +1,8 @@
+name: Atomic Enterprise Platform EA2 base image
+maintainers:
+- Jim Minter <jminter@redhat.com>
+description: |
+  This image provides a base instance of Atomic Enterprise Platform EA2.
+layer:
+  cpus: 2
+  mem: 4096
