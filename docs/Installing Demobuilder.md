@@ -25,7 +25,7 @@ sudo firewall-cmd --reload
 
 # Clone repository
 cd $HOME
-git clone https://github.com/RedHatEMEA/demobuilder.git
+git clone --recursive https://github.com/RedHatEMEA/demobuilder.git
 
 # Configure demobuilder
 cd demobuilder
