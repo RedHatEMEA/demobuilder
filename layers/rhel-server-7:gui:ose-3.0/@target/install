@@ -2,7 +2,7 @@
 
 . vm-functions
 
-ANSIBLE_TAG=a564019bba52238e6f1146bfdb2f70145ca3685b
+ANSIBLE_TAG=fd024841598adf3c77e57f13a17ff34a9955d43a
 MY_HOSTNAME=openshift.example.com
 
 # rhel-7-server-optional-rpms is required for python-jinja2, required by ansible
@@ -14,10 +14,28 @@ OPENSHIFTVERSION=$(rpm -q openshift --qf '%{VERSION}')
 
 for image in \
     registry.access.redhat.com/openshift3/ose-deployer:v$OPENSHIFTVERSION \
+    registry.access.redhat.com/openshift3/ose-docker-builder:v$OPENSHIFTVERSION \
     registry.access.redhat.com/openshift3/ose-docker-registry:v$OPENSHIFTVERSION \
     registry.access.redhat.com/openshift3/ose-haproxy-router:v$OPENSHIFTVERSION \
     registry.access.redhat.com/openshift3/ose-pod:v$OPENSHIFTVERSION \
     registry.access.redhat.com/openshift3/ose-sti-builder:v$OPENSHIFTVERSION \
+    registry.access.redhat.com/jboss-amq-6/amq-openshift:latest \
+    registry.access.redhat.com/jboss-eap-6/eap-openshift:latest \
+    registry.access.redhat.com/jboss-webserver-3/tomcat7-openshift:latest \
+    registry.access.redhat.com/jboss-webserver-3/tomcat8-openshift:latest \
+    registry.access.redhat.com/openshift3/jenkins-1-rhel7:latest \
+    registry.access.redhat.com/openshift3/mongodb-24-rhel7:latest \
+    registry.access.redhat.com/openshift3/mysql-55-rhel7:latest \
+    registry.access.redhat.com/openshift3/nodejs-010-rhel7:latest \
+    registry.access.redhat.com/openshift3/perl-516-rhel7:latest \
+    registry.access.redhat.com/openshift3/php-55-rhel7:latest \
+    registry.access.redhat.com/openshift3/postgresql-92-rhel7:latest \
+    registry.access.redhat.com/openshift3/python-33-rhel7:latest \
+    registry.access.redhat.com/openshift3/ruby-20-rhel7:latest \
+    docker.io/openshift/postgresql-92-centos7:latest \
+    docker.io/openshift/mongodb-24-centos7:latest \
+    docker.io/openshift/mysql-55-centos7:latest \
+    docker.io/openshift/hello-openshift:latest \
     ; do
   docker_pull $image
 done
@@ -52,7 +70,7 @@ openshift_master_identity_providers=[{'name': 'basicauthpassword', 'login': 'tru
 $MY_HOSTNAME
 
 [nodes]
-$MY_HOSTNAME openshift_hostname=$MY_HOSTNAME
+$MY_HOSTNAME openshift_hostname=$MY_HOSTNAME openshift_scheduleable=True
 EOF
 
 ANSIBLE_HOST_KEY_CHECKING=0 python -u /usr/bin/ansible-playbook openshift-ansible-$ANSIBLE_TAG/playbooks/byo/config.yml

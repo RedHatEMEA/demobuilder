@@ -34,7 +34,13 @@ python setup.py install
 popd
 yum -y history undo $(yum history list | grep -A1 ^- | tail -1 | awk '{print $1;}')
 
-COMMIT=b9fbe2fcfd027899c4394f77fb58acfdd4a25f00
+https_proxy=$PROXY curl -sLO https://pypi.python.org/packages/source/b/backports.ssl/backports.ssl-0.0.7.tar.gz
+tar -xzf backports.ssl-0.0.7.tar.gz
+pushd backports.ssl-0.0.7
+python setup.py install
+popd
+
+COMMIT=efe76f1da339606bc3cee7605a30dbcbbdb453af
 https_proxy=$PROXY curl -sLO https://github.com/RedHatEMEA/webproxycache/archive/$COMMIT.zip
 unzip -q $COMMIT.zip
 mv webproxycache-$COMMIT /usr/local/webproxycache
