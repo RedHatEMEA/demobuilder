@@ -32,7 +32,7 @@ register_channels() {
     done
   fi
 
-  for CHANNEL in $*; do
+  for CHANNEL in "$@"; do
     if [ -n "$RHN_USER" -a -x /sbin/subscription-manager ]; then
       yum-config-manager --enable $CHANNEL &>/dev/null
     else
@@ -46,11 +46,11 @@ yum_update() {
 }
 
 yum_remove() {
-  /usr/bin/python -u /usr/bin/yum -y remove $*
+  /usr/bin/python -u /usr/bin/yum -y remove "$@"
 }
 
 yum_install() {
-  /usr/bin/python -u /usr/bin/yum -y install $*
+  /usr/bin/python -u /usr/bin/yum -y install "$@"
 }
 
 docker_pull() {
