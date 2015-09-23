@@ -9,7 +9,7 @@
 ```bash
 # Install required packages
 sudo dnf -y install git libcdio libguestfs libvirt pigz pyOpenSSL \
-  python-bottle PyYAML qemu-kvm
+  python-bottle PyYAML qemu-kvm python-cherrypy python-apsw
 
 # Ensure system is up to date
 sudo dnf -y update
@@ -25,7 +25,7 @@ sudo firewall-cmd --reload
 
 # Clone repository
 cd $HOME
-git clone -u https://github.com/RedHatEMEA/demobuilder.git
+git clone --recursive https://github.com/RedHatEMEA/demobuilder.git
 
 # Configure demobuilder
 cd demobuilder
