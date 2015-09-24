@@ -7,11 +7,12 @@ MY_HOSTNAME=atomic.example.com
 
 # rhel-7-server-optional-rpms is required for python-jinja2, required by ansible
 register_channels rhel-7-server-rpms rhel-7-server-extras-rpms rhel-7-server-optional-rpms
-https_proxy=$PROXY curl -o /etc/yum.repos.d/atomic-enterprise.repo https://mirror.openshift.com/atomic/mirror/.atomic-enterprise-early-2/atomic-enterprise.repo
+https_proxy=$PROXY curl -o /etc/yum.repos.d/atomic-enterprise.repo https://mirror.openshift.com/atomic/mirror/.atomic-enterprise-early-3/atomic-enterprise.repo
+sed -i -e 's!os/$!!' /etc/yum.repos.d/atomic-enterprise.repo
 
 yum_install atomic bind-utils cockpit cockpit-kubernetes docker-io git httpd-tools iptables-services lsof PyPAM python-requests net-tools nmap-ncat PyYAML strace tcpdump unzip
 
-AOSVERSION=3.0.1.100
+AOSVERSION=3.0.2.100
 
 for image in \
     registry.access.redhat.com/aos3/aos-deployer:v$AOSVERSION \
