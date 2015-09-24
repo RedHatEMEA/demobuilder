@@ -1,0 +1,5 @@
+name: Demobuilder image
+maintainers:
+- Jim Minter <jminter@redhat.com>
+description: |
+  Quickstart image for demobuilder developers

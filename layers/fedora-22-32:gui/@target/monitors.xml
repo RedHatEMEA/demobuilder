@@ -1,7 +1,7 @@
 <monitors version="1">
   <configuration>
     <clone>no</clone>
-    <output name="VNC-0">
+    <output name="default">
       <vendor>unknown</vendor>
       <product>unknown</product>
       <serial>unknown</serial>

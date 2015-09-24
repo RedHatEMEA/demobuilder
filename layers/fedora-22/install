@@ -4,9 +4,9 @@
 
 LAYER=$(basename $(dirname $0))
 
-ISO=isos/Fedora-Server-DVD-x86_64-21.iso
+ISO=isos/Fedora-Server-DVD-x86_64-22.iso
 if [ ! -e $ISO ]; then
-  curl -o $ISO $MIRROR_FEDORA/pub/fedora/linux/releases/21/Server/x86_64/iso/$(basename $ISO)
+  curl -o $ISO $MIRROR_FEDORA/pub/fedora/linux/releases/22/Server/x86_64/iso/$(basename $ISO)
 fi
 
 read_config $LAYER
