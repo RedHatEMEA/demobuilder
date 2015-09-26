@@ -68,3 +68,8 @@ if [ "$DEBUG" ]; then
 fi
 
 read_config
+
+QEMUKVM=/usr/bin/qemu-kvm
+if [ -x /usr/libexec/qemu-kvm ]; then
+  QEMUKVM=/usr/libexec/qemu-kvm
+fi

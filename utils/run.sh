@@ -15,7 +15,7 @@ trap stop EXIT
 TMPDIR=$(mktemp -d)
 VNC=${VNC:-:0}
 
-utils/sigwrap /usr/bin/qemu-kvm -nodefaults \
+utils/sigwrap $QEMUKVM -nodefaults \
   -cpu host \
   -smp $BUILD_CPUS \
   -m $BUILD_MEM \

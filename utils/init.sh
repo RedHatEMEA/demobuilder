@@ -9,7 +9,7 @@ fi
 FATAL=0
 
 if grep -q 'Red Hat Enterprise Linux' /etc/redhat-release ; then
-  for pkg in git libcdio libguestfs libvirt pyOpenSSL PyYAML qemu-kvm-rhev sqlite; do
+  for pkg in git libcdio libguestfs libvirt pyOpenSSL PyYAML sqlite; do
     if ! rpm -q $pkg &>/dev/null; then
       echo "FATAL: please install $pkg.  You probably need to run:"
       echo "sudo yum -y install $pkg"
@@ -17,6 +17,12 @@ if grep -q 'Red Hat Enterprise Linux' /etc/redhat-release ; then
       FATAL=1
     fi
   done
+  if ! (rpm -q qemu-kvm &>/dev/null || rpm -q qemu-kvm-rhev &>/dev/null); then
+    echo "FATAL: please install qemu-kvm[-rhev].  You probably need to run:"
+    echo "sudo yum -y install qemu-kvm[-rhev]"
+    echo
+    FATAL=1
+  fi
   for pkg in pigz python-bottle python-cherrypy; do
     if ! rpm -q $pkg &>/dev/null; then
       echo "FATAL: please install $pkg.  You probably need to run:"
@@ -26,11 +32,13 @@ if grep -q 'Red Hat Enterprise Linux' /etc/redhat-release ; then
       FATAL=1
     fi
   done
-  if ! python -c 'import apsw' &>/dev/null; then
-    echo "FATAL: please install python-apsw"
-    echo
-    FATAL=1
-  fi
+  for pkg in apsw backports.ssl; do
+    if ! python -c "import $pkg" &>/dev/null; then
+      echo "FATAL: please install python-$pkg"
+      echo
+      FATAL=1
+    fi
+  done
 else
   for pkg in git libcdio libguestfs libvirt pigz pyOpenSSL python-apsw python-bottle python-cherrypy PyYAML qemu-kvm sqlite; do
     if ! rpm -q $pkg &>/dev/null; then

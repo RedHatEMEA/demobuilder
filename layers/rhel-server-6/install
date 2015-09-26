@@ -24,7 +24,7 @@ for FILE in initrd.img vmlinuz; do
 done
 
 qemu-img create -q -f qcow2 -o compat=0.10 tmp/$LAYER.qcow2 ${LAYER_DISK}G
-utils/sigwrap /usr/bin/qemu-kvm -nodefaults \
+utils/sigwrap $QEMUKVM -nodefaults \
   -cpu host \
   -smp $BUILD_CPUS \
   -m $BUILD_MEM \
