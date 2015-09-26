@@ -12,8 +12,6 @@ yum_install bind-utils git httpd-tools iptables-services lsof openshift-master o
 
 OPENSHIFTVERSION=$(rpm -q openshift --qf '%{VERSION}')
 
-#    registry.access.redhat.com/openshift3/jenkins-1-rhel7:latest \
-
 for image in \
     registry.access.redhat.com/openshift3/ose-deployer:v$OPENSHIFTVERSION \
     registry.access.redhat.com/openshift3/ose-docker-builder:v$OPENSHIFTVERSION \
@@ -25,6 +23,7 @@ for image in \
     registry.access.redhat.com/jboss-eap-6/eap-openshift:latest \
     registry.access.redhat.com/jboss-webserver-3/tomcat7-openshift:latest \
     registry.access.redhat.com/jboss-webserver-3/tomcat8-openshift:latest \
+    registry.access.redhat.com/openshift3/jenkins-1-rhel7:latest \
     registry.access.redhat.com/openshift3/mongodb-24-rhel7:latest \
     registry.access.redhat.com/openshift3/mysql-55-rhel7:latest \
     registry.access.redhat.com/openshift3/nodejs-010-rhel7:latest \
