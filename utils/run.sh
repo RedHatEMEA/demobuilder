@@ -29,7 +29,7 @@ utils/sigwrap $QEMUKVM -nodefaults \
   -device virtio-serial-pci \
   -device virtserialport,chardev=chan0,name=com.redhat.rhevm.vdsm \
   -device virtserialport,chardev=chan1,name=org.qemu.guest_agent.0 \
-  -device vmware-svga \
+  -device cirrus-vga \
   -vnc $VNC \
   -usbdevice tablet \
   &>/dev/null &
