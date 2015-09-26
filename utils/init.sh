@@ -9,7 +9,7 @@ fi
 FATAL=0
 
 if grep -q 'Red Hat Enterprise Linux' /etc/redhat-release ; then
-  for pkg in git libcdio libguestfs libvirt pyOpenSSL PyYAML qemu-kvm sqlite; do
+  for pkg in git libcdio libguestfs libvirt pyOpenSSL PyYAML qemu-kvm-rhev sqlite; do
     if ! rpm -q $pkg &>/dev/null; then
       echo "FATAL: please install $pkg.  You probably need to run:"
       echo "sudo yum -y install $pkg"
