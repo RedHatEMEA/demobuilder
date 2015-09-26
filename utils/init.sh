@@ -8,14 +8,39 @@ fi
 
 FATAL=0
 
-for pkg in git libcdio libguestfs libvirt pigz pyOpenSSL python-apsw python-bottle python-cherrypy PyYAML qemu-kvm sqlite; do
-  if ! rpm -q $pkg &>/dev/null; then
-    echo "FATAL: please install $pkg.  You probably need to run:"
-    echo "sudo dnf -y install $pkg"
+if grep -q 'Red Hat Enterprise Linux' /etc/redhat-release ; then
+  for pkg in git libcdio libguestfs libvirt pyOpenSSL PyYAML qemu-kvm sqlite; do
+    if ! rpm -q $pkg &>/dev/null; then
+      echo "FATAL: please install $pkg.  You probably need to run:"
+      echo "sudo yum -y install $pkg"
+      echo
+      FATAL=1
+    fi
+  done
+  for pkg in pigz python-bottle python-cherrypy; do
+    if ! rpm -q $pkg &>/dev/null; then
+      echo "FATAL: please install $pkg.  You probably need to run:"
+      echo "sudo rpm -i https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
+      echo "sudo yum -y install $pkg"
+      echo
+      FATAL=1
+    fi
+  done
+  if ! python -c 'import apsw' &>/dev/null; then
+    echo "FATAL: please install python-apsw"
     echo
     FATAL=1
   fi
-done
+else
+  for pkg in git libcdio libguestfs libvirt pigz pyOpenSSL python-apsw python-bottle python-cherrypy PyYAML qemu-kvm sqlite; do
+    if ! rpm -q $pkg &>/dev/null; then
+      echo "FATAL: please install $pkg.  You probably need to run:"
+      echo "sudo dnf -y install $pkg"
+      echo
+      FATAL=1
+    fi
+  done
+fi
 
 for svc in libvirtd; do
   if ! pidof $svc &>/dev/null; then
