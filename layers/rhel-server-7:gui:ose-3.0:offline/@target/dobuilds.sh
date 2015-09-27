@@ -5,6 +5,8 @@ wait_build() {
     oc get builds | grep "$1.*Complete" && return 0
     sleep 10
   done
+  oc get build "$1"
+  oc build-logs "$1"
   return 1
 }
 
