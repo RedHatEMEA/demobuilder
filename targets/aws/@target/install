@@ -1,0 +1,5 @@
+#!/bin/bash -ex
+
+. vm-functions
+
+rm /root/.ssh/authorized_keys
