@@ -23,9 +23,11 @@ sudo systemctl start libvirtd.service
 sudo firewall-cmd --permanent --zone=trusted --add-interface=virbr0
 sudo firewall-cmd --reload
 
-# Clone repository
+# Fork https://github.com/RedHatEMEA/demobuilder into your own github account
+
+# Clone your forked repository
 cd $HOME
-git clone --recursive https://github.com/RedHatEMEA/demobuilder.git
+git clone --recursive https://github.com/yourgithubid/demobuilder.git
 
 # Configure demobuilder
 cd demobuilder
