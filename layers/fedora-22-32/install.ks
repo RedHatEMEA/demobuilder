@@ -24,6 +24,7 @@ qemu-guest-agent
 
 %post
 exec &>/dev/console
+tput csr 0
 set -x
 
 eval $(tr ' ' '\n' < /proc/cmdline | grep =)
