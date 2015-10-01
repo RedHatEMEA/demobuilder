@@ -2,6 +2,11 @@
 
 . vm-functions
 
-useradd test
-echo test | passwd --stdin test
-echo 'test ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers
+register_channels rhel-7-server-rpms rhel-7-server-rh-common-rpms
+
+yum_install cloud-init
+
+systemctl enable cloud-init.service
+
+grubby --update-kernel=ALL --remove-args=quiet
+grubby --update-kernel=ALL --args=console=ttyS0
