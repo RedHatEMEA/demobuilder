@@ -24,6 +24,6 @@ rm -rf tmp/$BASE:$TARGET.qcow2 tmp/$BASE:$TARGET.raw
 mv tmp/$BASE:$TARGET.vmdk releases/$BASE:$TARGET.vmdk
 
 echo \$ aws s3 cp releases/$BASE:$TARGET.vmdk s3://demobuilder/$BASE:$TARGET.vmdk
-echo \$ aws ec2 import-image --disk-containers "UserBucket={S3Bucket=demobuilder,S3Key=$BASE:$TARGET.vmdk}"
+echo \$ aws ec2 import-image --disk-containers \'UserBucket={S3Bucket=demobuilder,S3Key=$BASE:$TARGET.vmdk}\'
 echo \$ aws ec2 describe-import-image-tasks
 echo \$ aws ec2 cancel-import-task --import-task-id ...
