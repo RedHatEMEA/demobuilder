@@ -103,6 +103,9 @@ def main():
 
     args = parse_args()
 
+    config = yaml.load(open("config.yml").read())
+    dbpath = config["config"].get("dbpath", "webproxycache.db")
+
     for apiport in range(1024, 65536):
         try:
             apiserver = WSGIRefServer(args.ip, apiport)
@@ -113,7 +116,7 @@ def main():
 
     for cacheport in range(apiport + 1, 65536):
         try:
-            cacheserver = webproxycache.make_server(args.ip, cacheport)
+            cacheserver = webproxycache.make_server(args.ip, cacheport, dbpath)
             break
 
         except socket.error:

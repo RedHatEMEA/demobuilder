@@ -40,7 +40,7 @@ pushd backports.ssl-0.0.7
 python setup.py install
 popd
 
-COMMIT=8863bb11468fca4387649c3bd31fa3e5c069ada4
+COMMIT=7d19ce40efac7aba5eb94e4a3815d4e3a9004bc2
 https_proxy=$PROXY curl -sLO https://github.com/RedHatEMEA/webproxycache/archive/$COMMIT.zip
 unzip -q $COMMIT.zip
 mv webproxycache-$COMMIT /usr/local/webproxycache
