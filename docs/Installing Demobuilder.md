@@ -2,7 +2,15 @@
 
 ### Prerequisites
 
-- Fedora 22 on a physical machine.
+- Fedora 22 on a physical or virtual machine.
+
+### For Mac users
+- you have to use VMWare Fusion as this is the only hypervisor with \
+nested virtualisation that works. VirtualBox and Parallels do not work.
+- Provide 8GB of memory
+- Provide 50GB for the hard disk
+- Enable hypervisor applications in this virtual machine in Settings > \
+Processors & Memory > Advanced Options 
 
 ### Installation
 
@@ -23,9 +31,11 @@ sudo systemctl start libvirtd.service
 sudo firewall-cmd --permanent --zone=trusted --add-interface=virbr0
 sudo firewall-cmd --reload
 
-# Clone repository
+# Fork https://github.com/RedHatEMEA/demobuilder into your own github account
+
+# Clone your forked repository
 cd $HOME
-git clone --recursive https://github.com/RedHatEMEA/demobuilder.git
+git clone --recursive https://github.com/yourgithubid/demobuilder.git
 
 # Configure demobuilder
 cd demobuilder
