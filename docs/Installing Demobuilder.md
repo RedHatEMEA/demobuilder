@@ -23,8 +23,8 @@ sudo dnf -y install git libcdio libguestfs libvirt pigz pyOpenSSL \
 sudo dnf -y update
 
 # Ensure required services are started
-# If you get "Failed to execute operation: Access denied" you've hit a known bug
-# run sudo systemctl daemon-reexec to fix this, then re-run the commands below.
+# If you get "Failed to execute operation: Access denied" you may have hit
+# bz1224211.  Run sudo systemctl daemon-reexec and retry.
 sudo systemctl enable libvirtd.service
 sudo systemctl start libvirtd.service
 
