@@ -20,7 +20,6 @@ zerombr
 iptables-services
 rsync
 qemu-guest-agent
-yum-utils
 %end
 
 %post
@@ -45,10 +44,9 @@ curl -so vm-functions http://$APILISTENER/static/utils/vm-functions
 . ./vm-functions
 
 systemctl enable iptables.service
-systemctl disable kdump.service
-systemctl disable rhnsd.service
+systemctl enable network.service
 
-register_channels rhel-7-server-rpms
+register_channels
 yum_remove 'NetworkManager*' firewalld
 yum_update
 cleanup
@@ -58,7 +56,5 @@ rm vm-functions
 grubby --update-kernel=ALL --args=quiet
 grubby --update-kernel=ALL --args=net.ifnames=0
 grubby --update-kernel=ALL --remove-args=console=ttyS0,115200n8
-grubby --update-kernel=ALL --remove-args=crashkernel=auto
-grubby --update-kernel=DEFAULT --remove-args=systemd.debug
 
 %end

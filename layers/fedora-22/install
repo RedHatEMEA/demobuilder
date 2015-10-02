@@ -4,10 +4,9 @@
 
 LAYER=$(basename $(dirname $0))
 
-ISO=isos/rhel-server-6.7-x86_64-dvd.iso
+ISO=isos/Fedora-Server-DVD-x86_64-22.iso
 if [ ! -e $ISO ]; then
-  echo "$0: please download $(basename $ISO) and place it in $ISO"
-  exit 1
+  curl -o $ISO $MIRROR_FEDORA/pub/fedora/linux/releases/22/Server/x86_64/iso/$(basename $ISO)
 fi
 
 read_config $LAYER

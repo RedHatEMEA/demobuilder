@@ -1,0 +1,14 @@
+#!/bin/bash -ex
+
+. vm-functions
+
+register_channels rhel-7-server-rpms rhel-7-server-rh-common-rpms
+
+yum_install cloud-init
+
+systemctl enable cloud-init.service
+
+cp 99_demobuilder.cfg /etc/cloud/cloud.cfg.d
+
+grubby --update-kernel=ALL --remove-args=quiet
+grubby --update-kernel=ALL --args=console=ttyS0

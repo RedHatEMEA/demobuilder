@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<title>OpenShift 3.0.2 offline image with demo</title>
+
+<xmp style="display:none;">
+## Description
+
+This image provides an all-in-one instance of OpenShift 3.0.2, including the
+master and node components, examples, GUI and web browser.  All S2I builder
+images are also included, and source code and dependencies for all examples
+apps is pre-downloaded, so no nothing extra is needed and the image can be
+run disconnected from the internet.  This image also includes all the
+components necessary for an OpenShift 3.0.2 demo.
+
+This image is heavily modified and additionally includes JBoss Developer
+Studio.  It is intended for SAs in order to demo the full OpenShift end-user
+experience.
+
+<!-- HEADER -->
+
+Run the VM and open the GUI.  Log in as *demo* and set your password.
+
+## OpenShift walk-through
+
+Follow in order the steps below to walk through some basic capabilities of
+OpenShift.
+
+#### Browse the OpenShift web user interface
+
+1. Double-click the *Firefox Web Browser* icon on the desktop.  The OpenShift
+   web user interface will open on the login page.
+1. Enter your username (`demo`) and the password that you set at login time, and
+   click *Log In*.
+1. Click a project workspace (e.g. *demo*).
+
+#### Create an application hosted on OpenShift from source code
+
+These steps demonstrate how to import a simple application into OpenShift from a
+git source tree, and have OpenShift build and deploy the application.  The steps
+demonstrate how easy it is to get started with OpenShift.
+
+1. Click the *Add to Project* button.
+1. Click the example URL of a Git source code repository,
+   `git://openshift.example.com/github.com/openshift/nodejs-ex`, to populate the
+   *Repository URL* box and click *Next*.
+1. Click the *nodejs* builder image.
+1. Scroll down and click *Create*.
+1. Wait for the example application to be cloned, built and deployed.  It will
+   take up to a minute or two for the build process to begin automatically and
+   then complete.
+1. Middle-click the application URL
+   (*http://nodejs-ex.demo.apps.example.com*) to launch the application in a new
+   tab.
+
+#### Create an application hosted on OpenShift from a pre-defined template
+
+These steps demonstrate how OpenShift can build and deploy a (possibly
+multi-component) traditional or modern application from a pre-defined template.
+This might be done by a developer, tester or operator to quickly set up a
+dedicated application instance according to its template, using OpenShift's
+self-service portal.
+
+1. Click the *Add to Project* button.
+1. Under *Instant Apps*, click *monster*.
+1. Scroll down and click *Create*.
+1. Wait for the example application to be cloned, built and deployed.  It will
+   take up to a minute or two for the build process to begin automatically and
+   then complete.
+1. Middle-click the application URL
+   (*http://monster.demo.apps.example.com*) to launch the application in a new
+   tab.
+
+#### Commit a source code change to an application hosted on OpenShift
+
+These steps demonstrate how a developer could make changes to their application
+source code and quickly see those changes replicated in their own application
+instance running on OpenShift.
+
+1. Make a small change to the source code.
+   1. Double-click the *Red Hat JBoss Developer Studio 8.1.0.GA* icon on the
+      desktop.
+   1. Press `CTRL + SHIFT + R` to open the Open Resource window, and type
+      `home.html` to select
+      *monster/src/main/webapp/resources/templates/desktop/home.html*.  Click
+      *Open*.
+   1. Make a sample change to the text which is visible on the Ticket Monster
+      home page, then click *File/Save*.
+1. Commit and push the source code.
+   1. Click the *Link with Editor* button in the *Project* window to find
+      *home.html* in the *Project* window.
+   1. Right-click *home.html*, and select *Team/Commit...*.
+   1. Enter a git commit message (e.g. "minor change"), ensure
+      *src/main/webapp/resources/templates/desktop/home.html* is ticked, then
+      click *Commit and Push*.
+   1. A message should be shown including the text "Triggering OSE3 build...".
+      Click *OK*.
+1. See the change in the application.
+   1. Return to Firefox.  OpenShift will clone, built and deploy a new version
+      of the Ticket Monster application.  It should not take long.
+   1. Middle-click the application URL
+      (*http://monster.demo.apps.example.com*), and the change you made should
+      be visible in OpenShift.
+
+#### Debug an application hosted on OpenShift
+
+These steps demonstrate how a developer could debug the source code of an
+application running on OpenShift from their IDE.
+
+1. Set a breakpoint.
+   1. Return to JBoss Developer Studio.
+   1. Press `CTRL + SHIFT + R` to open the Open Resource window, and type
+      `BookingService.java` to select
+      *monster/src/main/java/org/jboss/examples/ticketmonster/rest/BookingService.java*.
+      Click *Open*.
+   1. Scroll down to line 124, `public Response createBooking...`.  Right-click
+      in the blue bar to the left of the text and select *Toggle Breakpoint* to
+      set a breakpoint on the function.
+1. Connect to the application debugger port.
+   1. Now double-click the Terminal icon on the desktop.
+   1. Type `oc login` and press Enter to login to OpenShift.
+   1. Enter your username (`demo`) and press Enter.
+   1. Enter the password that you set at login time and press Enter.
+   1. Type `oc get pods` and find the name of the pod hosting the Ticket monster
+      application.  It will be of the form `monster-2-{randomid}` and will be in
+      state `Running`.
+   1. Port-forward the pod's debugger port locally.  Type `oc port-forward -p
+      monster-2-{randomid} 8787`.
+1. Start debugging.
+   1. Return to JBoss Developer Studio.
+   1. Click *Run/Debug Configurations...*.
+   1. Double-click *Remote Java Application* in the list on the left.
+   1. Change the port number on the right from `8000` to `8787` and click
+      *Debug*.
+1. Trigger the breakpoint.
+   1. Return to Firefox and the Ticket Monster application.
+   1. Follow the application to buy a ticket.
+   1. When you click *Checkout*, the breakpoint will be triggered.  You will be
+      taken back to JBoss Developer Studio, and it will ask to open the Debug
+      perspective.  Click *Yes*.
+1. Examine the state of the application.
+   1. In the *Variables* window at the top right of the screen, you will be able
+      to see details of the booking you just entered.
+   1. Expand the variable *bookingRequest* and right-click *email*.  Select
+      *Change Value...* to change the application state in OpenShift.
+   1. Enter a different value in the box, and click *OK*.
+   1. Click *Run/Resume* to resume flow of the application.
+   1. Return to Firefox and click *Bookings*.  You should see that you
+      successfully modified the e-mail address of your booking through the
+      debugger.
+
+#### Rollback an application component
+
+These steps demonstrate how a developer or operator could rollback an unwanted
+change to an application component running on OpenShift.
+
+1. Double-click the Terminal icon on the desktop.
+1. Type `oc rollback monster-1` and press Enter.
+1. Return to Firefox and wait for OpenShift to rollback the application.
+1. Navigate to the application front page, and press `CTRL + SHIFT + R` to
+   refresh it.  In due course you should find that the change you made earlier
+   has been reverted.
+
+#### Scale an application component
+
+These steps demonstrate how an operator could manually scale up or down the
+number of instances of an application component running on OpenShift.
+
+1. Double-click the Terminal icon on the desktop.
+1. Type `oc scale --replicas=2 dc monster` and press Enter.
+1. Return to Firefox.  You should see that there are now two Ticket Monster
+   pods.
+
+#### Reset the demo project
+
+1. Double-click the Terminal icon on the desktop.
+1. Type `oc delete all --all` to reset your project.
+1. Type `exit` to close the terminal window.
+
+#### Use the OpenShift ("oc") command line tool as the system:admin user
+
+1. Double-click the Terminal icon on the desktop.
+1. Type `sudo -i` and press Enter to change to the root user.
+1. Type oc commands such as `oc status` and `oc get pods` as appropriate.
+1. Type `logout` to change back to the demo user.
+1. Type `exit` to close the terminal window.
+
+## More information
+
+- [OpenShift product documentation](https://access.redhat.com/documentation/en-US/OpenShift_Enterprise/)
+- [OpenShift Enterprise](https://enterprise.openshift.com/)
+- [OpenShift Training](https://github.com/openshift/training)
+- [OpenShift Origin](http://www.openshift.org/)
+
+<!-- FOOTER -->
+
+## VM image maintainer(s)
+
+- Jim Minter [jminter@redhat.com](mailto:jminter@redhat.com)
+
+## Please contribute to this demo!
+
+Questions, comments, bug reports, feature requests, patches, pull requests and
+cake are all welcomed on [GitHub](http://github.com/RedHatEMEA/demobuilder) or
+to [jminter@redhat.com](mailto:jminter@redhat.com).
+
+If sending a bug report, please include the contents of
+[/etc/demobuilder](/etc/demobuilder), as this will indicate the builds that were
+used to create the VM image.
+</xmp>
+
+<script src="strapdown/v/0.2/strapdown.js"></script>
+<script type="text/javascript">
+var spans = document.getElementsByTagName('span');
+for (var i = 0; i < spans.length; i++) {
+  spans[i].className = "pln"
+}
+</script>
+
+</html>

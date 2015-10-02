@@ -2,9 +2,9 @@
   <configuration>
     <clone>no</clone>
     <output name="default">
-      <vendor>???</vendor>
-      <product>0x0000</product>
-      <serial>0x00000000</serial>
+      <vendor>unknown</vendor>
+      <product>unknown</product>
+      <serial>unknown</serial>
       <width>1024</width>
       <height>768</height>
       <rate>60</rate>
@@ -14,6 +14,7 @@
       <reflect_x>no</reflect_x>
       <reflect_y>no</reflect_y>
       <primary>yes</primary>
+      <presentation>no</presentation>
     </output>
   </configuration>
 </monitors>

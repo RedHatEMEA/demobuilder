@@ -23,7 +23,11 @@ register_channels() {
     yum-config-manager --disable &>/dev/null
 
   else
-    grep -q ^proxy= /etc/yum.conf || echo proxy=$PROXY >>/etc/yum.conf
+    if [ -x /usr/bin/dnf ]; then
+      grep -q ^proxy= /etc/dnf/dnf.conf || echo proxy=$PROXY >>/etc/dnf/dnf.conf
+    else
+      grep -q ^proxy= /etc/yum.conf || echo proxy=$PROXY >>/etc/yum.conf
+    fi
   fi
 
   if [ -e /etc/fedora-release ]; then
@@ -32,7 +36,7 @@ register_channels() {
     done
   fi
 
-  for CHANNEL in $*; do
+  for CHANNEL in "$@"; do
     if [ -n "$RHN_USER" -a -x /sbin/subscription-manager ]; then
       yum-config-manager --enable $CHANNEL &>/dev/null
     else
@@ -42,15 +46,27 @@ register_channels() {
 }
 
 yum_update() {
-  /usr/bin/python -u /usr/bin/yum -y update
+  if [ -x /usr/bin/dnf ]; then
+    /usr/bin/python -u /usr/bin/dnf -y update
+  else
+    /usr/bin/python -u /usr/bin/yum -y update
+  fi
 }
 
 yum_remove() {
-  /usr/bin/python -u /usr/bin/yum -y remove $*
+  if [ -x /usr/bin/dnf ]; then
+    /usr/bin/python -u /usr/bin/dnf -y remove "$@"
+  else
+    /usr/bin/python -u /usr/bin/yum -y remove "$@"
+  fi
 }
 
 yum_install() {
-  /usr/bin/python -u /usr/bin/yum -y install $*
+  if [ -x /usr/bin/dnf ]; then
+    /usr/bin/python -u /usr/bin/dnf -y install "$@"
+  else
+    /usr/bin/python -u /usr/bin/yum -y install "$@"
+  fi
 }
 
 docker_pull() {
@@ -73,9 +89,17 @@ cleanup() {
   # running kernel, so must use rpm -e
   [ -n "$(rpm -q kernel --last | tail -n +2 | cut -d' ' -f1)" ] && rpm -e $(rpm -q kernel --last | tail -n +2 | cut -d' ' -f1)
 
-  /usr/bin/python -u /usr/bin/yum clean all || true
+  if [ -x /usr/bin/dnf ]; then
+    /usr/bin/python -u /usr/bin/dnf clean all || true
+  else
+    /usr/bin/python -u /usr/bin/yum clean all || true
+  fi
   rm -f /etc/yum.repos.d/auto-*.repo
-  sed -i -e '/^proxy=/ d;' /etc/yum.conf
+  if [ -x /usr/bin/dnf ]; then
+    sed -i -e '/^proxy=/ d;' /etc/dnf/dnf.conf
+  else
+    sed -i -e '/^proxy=/ d;' /etc/yum.conf
+  fi
 
   if [ -n "$RHN_USER" -a -x /sbin/subscription-manager -a -e /etc/pki/consumer/cert.pem ]; then
     subscription-manager unregister || true

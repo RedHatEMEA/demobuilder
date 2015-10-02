@@ -40,3 +40,5 @@ sed -i -e '/Defaults.*requiretty/ d;' /etc/sudoers
 
 su vagrant -c "mkdir -m 0700 /home/vagrant/.ssh; https_proxy=$PROXY curl -sLo /home/vagrant/.ssh/authorized_keys https://github.com/mitchellh/vagrant/raw/master/keys/vagrant.pub; chmod 0600 /home/vagrant/.ssh/authorized_keys"
 chcon system_u:object_r:ssh_home_t:s0 /home/vagrant/.ssh /home/vagrant/.ssh/authorized_keys
+
+mkinitrd --with=ahci --force /boot/initramfs-$(uname -r).img $(uname -r)

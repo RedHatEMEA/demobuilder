@@ -1,0 +1,8 @@
+#!/bin/bash -ex
+
+. vm-functions
+
+register_channels
+yum_install git libcdio libguestfs libvirt pigz pyOpenSSL python-apsw python-bottle python-cherrypy PyYAML qemu-kvm
+
+systemctl enable libvirtd.service
