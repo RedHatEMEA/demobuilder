@@ -5,7 +5,7 @@
 - Fedora 22 or RHEL7, on a physical or virtual machine (with nested
   virtualisation enabled).
 
-If using a virtual machine, suggested minimum specs are 8GB RAM and 50GB disk.
+If using a virtual machine, suggested minimum specs are 8GB RAM and 50GB disk. 
 
 Note for OSX users: demobuilder is known to work with nested virtualisation in
 VMware Fusion; VirtualBox and Parallels have been tried unsuccessfully (so far).
@@ -15,6 +15,12 @@ Enable hypervisor applications in this virtual machine.
 ### Installation
 
 ```bash
+# Install Red Hat certificates
+# Download the two certificates to your Fedora 22 machine/vm from https://mojo.redhat.com/docs/DOC-1049591
+sudo mv redhat.com.crt /etc/pki/ca-trust/source/anchors
+sudo mv redhat.com.engineering-services.crt /etc/pki/ca-trust/source/anchors
+sudo update-ca-trust
+
 # Install required packages
 sudo dnf -y install git libcdio libguestfs libvirt pigz pyOpenSSL \
   python-bottle PyYAML qemu-kvm python-cherrypy python-apsw
