@@ -10,5 +10,8 @@ systemctl enable cloud-init.service
 
 cp 99_demobuilder.cfg /etc/cloud/cloud.cfg.d
 
+cp fix-lib-modules.sh /usr/local/libexec
+cp fix-lib-modules.service /lib/systemd/system
+systemctl enable fix-lib-modules
+
 grubby --update-kernel=ALL --remove-args=quiet
-grubby --update-kernel=ALL --args=console=ttyS0
