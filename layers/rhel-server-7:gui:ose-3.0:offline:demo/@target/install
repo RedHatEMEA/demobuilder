@@ -12,6 +12,9 @@ for image in \
   docker_pull $image
 done
 
+oadm new-project prod --admin=demo
+oc policy add-role-to-group system:image-puller system:serviceaccounts:prod -n demo
+
 mkdir -p /home/demo/.m2
 cp settings.xml /home/demo/.m2
 sed -i -e "/<proxies>/ a \
@@ -30,7 +33,7 @@ mv com.redhat.importer_1.0.0.201509031446.jar /usr/local/jbdevstudio/studio/plug
 
 yum_install xorg-x11-server-Xvfb
 
-COMMIT=1af79a7192d32efc6630fc5b960c07baa0fdb16f
+COMMIT=4d10b1c93e0095180a5edce77ba728097ca153bd
 https_proxy=$PROXY curl -sLO https://github.com/jim-minter/ose3-demos/archive/$COMMIT.zip
 unzip -q $COMMIT.zip
 mv ose3-demos-$COMMIT/* /home/demo
@@ -68,6 +71,7 @@ EOF
 done
 
 oc create -f /home/demo/git/monster/openshift/ticket-monster-template.yaml -n openshift
+oc create -f /home/demo/git/monster/openshift/ticket-monster-prod-template.yaml -n openshift
 
 su - demo -c "xvfb-run /usr/local/jbdevstudio/jbdevstudio -data workspace $BUILD"
 

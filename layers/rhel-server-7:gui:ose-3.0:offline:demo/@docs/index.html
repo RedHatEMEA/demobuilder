@@ -160,19 +160,49 @@ change to an application component running on OpenShift.
    refresh it.  In due course you should find that the change you made earlier
    has been reverted.
 
+#### Promote an application component without rebuild
+
+These steps demonstrate how an operator could promote an application component
+into a subsequent environment (e.g. production) without rebuilding the
+component.
+
+1. Prepare the *prod* project to host the application component.
+   1. In Firefox, select the *prod* project.
+   1. Click the *Add to Project* button.
+   1. Under *Instant Apps*, click *monster-prod*.
+   1. Scroll down and click *Create*.
+   1. Wait for the database pod to be deployed.  It will take up to a minute or
+      two to complete.
+1. Tag the the oldest version of the application component in order to deploy it
+   into the *prod* project.
+   1. Double-click the Terminal icon on the desktop.
+   1. Type `oc describe imagestream monster` and press Enter.
+   1. Choose the oldest of the built docker images (it'll look like
+      *monster@sha256:[0-9a-f]{64}*).
+   1. Type `oc tag <tag> monster:prod` and press Enter.
+   1. Return to Firefox and wait for OpenShift to deploy the application into
+      the prod project.
+1. Repeat the process with a newer version of the application component.  Watch
+   the Firefox window to see OpenShift automatically carrying out rolling
+   upgrade of the application component in the *prod* project.
+
 #### Scale an application component
 
 These steps demonstrate how an operator could manually scale up or down the
 number of instances of an application component running on OpenShift.
 
 1. Double-click the Terminal icon on the desktop.
+1. Type `oc project prod` and press Enter.
 1. Type `oc scale --replicas=2 dc monster` and press Enter.
 1. Return to Firefox.  You should see that there are now two Ticket Monster
    pods.
 
-#### Reset the demo project
+#### Reset the demo and prod projects
 
 1. Double-click the Terminal icon on the desktop.
+1. Type `oc project prod` and press Enter.
+1. Type `oc delete all --all` to reset your project.
+1. Type `oc project demo` and press Enter.
 1. Type `oc delete all --all` to reset your project.
 1. Type `exit` to close the terminal window.
 
