@@ -7,6 +7,7 @@ import socket
 import subprocess
 import sys
 import tempfile
+import time
 
 
 def get_service_endpoint(url):
@@ -19,10 +20,19 @@ def resolve_values(t, x):
     return re.sub("\${([^}]+)}", lambda m: parameters[m.group(1)], x)
 
 
-def system(cmd, check=True, **kwargs):
+def system(cmd, retry=1, **kwargs):
     print >>sys.stderr, "+ " + cmd
-    if check:
-        subprocess.check_call(cmd, shell=True, **kwargs)
+    if retry:
+        for i in range(1, retry + 1):
+            try:
+                subprocess.check_call(cmd, shell=True, **kwargs)
+                break
+            except subprocess.CalledProcessError:
+                print >>sys.stderr, "[failed, retry %u/%u]" % (i, retry)
+                if i == retry:
+                    raise
+                else:
+                    time.sleep(10)
     else:
         subprocess.call(cmd, shell=True, **kwargs)
 
@@ -86,15 +96,15 @@ def download_referenced_images_imagestreams(repo):
         if i != newi:
             if os.path.exists(i.split("/", 1)[1].split(":")[0]):
                 system("docker build -t " + newi + " " + i.split("/", 1)[1].split(":")[0])
-                system("docker push " + newi)
+                system("docker push " + newi, 5)
                 system("docker rmi " + newi)
-                system("docker rmi " + i, False)
+                system("docker rmi " + i, 0)
             else:
                 system("docker pull " + i)
                 system("docker tag " + i + " " + newi)
-                system("docker push " + newi)
+                system("docker push " + newi, 5)
                 system("docker rmi " + newi)
-                system("docker rmi " + i, False)
+                system("docker rmi " + i, 0)
 
     for im in oapi.get("/images")._items:
         oapi.delete("/images/" + im.metadata.name)
