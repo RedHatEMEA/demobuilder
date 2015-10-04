@@ -19,10 +19,10 @@ for image in \
     registry.access.redhat.com/openshift3/ose-haproxy-router:v$OPENSHIFTVERSION \
     registry.access.redhat.com/openshift3/ose-pod:v$OPENSHIFTVERSION \
     registry.access.redhat.com/openshift3/ose-sti-builder:v$OPENSHIFTVERSION \
-    registry.access.redhat.com/jboss-amq-6/amq-openshift:latest \
-    registry.access.redhat.com/jboss-eap-6/eap-openshift:latest \
-    registry.access.redhat.com/jboss-webserver-3/tomcat7-openshift:latest \
-    registry.access.redhat.com/jboss-webserver-3/tomcat8-openshift:latest \
+    registry.access.redhat.com/jboss-amq-6/amq-openshift:6.2 \
+    registry.access.redhat.com/jboss-eap-6/eap-openshift:6.4 \
+    registry.access.redhat.com/jboss-webserver-3/tomcat7-openshift:3.0 \
+    registry.access.redhat.com/jboss-webserver-3/tomcat8-openshift:3.0 \
     registry.access.redhat.com/openshift3/jenkins-1-rhel7:latest \
     registry.access.redhat.com/openshift3/mongodb-24-rhel7:latest \
     registry.access.redhat.com/openshift3/mysql-55-rhel7:latest \
