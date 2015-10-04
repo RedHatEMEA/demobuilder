@@ -15,3 +15,5 @@ cp fix-lib-modules.service /lib/systemd/system
 systemctl enable fix-lib-modules
 
 grubby --update-kernel=ALL --remove-args=quiet
+
+[ -e /home/demo ] && passwd -l demo
