@@ -94,6 +94,7 @@ cleanup() {
   else
     /usr/bin/python -u /usr/bin/yum clean all || true
   fi
+  rm -rf /var/cache/yum/*
   rm -f /etc/yum.repos.d/auto-*.repo
   if [ -x /usr/bin/dnf ]; then
     sed -i -e '/^proxy=/ d;' /etc/dnf/dnf.conf
