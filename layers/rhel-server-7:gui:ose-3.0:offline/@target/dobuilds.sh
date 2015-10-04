@@ -3,6 +3,7 @@
 wait_build() {
   for ((i = 0; i < 60; i++)); do
     oc get builds | grep "$1.*Complete" && return 0
+    oc get builds | grep "$1.*Failed" && break
     sleep 10
   done
   oc get build "$1"
