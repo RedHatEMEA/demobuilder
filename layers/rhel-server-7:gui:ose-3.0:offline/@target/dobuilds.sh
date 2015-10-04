@@ -23,3 +23,7 @@ for template in $(oc get templates -n openshift | sed 1d | awk '{print $1;}'); d
   oc delete all --all &>/dev/null
 done
 oc project default &>/dev/null
+
+for i in $(oc get images | grep sha256 | awk '{print $1;}'); do
+  oc delete image $i
+done
