@@ -126,6 +126,8 @@ def download_git_repos():
     for uri in uris:
         print uri
         root = "/var/lib/git/" + uri.split("://", 1)[1]
+        if uri == "https://github.com/openshift/cakephp-ex.git":
+            uri = "https://github.com/jim-minter/cakephp-ex.git"
         if not os.path.exists(root):
             system("git clone --bare " + uri + " " + root)
 
