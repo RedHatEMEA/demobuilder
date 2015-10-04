@@ -44,7 +44,7 @@ for i in /home/demo/git/*; do
   git init
   git add -A
   git commit -m 'Initial commit'
-  git remote add origin git://$HOSTNAME/demo/$(basename $i)
+  git remote add origin git://localhost/demo/$(basename $i)
   git push -u origin master
 
   chown -R demo:demo $i
@@ -61,7 +61,7 @@ for i in /home/demo/git/*; do
 #!/bin/bash
 
 echo 'Triggering OSE3 build...'
-curl -sX POST 'https://$HOSTNAME:8443/osapi/v1beta3/namespaces/demo/buildconfigs/$(basename $i)/webhooks/secret/generic'
+curl -sX POST "https://\$(cat /proc/sys/kernel/hostname):8443/osapi/v1beta3/namespaces/demo/buildconfigs/$(basename $i)/webhooks/secret/generic"
 EOF
   chmod 0755 /var/lib/git/demo/$(basename $i)/hooks/post-receive
   chown -R nobody:nobody /var/lib/git
