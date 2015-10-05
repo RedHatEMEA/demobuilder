@@ -31,7 +31,14 @@ OpenShift.
    web user interface will open on the login page.
 1. Enter your username (`demo`) and the password that you set at login time, and
    click *Log In*.
-1. Click a project workspace (e.g. *demo*).
+
+#### Log in to OpenShift via the CLI
+
+1. Now double-click the Terminal icon on the desktop.
+1. Type `oc login` and press Enter to login to OpenShift.
+1. Enter your username (`demo`) and press Enter.
+1. Enter the password that you set at login time and press Enter.
+1. Type `exit` to close the terminal window.
 
 #### Create an application hosted on OpenShift from source code
 
@@ -39,18 +46,24 @@ These steps demonstrate how to import a simple application into OpenShift from a
 git source tree, and have OpenShift build and deploy the application.  The steps
 demonstrate how easy it is to get started with OpenShift.
 
+1. Click the *New Project* button.
+1. Type `test` in the *Name* box and click *Create*.
 1. Click the *Add to Project* button.
-1. Click the example URL of a Git source code repository,
-   `git://openshift.example.com/github.com/openshift/nodejs-ex`, to populate the
-   *Repository URL* box and click *Next*.
-1. Click the *nodejs* builder image.
+1. Type `git://openshift.example.com/github.com/openshift/nodejs-ex#master` in
+   the *Repository URL* box and click *Next*.
+1. Select the *nodejs:0.10* builder image.
 1. Scroll down and click *Create*.
 1. Wait for the example application to be cloned, built and deployed.  It will
    take up to a minute or two for the build process to begin automatically and
    then complete.
 1. Middle-click the application URL
-   (*http://nodejs-ex.demo.apps.example.com*) to launch the application in a new
+   (*http://nodejs-ex-demo.apps.example.com*) to launch the application in a new
    tab.
+1. Click the *OPENSHIFT ENTERPRISE* logo in the top left of the OpenShift web
+   user interface to return to the *Projects* list.
+1. Click the *Delete Project* icon next to the *test* project, then click
+   *Delete this project*.  IMPORTANT: do not delete the *demo* or *prod*
+   projects.
 
 #### Create an application hosted on OpenShift from a pre-defined template
 
@@ -60,14 +73,18 @@ This might be done by a developer, tester or operator to quickly set up a
 dedicated application instance according to its template, using OpenShift's
 self-service portal.
 
+1. IMPORTANT: in the *Projects* list, select the *demo* project.  You must use
+   the *demo* project at this point for the rest of the walk-through to proceed!
 1. Click the *Add to Project* button.
 1. Under *Instant Apps*, click *monster*.
 1. Scroll down and click *Create*.
 1. Wait for the example application to be cloned, built and deployed.  It will
    take up to a minute or two for the build process to begin automatically and
    then complete.
+1. (Optional/Advanced: use the command `oc build-logs monster-1` to follow the
+   build process).
 1. Middle-click the application URL
-   (*http://monster.demo.apps.example.com*) to launch the application in a new
+   (*http://monster-demo.apps.example.com*) to launch the application in a new
    tab.
 
 #### Commit a source code change to an application hosted on OpenShift
@@ -96,10 +113,11 @@ instance running on OpenShift.
       Click *OK*.
 1. See the change in the application.
    1. Return to Firefox.  OpenShift will clone, built and deploy a new version
-      of the Ticket Monster application.  It should not take long.
+      of the Ticket Monster application.  It will be a faster process than the
+      previous build.
    1. Middle-click the application URL
-      (*http://monster.demo.apps.example.com*), and the change you made should
-      be visible in OpenShift.
+      (*http://monster-demo.apps.example.com*), and the change you made should
+      soon be visible in OpenShift.
 
 #### Debug an application hosted on OpenShift
 
@@ -116,15 +134,12 @@ application running on OpenShift from their IDE.
       in the blue bar to the left of the text and select *Toggle Breakpoint* to
       set a breakpoint on the function.
 1. Connect to the application debugger port.
-   1. Now double-click the Terminal icon on the desktop.
-   1. Type `oc login` and press Enter to login to OpenShift.
-   1. Enter your username (`demo`) and press Enter.
-   1. Enter the password that you set at login time and press Enter.
+   1. Double-click the Terminal icon on the desktop.
    1. Type `oc get pods` and find the name of the pod hosting the Ticket monster
-      application.  It will be of the form `monster-2-{randomid}` and will be in
-      state `Running`.
+      application.  It will be of the form `monster-2-[a-z0-9]{5}` and will be
+      in state `Running`.  Call this $POD.
    1. Port-forward the pod's debugger port locally.  Type `oc port-forward -p
-      monster-2-{randomid} 8787`.
+      $POD 8787`.
 1. Start debugging.
    1. Return to JBoss Developer Studio.
    1. Click *Run/Debug Configurations...*.
@@ -133,7 +148,7 @@ application running on OpenShift from their IDE.
       *Debug*.
 1. Trigger the breakpoint.
    1. Return to Firefox and the Ticket Monster application.
-   1. Follow the application to buy a ticket.
+   1. Use the application to buy a ticket.
    1. When you click *Checkout*, the breakpoint will be triggered.  You will be
       taken back to JBoss Developer Studio, and it will ask to open the Debug
       perspective.  Click *Yes*.
@@ -147,44 +162,53 @@ application running on OpenShift from their IDE.
    1. Return to Firefox and click *Bookings*.  You should see that you
       successfully modified the e-mail address of your booking through the
       debugger.
+1. Return to the terminal window and press `CTRL + C` to stop port forwarding.
+1. Type `exit` to close the terminal window.
 
-#### Rollback an application component
+#### Rollback an application component (developer)
 
-These steps demonstrate how a developer or operator could rollback an unwanted
+These steps demonstrate how a developer could rollback an unwanted
 change to an application component running on OpenShift.
 
 1. Double-click the Terminal icon on the desktop.
 1. Type `oc rollback monster-1` and press Enter.
+1. Type `exit` to close the terminal window.
 1. Return to Firefox and wait for OpenShift to rollback the application.
 1. Navigate to the application front page, and press `CTRL + SHIFT + R` to
    refresh it.  In due course you should find that the change you made earlier
    has been reverted.
 
-#### Promote an application component without rebuild
+#### Promote an application component without rebuild (operator)
 
 These steps demonstrate how an operator could promote an application component
-into a subsequent environment (e.g. production) without rebuilding the
-component.
+into a subsequent environment (e.g. production) for deployment/upgrade without
+rebuilding the component, as well as rolling back an unwanted change if
+necessary.
 
 1. Prepare the *prod* project to host the application component.
    1. In Firefox, select the *prod* project.
    1. Click the *Add to Project* button.
    1. Under *Instant Apps*, click *monster-prod*.
    1. Scroll down and click *Create*.
-   1. Wait for the database pod to be deployed.  It will take up to a minute or
-      two to complete.
+   1. IMPORTANT: wait for the database pod to be deployed.  It will take up to a
+      minute or two to complete.
 1. Tag the the oldest version of the application component in order to deploy it
    into the *prod* project.
    1. Double-click the Terminal icon on the desktop.
    1. Type `oc describe imagestream monster` and press Enter.
    1. Choose the oldest of the built docker images (it'll look like
-      *monster@sha256:[0-9a-f]{64}*).
-   1. Type `oc tag <tag> monster:prod` and press Enter.
+      *monster@sha256:[0-9a-f]{64}*).  Call this $TAG.
+   1. Type `oc tag $TAG monster:prod` and press Enter.
    1. Return to Firefox and wait for OpenShift to deploy the application into
-      the prod project.
+      the prod project.  Note that the application manifest has been set to
+      deploy three application pods.
+   1. Middle-click the application URL
+      (*http://monster-prod.apps.example.com*) to launch the application in a
+      new tab.
 1. Repeat the process with a newer version of the application component.  Watch
    the Firefox window to see OpenShift automatically carrying out rolling
    upgrade of the application component in the *prod* project.
+1. Return to the terminal window and type `exit` to close the window.
 
 #### Scale an application component
 
@@ -194,7 +218,8 @@ number of instances of an application component running on OpenShift.
 1. Double-click the Terminal icon on the desktop.
 1. Type `oc project prod` and press Enter.
 1. Type `oc scale --replicas=2 dc monster` and press Enter.
-1. Return to Firefox.  You should see that there are now two Ticket Monster
+1. Type `exit` to close the terminal window.
+1. Return to Firefox.  You should see that there are now only two Ticket Monster
    pods.
 
 #### Reset the demo and prod projects
@@ -211,6 +236,8 @@ number of instances of an application component running on OpenShift.
 1. Double-click the Terminal icon on the desktop.
 1. Type `sudo -i` and press Enter to change to the root user.
 1. Type oc commands such as `oc status` and `oc get pods` as appropriate.
+1. IMPORTANT: take care not to inadvertently delete objects in the *default*
+   project!
 1. Type `logout` to change back to the demo user.
 1. Type `exit` to close the terminal window.
 
