@@ -1,0 +1,4 @@
+#
+features:install wrapper
+sleep -s 30
+wrapper:install -n fuse6.2 -d Fuse6.2 -s AUTO_START

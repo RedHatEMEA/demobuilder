@@ -1,0 +1,51 @@
+#!/bin/bash -ex
+
+. vm-functions
+
+cp install /home/demo
+cp .bashrc /home/demo
+
+register_channels rhel-7-server-rpms rhel-7-server-optional-rpms rhel-server-rhscl-7-rpms
+
+yum_install maven30 unzip gedit
+
+mkdir -p /home/demo/.m2
+cp settings.xml /home/demo/.m2
+sed -i -e "/<proxies>/ a \
+<proxy><host>$HOSTNAME</host></proxy>" /home/demo/.m2/settings.xml
+
+# Donwload and install JBDS
+https_proxy=$PROXY curl -sLO https://download.eng.rdu2.redhat.com/released/jbdevstudio/8.1.0/jboss-devstudio-8.1.0.GA-installer-standalone.jar
+java -jar jboss-devstudio-8.1.0.GA-installer-standalone.jar InstallConfigRecord.xml
+cp 'Red Hat JBoss Developer Studio 8.1.0.GA.desktop' /usr/share/applications
+install -m 0755 -o demo 'Red Hat JBoss Developer Studio 8.1.0.GA.desktop' /home/demo/Desktop
+
+# Install Integration Stack
+#/usr/local/jbdevstudio/jbdevstudio -p2.os linux -application org.eclipse.equinox.p2.director -repository https://devstudio.redhat.com/earlyaccess/8.0/ -installIU org.fusesource.ide.camel.editor.feature.feature.group,org.fusesource.ide.core.feature.feature.group,org.fusesource.ide.fabric8.feature.feature.group,org.fusesource.ide.jmx.feature.feature.group,org.fusesource.ide.server.extensions.feature.feature.group,org.jboss.tools.fuse.transformation.feature.feature.group
+
+# Donwload and install Fuse
+https_proxy=$PROXY curl -sLO https://download.eng.rdu2.redhat.com/released/JBossFuse/6.2.0/jboss-fuse-full-6.2.0.redhat-133.zip
+unzip jboss-fuse-full-6.2.0.redhat-133.zip
+mkdir -p /home/demo/fuse
+mv jboss-fuse-6.2.0.redhat-133/* /home/demo/fuse
+cp users.properties /home/demo/fuse/etc
+cp installservice.script /home/demo/fuse
+cp createfabric.script /home/demo/fuse
+chown -R demo:demo /home/demo
+su - demo
+export JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.85-2.6.1.2.el7_1.x86_64
+/home/demo/fuse/bin/start&
+sleep 1m
+chown -R demo:demo /home/demo
+/home/demo/fuse/bin/client -u admin -p admin -f installservice.script
+chown -R demo:demo /home/demo
+cp fuse6.2-service /home/demo/fuse/bin
+cp fuse6.2-wrapper.conf /home/demo/fuse/etc
+ln -s /home/demo/fuse/bin/fuse6.2-service /etc/init.d/
+chkconfig fuse6.2-service --add
+chkconfig fuse6.2-service on
+/home/demo/fuse/bin/client -u admin -p admin -f createfabric.script
+sleep 3m
+chown -R demo:demo /home/demo
+
+
