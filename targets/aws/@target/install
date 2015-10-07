@@ -1,0 +1,19 @@
+#!/bin/bash -ex
+
+. vm-functions
+
+register_channels rhel-7-server-rpms rhel-7-server-rh-common-rpms
+
+yum_install cloud-init
+
+systemctl enable cloud-init.service
+
+cp 99_demobuilder.cfg /etc/cloud/cloud.cfg.d
+
+cp fix-lib-modules.sh /usr/local/libexec
+cp fix-lib-modules.service /lib/systemd/system
+systemctl enable fix-lib-modules
+
+grubby --update-kernel=ALL --remove-args=quiet
+
+[ -e /home/demo ] && passwd -l demo

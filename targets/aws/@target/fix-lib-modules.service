@@ -1,0 +1,9 @@
+[Unit]
+Before=network.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/libexec/fix-lib-modules.sh
+
+[Install]
+WantedBy=multi-user.target

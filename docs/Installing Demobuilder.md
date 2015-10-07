@@ -2,7 +2,15 @@
 
 ### Prerequisites
 
-- Fedora 22 on a physical machine.
+- Fedora 22 or RHEL7, on a physical or virtual machine (with nested
+  virtualisation enabled).
+
+If using a virtual machine, suggested minimum specs are 8GB RAM and 50GB disk.
+
+Note for OSX users: demobuilder is known to work with nested virtualisation in
+VMware Fusion; VirtualBox and Parallels have been tried unsuccessfully (so far).
+In VMware Fusion, select Settings / Processors & Memory / Advanced Options /
+Enable hypervisor applications in this virtual machine.
 
 ### Installation
 
@@ -15,6 +23,8 @@ sudo dnf -y install git libcdio libguestfs libvirt pigz pyOpenSSL \
 sudo dnf -y update
 
 # Ensure required services are started
+# If you get "Failed to execute operation: Access denied" you may have hit
+# bz1224211.  Run sudo systemctl daemon-reexec and retry.
 sudo systemctl enable libvirtd.service
 sudo systemctl start libvirtd.service
 
@@ -23,9 +33,11 @@ sudo systemctl start libvirtd.service
 sudo firewall-cmd --permanent --zone=trusted --add-interface=virbr0
 sudo firewall-cmd --reload
 
-# Clone repository
+# Fork https://github.com/RedHatEMEA/demobuilder into your own GitHub account
+
+# Clone your forked repository
 cd $HOME
-git clone --recursive https://github.com/RedHatEMEA/demobuilder.git
+git clone --recursive https://github.com/<yourgithubid>/demobuilder.git
 
 # Configure demobuilder
 cd demobuilder

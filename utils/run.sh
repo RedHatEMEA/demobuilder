@@ -15,7 +15,7 @@ trap stop EXIT
 TMPDIR=$(mktemp -d)
 VNC=${VNC:-:0}
 
-utils/sigwrap /usr/bin/qemu-kvm -nodefaults \
+utils/sigwrap $QEMUKVM -nodefaults \
   -cpu host \
   -smp $BUILD_CPUS \
   -m $BUILD_MEM \
@@ -29,7 +29,7 @@ utils/sigwrap /usr/bin/qemu-kvm -nodefaults \
   -device virtio-serial-pci \
   -device virtserialport,chardev=chan0,name=com.redhat.rhevm.vdsm \
   -device virtserialport,chardev=chan1,name=org.qemu.guest_agent.0 \
-  -device vmware-svga \
+  -device cirrus-vga \
   -vnc $VNC \
   -usbdevice tablet \
   &>/dev/null &

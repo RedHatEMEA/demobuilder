@@ -1,3 +1,3 @@
-name: RHEL Server 7
+name: RHEL 7 Server image
 maintainers:
 - Jim Minter <jminter@redhat.com>

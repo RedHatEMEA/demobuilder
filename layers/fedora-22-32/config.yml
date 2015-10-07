@@ -1,0 +1,3 @@
+name: Fedora 22 Server (32-bit) image
+maintainers:
+- Jim Minter <jminter@redhat.com>

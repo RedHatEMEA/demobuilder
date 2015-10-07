@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+. utils/functions
+
+if [ $# -ne 1 ]; then
+  echo "usage: $0 base"
+  exit 1
+fi
+
+BASE=$1
+TARGET=$(basename $(dirname $0))
+
+read_config $BASE $TARGET
+
+export BASE
+
+utils/addlayer.sh build/$BASE.qcow2 targets/$TARGET tmp/$BASE:$TARGET.qcow2
+convert_qcow2 tmp/$BASE:$TARGET.qcow2 raw
+
+utils/VMDKstream.py tmp/$BASE:$TARGET.raw tmp/$BASE:$TARGET.vmdk
+
+rm -rf tmp/$BASE:$TARGET.qcow2 tmp/$BASE:$TARGET.raw
+
+mv tmp/$BASE:$TARGET.vmdk releases/$BASE:$TARGET.vmdk
+
+echo \$ aws s3 cp releases/$BASE:$TARGET.vmdk s3://demobuilder/$BASE:$TARGET.vmdk
+echo \$ aws ec2 import-image --disk-containers \'"UserBucket={S3Bucket=demobuilder,S3Key=$BASE:$TARGET.vmdk}"\'
+echo \$ aws ec2 describe-import-image-tasks
+echo \$ aws ec2 cancel-import-task --import-task-id ...

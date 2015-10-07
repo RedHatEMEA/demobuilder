@@ -1,8 +1,8 @@
-name: OpenShift 3.0.1 offline image
+name: OpenShift 3.0.2 offline image
 maintainers:
 - Jim Minter <jminter@redhat.com>
 description: |
-  This image provides an all-in-one instance of OpenShift 3.0.1, including the
+  This image provides an offline instance of OpenShift 3.0.2, including the
   master and node components, examples, GUI and web browser.  All S2I builder
   images are also included, and source code and dependencies for all examples
   apps is pre-downloaded, so no nothing extra is needed and the image can be
@@ -10,4 +10,5 @@ description: |
 
   This image is fairly modified to enable offline usage.  It is intended for SAs
   and consultants to replicate issues / experiment with the product with no
-  Internet connectivity, or for SAs to demo the vanilla out-of-the-box product.
+  Internet connectivity, or for SAs to demo the vanilla out-of-the-box product
+  with no Internet connectivity.
