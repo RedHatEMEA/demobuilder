@@ -1,5 +1,5 @@
-name: Template image
+name: JBoss Fuse 6.2 image
 maintainers:
-- Jim Minter <jminter@redhat.com>
+- Jon Walton <jwalton@redhat.com>
 description: |
   TODO
