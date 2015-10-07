@@ -4,18 +4,24 @@ import glob
 import re
 import yaml
 
-header = '''<!DOCTYPE html>
+header_start = '''<!DOCTYPE html>
 <html>
 <title>%(title)s</title>
 
 <xmp style="display:none;">
-## Description
+'''
+
+header_mid = '''## Description
 
 %(description)s
 
-<!-- HEADER -->'''
+'''
 
-footer = '''<!-- FOOTER -->
+header_end = "<!-- HEADER -->"
+
+footer_start = "<!-- FOOTER -->"
+
+footer_mid = '''
 
 ## VM image maintainer(s)
 
@@ -29,7 +35,9 @@ to [jminter@redhat.com](mailto:jminter@redhat.com).
 
 If sending a bug report, please include the contents of
 [/etc/demobuilder](/etc/demobuilder), as this will indicate the builds that were
-used to create the VM image.
+used to create the VM image.'''
+
+footer_end = '''
 </xmp>
 
 <script src="strapdown/v/0.2/strapdown.js"></script>
@@ -50,8 +58,12 @@ def main():
         config = yaml.load(open("layers/%s/config.yml" % layer).read())
         maintainers = "\n".join([re.sub("(.*?) <(.*)>", r"- \1 [\2](mailto:\2)", m) for m in config["maintainers"]])
 
-        head = header % {"title": config["name"], "description": config["description"].strip()}
-        foot = footer % {"maintainers": maintainers}
+        if path.endswith("/index.html"):
+            head = (header_start + header_mid + header_end) % {"title": config["name"], "description": config["description"].strip()}
+            foot = (footer_start + footer_mid + footer_end) % {"maintainers": maintainers}
+        else:
+            head = (header_start + header_end) % {"title": config["name"], "description": config["description"].strip()}
+            foot = (footer_start + footer_end) % {"maintainers": maintainers}
 
         f = open(path).read()
 
