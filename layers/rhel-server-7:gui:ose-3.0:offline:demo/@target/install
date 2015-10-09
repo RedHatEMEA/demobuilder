@@ -7,7 +7,7 @@ register_channels rhel-7-server-rpms rhel-7-server-optional-rpms rhel-server-rhs
 yum_install maven30
 
 for image in \
-    docker.io/openshift/hello-openshift:latest \
+    docker.io/openshift/hello-openshift:v0.4.2 \
     ; do
   docker_pull $image
 done
@@ -33,7 +33,7 @@ mv com.redhat.importer_1.0.0.201509031446.jar /usr/local/jbdevstudio/studio/plug
 
 yum_install xorg-x11-server-Xvfb
 
-COMMIT=4d10b1c93e0095180a5edce77ba728097ca153bd
+COMMIT=d816670ae2f2883b7560272a2fdee67760563387
 https_proxy=$PROXY curl -sLO https://github.com/jim-minter/ose3-demos/archive/$COMMIT.zip
 unzip -q $COMMIT.zip
 mv ose3-demos-$COMMIT/* /home/demo
