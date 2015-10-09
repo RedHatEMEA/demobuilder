@@ -7,45 +7,72 @@ cp .bashrc /home/demo
 
 register_channels rhel-7-server-rpms rhel-7-server-optional-rpms rhel-server-rhscl-7-rpms
 
-yum_install maven30 unzip gedit
+yum_install maven30 unzip gedit wget
+
+wget "pkgs.repoforge.org/sshpass/sshpass-1.05-1.el7.rf.x86_64.rpm"
+rpm -ivh sshpass-1.05-1.el7.rf.x86_64.rpm
 
 mkdir -p /home/demo/.m2
 cp settings.xml /home/demo/.m2
 sed -i -e "/<proxies>/ a \
 <proxy><host>$HOSTNAME</host></proxy>" /home/demo/.m2/settings.xml
 
-# Donwload and install JBDS
-https_proxy=$PROXY curl -sLO https://download.eng.rdu2.redhat.com/released/jbdevstudio/8.1.0/jboss-devstudio-8.1.0.GA-installer-standalone.jar
-java -jar jboss-devstudio-8.1.0.GA-installer-standalone.jar InstallConfigRecord.xml
-cp 'Red Hat JBoss Developer Studio 8.1.0.GA.desktop' /usr/share/applications
-install -m 0755 -o demo 'Red Hat JBoss Developer Studio 8.1.0.GA.desktop' /home/demo/Desktop
+### Donwload and install JBDS
+#https_proxy=$PROXY curl -sLO https://download.eng.rdu2.redhat.com/released/jbdevstudio/8.1.0/jboss-devstudio-8.1.0.GA-installer-standalone.jar
+#java -jar jboss-devstudio-8.1.0.GA-installer-standalone.jar InstallConfigRecord.xml
+#cp 'Red Hat JBoss Developer Studio 8.1.0.GA.desktop' /usr/share/applications
+#install -m 0755 -o demo 'Red Hat JBoss Developer Studio 8.1.0.GA.desktop' /home/demo/Desktop
 
-# Install Integration Stack
+### Install Integration Stack
 #/usr/local/jbdevstudio/jbdevstudio -p2.os linux -application org.eclipse.equinox.p2.director -repository https://devstudio.redhat.com/earlyaccess/8.0/ -installIU org.fusesource.ide.camel.editor.feature.feature.group,org.fusesource.ide.core.feature.feature.group,org.fusesource.ide.fabric8.feature.feature.group,org.fusesource.ide.jmx.feature.feature.group,org.fusesource.ide.server.extensions.feature.feature.group,org.jboss.tools.fuse.transformation.feature.feature.group
 
-# Donwload and install Fuse
+### Donwload and install Fuse
+FUSE_PATH="/home/demo/fuse"
 https_proxy=$PROXY curl -sLO https://download.eng.rdu2.redhat.com/released/JBossFuse/6.2.0/jboss-fuse-full-6.2.0.redhat-133.zip
 unzip jboss-fuse-full-6.2.0.redhat-133.zip
-mkdir -p /home/demo/fuse
-mv jboss-fuse-6.2.0.redhat-133/* /home/demo/fuse
-cp users.properties /home/demo/fuse/etc
-cp installservice.script /home/demo/fuse
-cp createfabric.script /home/demo/fuse
-chown -R demo:demo /home/demo
+mkdir -p $FUSE_PATH
+mv jboss-fuse-6.2.0.redhat-133/* $FUSE_PATH
+cp users.properties $FUSE_PATH/etc
+cp jboss-fuse-6.2.0.redhat-153-p2.zip $FUSE_PATH
+
+chown -R demo:demo $FUSE_PATH
+SSH_PATH=$(which ssh) 
+ssh2fabric="sshpass -p admin $SSH_PATH -p 8101 -o ServerAliveCountMax=100 -o ConnectionAttempts=180 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PreferredAuthentications=password -o LogLevel=ERROR admin@localhost"
+
 su - demo
 export JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.85-2.6.1.2.el7_1.x86_64
-/home/demo/fuse/bin/start&
-sleep 1m
-chown -R demo:demo /home/demo
-/home/demo/fuse/bin/client -u admin -p admin -f installservice.script
-chown -R demo:demo /home/demo
-cp fuse6.2-service /home/demo/fuse/bin
-cp fuse6.2-wrapper.conf /home/demo/fuse/etc
-ln -s /home/demo/fuse/bin/fuse6.2-service /etc/init.d/
+sh $FUSE_PATH/bin/start
+sleep 5m
+
+### Install Service wrapper
+chown -R demo:demo $FUSE_PATH
+$ssh2fabric 'wait-for-service -t 300000 io.fabric8.api.BootstrapComplete'
+$ssh2fabric 'features:install wrapper'
+sleep 2m
+$ssh2fabric 'wrapper:install -n fuse6.2 -d Fuse6.2 -s AUTO_START'
+sleep 5m
+cp fuse6.2-service $FUSE_PATH/bin
+cp fuse6.2-wrapper.conf $FUSE_PATH/etc
+ln -s $FUSE_PATH/bin/fuse6.2-service /etc/init.d/
+chown -R demo:demo $FUSE_PATH
 chkconfig fuse6.2-service --add
 chkconfig fuse6.2-service on
-/home/demo/fuse/bin/client -u admin -p admin -f createfabric.script
+
+### Install Fuse 6.2 Patch 2
+#$ssh2fabric 'patch:add file:///home/demo/fuse/jboss-fuse-6.2.0.redhat-153-p2.zip'
+#$ssh2fabric 'patch:install jboss-fuse-6.2.0.redhat-153-p2'
+#$ssh2fabric 'osgi:install mvn:org.apache.aries.blueprint/org.apache.aries.blueprint.core.compatibility/1.0.0'
+#$ssh2fabric 'osgi:refresh'
+#sleep 3m
+#chown -R demo:demo /home/demo/fuse
+
+### Create Fabric and containers
+$ssh2fabric 'fabric:create --clean -r localip -g localip'
+sleep 5m
+$ssh2fabric 'fabric:container-create-child root demo 1'
 sleep 3m
-chown -R demo:demo /home/demo
+chown -R demo:demo /home/demo/fuse
+sh /home/demo/fuse/bin/stop
+sleep 5m
 
 
