@@ -67,7 +67,7 @@ chkconfig fuse6.2-service on
 #chown -R demo:demo /home/demo/fuse
 
 ### Create Fabric and containers
-$ssh2fabric 'fabric:create --clean -r localip -g localip'
+$ssh2fabric 'fabric:create --clean -m 127.0.0.1 -g manualip -r manualip'
 sleep 5m
 $ssh2fabric 'fabric:container-create-child root demo 1'
 sleep 3m
