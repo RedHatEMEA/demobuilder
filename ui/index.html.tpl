@@ -17,7 +17,7 @@ function hideshow(x) {
 ## Available images
 
 % for layer in sorted(layers.values(), key=lambda l: l.yaml["name"]):
-### {{ layer.yaml["name"] }}
+### <a id="{{ layer.yaml["name"].replace(" ", "_") }}"></a> {{ layer.yaml["name"] }}
 
 % if layer.yaml.get("description", ""):
 {{ layer.yaml["description"] }}
