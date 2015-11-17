@@ -77,7 +77,7 @@ The following process can be used to create a temporary COW VM of a stack for te
 1. Create a temporary COW snapshot file backed by the stack disk image:
 
    ```bash
-   $ utils/createsnap.sh build/rhel-server-6.5:gui:mynewlayer mysnap
+   $ utils/createsnap.sh build/rhel-server-6.5:gui:mynewlayer.qcow2 mysnap
    ```
 
 1. Run a temporary VM based on the temporary COW snapshot:
