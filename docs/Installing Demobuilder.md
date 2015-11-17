@@ -90,6 +90,5 @@ Valid targets:
   vsphere
 
 # Build an image
-./build.sh rhel-server-7 rhel-server-7:gui rhel-server-7:gui:ose-3.0 \
-  rhel-server-7:gui:ose-3.0:vagrant-libvirt
+./build.sh rhel-server-7:gui:ose-3.0:vagrant-libvirt
 ```
