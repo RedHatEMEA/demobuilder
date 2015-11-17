@@ -10,6 +10,10 @@ fi
 BASE=$1
 TARGET=$(basename $(dirname $0))
 
+if ! needs_build releases/$BASE:$TARGET.box $(dirname $0) build/$BASE.qcow2; then
+  exit 0
+fi
+
 read_config $BASE $TARGET
 
 utils/addlayer.sh build/$BASE.qcow2 targets/$TARGET tmp/$BASE:$TARGET.qcow2

@@ -4,6 +4,10 @@
 
 TARGET=$(basename $(dirname $0))
 
+if ! needs_build build/$TARGET.qcow2 $(dirname $0); then
+  exit 0
+fi
+
 QCOW=isos/rhel-guest-image-6.7-20150706.0.x86_64.qcow2
 if [ ! -e $QCOW ]; then
   echo "$0: please download $(basename $QCOW) and place it in $QCOW"

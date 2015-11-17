@@ -4,6 +4,10 @@
 
 LAYER=$(basename $(dirname $0))
 
+if ! needs_build build/$LAYER.qcow2 $(dirname $0); then
+  exit 0
+fi
+
 ISO=isos/rhel-server-7.1-x86_64-dvd.iso
 if [ ! -e $ISO ]; then
   echo "$0: please download $(basename $ISO) and place it in $ISO"

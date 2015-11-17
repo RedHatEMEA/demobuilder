@@ -10,6 +10,10 @@ fi
 BASE=$1
 TARGET=$(basename $(dirname $0))
 
+if ! needs_build releases/$BASE:$TARGET.vmdk $(dirname $0) build/$BASE.qcow2; then
+  exit 0
+fi
+
 read_config $BASE $TARGET
 
 export BASE

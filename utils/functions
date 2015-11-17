@@ -49,6 +49,21 @@ read_config() {
   setx
 }
 
+needs_build() {
+  if [ ! -e $1 ]; then
+    return 0
+  fi
+
+  if [ "$3" != "" -a "$3" -nt "$1" ]; then
+    return 0
+  fi
+
+  if [ "$(find $2 -newer $1)" = "" ]; then
+    echo "$0: build not needed"
+    return 1
+  fi
+}
+
 unsetx() {
   if [[ $- =~ x ]]; then
     XTRACE=on
