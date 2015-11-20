@@ -4,5 +4,6 @@ service rfb
         wait = no
         user = nobody
         server = /usr/bin/Xvnc
-        server_args = -inetd -query localhost -once -SecurityTypes None
+        # the :1 below is due to bz1283925
+        server_args = :1 -inetd -query localhost -once -SecurityTypes None
 }
