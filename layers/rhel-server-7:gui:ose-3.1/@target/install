@@ -1,0 +1,131 @@
+#!/bin/bash -ex
+
+. vm-functions
+
+MY_HOSTNAME=openshift.example.com
+
+# rhel-7-server-extras-rpms is required for docker-io
+register_channels rhel-7-server-rpms rhel-7-server-extras-rpms rhel-7-server-ose-3.1-rpms
+
+yum_install atomic-openshift-utils bind-utils docker-io git lsof PyPAM python-requests PyYAML net-tools nmap-ncat strace tcpdump unzip
+
+OPENSHIFTVERSION=$(yum info atomic-openshift-master | awk '/Version/ { print $3; }')
+
+IMAGES=(
+  registry.access.redhat.com/openshift3/ose-deployer:v$OPENSHIFTVERSION
+  registry.access.redhat.com/openshift3/ose-docker-builder:v$OPENSHIFTVERSION
+  registry.access.redhat.com/openshift3/ose-docker-registry:v$OPENSHIFTVERSION
+  registry.access.redhat.com/openshift3/ose-haproxy-router:v$OPENSHIFTVERSION
+  registry.access.redhat.com/openshift3/ose-pod:v$OPENSHIFTVERSION
+  registry.access.redhat.com/openshift3/ose-sti-builder:v$OPENSHIFTVERSION
+  registry.access.redhat.com/jboss-amq-6/amq-openshift:6.2
+  registry.access.redhat.com/jboss-eap-6/eap-openshift:6.4
+  registry.access.redhat.com/jboss-webserver-3/tomcat7-openshift:3.0
+  registry.access.redhat.com/jboss-webserver-3/tomcat8-openshift:3.0
+  registry.access.redhat.com/openshift3/jenkins-1-rhel7:latest
+  registry.access.redhat.com/openshift3/mongodb-24-rhel7:latest
+  registry.access.redhat.com/openshift3/mysql-55-rhel7:latest
+  registry.access.redhat.com/openshift3/nodejs-010-rhel7:latest
+  registry.access.redhat.com/openshift3/perl-516-rhel7:latest
+  registry.access.redhat.com/openshift3/php-55-rhel7:latest
+  registry.access.redhat.com/openshift3/postgresql-92-rhel7:latest
+  registry.access.redhat.com/openshift3/python-33-rhel7:latest
+  registry.access.redhat.com/openshift3/ruby-20-rhel7:latest
+  docker.io/openshift/postgresql-92-centos7:latest
+  docker.io/openshift/mongodb-24-centos7:latest
+  docker.io/openshift/mysql-55-centos7:latest
+  docker.io/openshift/hello-openshift:v0.4.2
+)
+
+for image in "${IMAGES[@]}"; do
+  docker_pull $image
+done
+
+hostname $MY_HOSTNAME
+echo $MY_HOSTNAME >/etc/hostname
+
+MY_IP=$(ifconfig eth0 | awk '/inet / { print $2; }')
+cp 99-hosts /etc/NetworkManager/dispatcher.d
+IP4_ADDRESS_0=$MY_IP /etc/NetworkManager/dispatcher.d/99-hosts eth0 up
+
+mkdir -p /root/.config/openshift
+cat >/root/.config/openshift/installer.cfg.yml <<EOF
+ansible_config: /usr/share/atomic-openshift-utils/ansible.cfg
+ansible_log_path: /tmp/ansible.log
+ansible_ssh_user: root
+hosts:
+- connect_to: openshift.example.com
+  hostname: openshift.example.com
+  ip: $MY_IP
+  master: true
+  node: true
+  public_hostname: openshift.example.com
+  public_ip: $MY_IP
+variant: openshift-enterprise
+variant_version: "3.1"
+version: v1
+EOF
+
+PYTHONUNBUFFERED=1 atomic-openshift-installer -u install
+
+./install.py
+oadm manage-node --schedulable $MY_HOSTNAME
+
+sed -i -e 's/  subdomain:.*/  subdomain: apps.example.com/' /etc/origin/master/master-config.yaml
+
+https_proxy=$PROXY curl -s https://pypi.python.org/packages/source/d/dnslib/dnslib-0.9.4.tar.gz | tar -xz
+pushd dnslib-0.9.4
+python setup.py install
+popd
+
+for svc in auth dns-intercept master-ipcfg node-ipcfg routewatcher; do
+  cp atomic-openshift-$svc.py /usr/local/libexec
+  cp atomic-openshift-$svc.service /lib/systemd/system
+  systemctl enable atomic-openshift-$svc
+done
+systemctl start atomic-openshift-dns-intercept.service
+
+oadm new-project demo --admin=demo
+mkdir /home/demo/.kube
+cat >/home/demo/.kube/config <<EOF
+kind: Config
+apiVersion: v1
+clusters:
+- cluster:
+    server: https://$MY_HOSTNAME:8443
+  name: ${MY_HOSTNAME//./-}:8443
+contexts:
+- context:
+    cluster: ${MY_HOSTNAME//./-}:8443
+  name: ${MY_HOSTNAME//./-}:8443
+current-context: ${MY_HOSTNAME//./-}:8443
+EOF
+chown -R demo:demo /home/demo/.kube
+
+echo '{"kind": "ServiceAccount", "apiVersion": "v1", "metadata": {"name": "infra"}}' | oc create -f -
+(oc get -o yaml scc privileged; echo - system:serviceaccount:default:infra) | oc replace scc privileged -f -
+mkdir /registry
+oadm registry --config=/etc/origin/master/admin.kubeconfig --credentials=/etc/origin/master/openshift-registry.kubeconfig --mount-host=/registry --service-account=infra --images='registry.access.redhat.com/openshift3/ose-${component}:${version}'
+
+oadm router --credentials=/etc/origin/master/openshift-router.kubeconfig --service-account=infra --images='registry.access.redhat.com/openshift3/ose-${component}:${version}'
+
+for ((i = 0; i < 12; i++)); do
+  [ $(oc get pods | grep -v -- -deploy | grep Running | wc -l) = 2 -a $(oc get pods | grep -- -deploy | wc -l) = 0 ] && break
+  sleep 10
+done
+[ $(oc get pods | grep -v -- -deploy | grep Running | wc -l) = 2 -a $(oc get pods | grep -- -deploy | wc -l) = 0 ] || exit 1
+
+cp /etc/origin/master/ca.crt /etc/pki/ca-trust/source/anchors/
+update-ca-trust
+
+firefox_set_homepage https://$MY_HOSTNAME:8443/
+
+sed -i -e '/-A FORWARD/ a\
+-A OS_FIREWALL_ALLOW -p tcp -m state --state NEW -m tcp --dport 5900 -j ACCEPT' /etc/sysconfig/iptables
+
+cat >>/usr/local/bin/demobuilder-cleanup.sh <<EOF
+systemctl stop atomic-openshift-node.service
+oc delete pods --all
+docker ps -aq | xargs docker rm -f
+true
+EOF

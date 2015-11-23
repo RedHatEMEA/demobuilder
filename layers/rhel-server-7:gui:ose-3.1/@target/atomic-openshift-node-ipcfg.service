@@ -1,0 +1,11 @@
+[Unit]
+After=atomic-openshift-master.service
+Before=atomic-openshift-node.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/libexec/atomic-openshift-node-ipcfg.py
+Environment="KUBECONFIG=/etc/origin/master/openshift-master.kubeconfig"
+
+[Install]
+WantedBy=multi-user.target

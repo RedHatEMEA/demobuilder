@@ -1,0 +1,9 @@
+[Unit]
+After=atomic-openshift-master.service
+
+[Service]
+ExecStart=/usr/local/libexec/atomic-openshift-routewatcher.py
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target

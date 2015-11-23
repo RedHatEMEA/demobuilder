@@ -3,7 +3,7 @@
 . vm-functions
 
 register_channels rhel-7-server-rpms
-yum_install bash-completion control-center evince firefox gdm gnome-classic-session gnome-session gnome-terminal man nautilus tigervnc-server urw-fonts xinetd xorg-x11-drivers xorg-x11-xinit
+yum_install bash-completion evince firefox gnome-classic-session gnome-terminal man-db tigervnc-server xinetd xorg-x11-drivers
 
 ln -sf /lib/systemd/system/graphical.target /etc/systemd/system/default.target
 
@@ -20,8 +20,7 @@ cp rfb /etc/xinetd.d
 
 cp 80-color-manager.rules /etc/polkit-1/rules.d
 
-sed -i -e '/-A INPUT -i lo -j ACCEPT/ a\
--A INPUT -p tcp -m state --state NEW -m tcp --dport 5900 -j ACCEPT' /etc/sysconfig/iptables
+firewall-cmd --permanent --zone=public --add-port=5900/tcp
 
 cp 01-fixes /etc/dconf/db/local.d
 
@@ -50,3 +49,7 @@ done
 sed -i -e '/load-module.*bluetooth/ s/^/#/' /etc/pulse/default.pa
 
 sed -i -e 's/"dateMenu", //' /usr/share/gnome-shell/modes/classic.json
+
+cat >>/usr/local/bin/demobuilder-cleanup.sh <<EOF
+rm -f /var/lib/NetworkManager/dhclient-*-eth0.lease
+EOF
