@@ -18,23 +18,6 @@ IMAGES=(
   registry.access.redhat.com/openshift3/ose-haproxy-router:v$OPENSHIFTVERSION
   registry.access.redhat.com/openshift3/ose-pod:v$OPENSHIFTVERSION
   registry.access.redhat.com/openshift3/ose-sti-builder:v$OPENSHIFTVERSION
-  registry.access.redhat.com/jboss-amq-6/amq-openshift:6.2
-  registry.access.redhat.com/jboss-eap-6/eap-openshift:6.4
-  registry.access.redhat.com/jboss-webserver-3/tomcat7-openshift:3.0
-  registry.access.redhat.com/jboss-webserver-3/tomcat8-openshift:3.0
-  registry.access.redhat.com/openshift3/jenkins-1-rhel7:latest
-  registry.access.redhat.com/openshift3/mongodb-24-rhel7:latest
-  registry.access.redhat.com/openshift3/mysql-55-rhel7:latest
-  registry.access.redhat.com/openshift3/nodejs-010-rhel7:latest
-  registry.access.redhat.com/openshift3/perl-516-rhel7:latest
-  registry.access.redhat.com/openshift3/php-55-rhel7:latest
-  registry.access.redhat.com/openshift3/postgresql-92-rhel7:latest
-  registry.access.redhat.com/openshift3/python-33-rhel7:latest
-  registry.access.redhat.com/openshift3/ruby-20-rhel7:latest
-  docker.io/openshift/postgresql-92-centos7:latest
-  docker.io/openshift/mongodb-24-centos7:latest
-  docker.io/openshift/mysql-55-centos7:latest
-  docker.io/openshift/hello-openshift:v0.4.2
 )
 
 for image in "${IMAGES[@]}"; do
