@@ -1,0 +1,26 @@
+
+module fix-git 1.0;
+
+require {
+	type git_system_t;
+	type tmp_t;
+	type http_port_t;
+	type git_sys_content_t;
+	class tcp_socket name_connect;
+	class file { write rename execute link create unlink execute_no_trans };
+	class dir { write read remove_name create add_name };
+}
+
+#============= git_system_t ==============
+allow git_system_t git_sys_content_t:dir create;
+
+#!!!! This avc is allowed in the current policy
+allow git_system_t git_sys_content_t:dir { write remove_name add_name };
+allow git_system_t git_sys_content_t:file { execute execute_no_trans };
+
+#!!!! This avc is allowed in the current policy
+allow git_system_t git_sys_content_t:file { write rename create unlink link };
+
+#!!!! This avc can be allowed using the boolean 'nis_enabled'
+allow git_system_t http_port_t:tcp_socket name_connect;
+allow git_system_t tmp_t:dir { read write };

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ -n "$http_proxy" ]; then
+  curl -so /tmp/ca_cert http://cacert/
+  export SSL_CERT_FILE=/tmp/ca_cert
+fi
+
+exec /usr/libexec/s2i/_assemble "$@"
