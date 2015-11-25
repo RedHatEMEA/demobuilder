@@ -7,11 +7,20 @@ MY_HOSTNAME=openshift.example.com
 # rhel-7-server-extras-rpms is required for docker-io
 register_channels rhel-7-server-rpms rhel-7-server-extras-rpms rhel-7-server-ose-3.1-rpms
 
-yum_install atomic-openshift-utils bind-utils docker-io git lsof PyPAM python-requests PyYAML net-tools nmap-ncat strace tcpdump unzip
+yum_install atomic-openshift-utils bind-utils docker-io git httpd-tools lsof PyPAM python-requests PyYAML net-tools nmap-ncat strace tcpdump unzip
 
 OPENSHIFTVERSION=$(yum info atomic-openshift-master | awk '/Version/ { print $3; }')
 
 IMAGES=(
+  registry.access.redhat.com/openshift3/logging-auth-proxy:latest
+  registry.access.redhat.com/openshift3/logging-deployment:${OPENSHIFTVERSION%.*}
+  registry.access.redhat.com/openshift3/logging-elasticsearch:latest
+  registry.access.redhat.com/openshift3/logging-fluentd:latest
+  registry.access.redhat.com/openshift3/logging-kibana:latest
+  registry.access.redhat.com/openshift3/metrics-cassandra:latest
+  registry.access.redhat.com/openshift3/metrics-deployer:latest
+  registry.access.redhat.com/openshift3/metrics-hawkular-metrics:latest
+  registry.access.redhat.com/openshift3/metrics-heapster:latest
   registry.access.redhat.com/openshift3/ose-deployer:v$OPENSHIFTVERSION
   registry.access.redhat.com/openshift3/ose-docker-builder:v$OPENSHIFTVERSION
   registry.access.redhat.com/openshift3/ose-docker-registry:v$OPENSHIFTVERSION
@@ -107,9 +116,14 @@ firefox_set_homepage https://$MY_HOSTNAME:8443/
 sed -i -e '/-A FORWARD/ a\
 -A OS_FIREWALL_ALLOW -p tcp -m state --state NEW -m tcp --dport 5900 -j ACCEPT' /etc/sysconfig/iptables
 
-cat >>/usr/local/bin/demobuilder-cleanup.sh <<EOF
+./install-logging.sh
+./install-metrics.sh
+
+cat >>/usr/local/bin/demobuilder-cleanup.sh <<'EOF'
 systemctl stop atomic-openshift-node.service
-oc delete pods --all
+for ns in default logging openshift-infra; do
+  oc delete pods --all -n $ns
+done
 docker ps -aq | xargs docker rm -f
 true
 EOF
