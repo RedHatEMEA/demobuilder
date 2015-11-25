@@ -263,10 +263,6 @@ def do_imagestream_builds(step, steps):
         print >>sys.stderr, "STATUS: %d/%d: %d/%d" % (step, steps, i, len(istrs))
         for t in istr.spec.tags:
             if "annotations" in t and "sampleRepo" in t.annotations:
-                # TODO: these images need HTTPS workarounds.
-                if istr.metadata.name + ":" + t.name in ["python:2.7", "python:3.4", "ruby:2.2"]:
-                    continue
-
                 print >>sys.stderr, istr.metadata.name + ":" + t.name
 
                 bc = k8s.API.decode({"apiVersion": "v1",

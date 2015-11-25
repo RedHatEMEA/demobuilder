@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cp /usr/libexec/s2i/_assemble /tmp/assemble
+if [ -n "$http_proxy" ]; then
+  curl -so /tmp/ca_cert http://cacert/
+  sed -i -e 's!pip install!pip install --cert /tmp/ca_cert!' /tmp/assemble
+fi
+
+exec /tmp/assemble "$@"
