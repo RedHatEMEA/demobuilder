@@ -67,6 +67,7 @@ for svc in auth dns-intercept master-ipcfg node-ipcfg routewatcher; do
   systemctl enable atomic-openshift-$svc
 done
 systemctl start atomic-openshift-dns-intercept.service
+systemctl mask docker-storage-setup.service
 
 oadm new-project demo --admin=demo
 mkdir /home/demo/.kube
