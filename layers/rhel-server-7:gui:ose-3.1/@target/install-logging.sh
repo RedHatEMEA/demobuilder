@@ -32,6 +32,8 @@ while [ "$(oc get dc logging-fluentd -n logging -o template --template '{{.statu
 done
 oc scale dc/logging-fluentd --replicas=1
 
+oc get dc -o yaml | sed -e 's/imagePullPolicy: .*/imagePullPolicy: IfNotPresent/' | oc replace -f -
+
 oc delete sa/logging-deployer secret/logging-deployer
 
 sed -i -e '/^assetConfig:/ a \

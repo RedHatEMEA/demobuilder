@@ -24,6 +24,9 @@ while [ "$(oc get pod $POD -o template --template='{{.status.phase}}')" != "Succ
   sleep 1
 done
 
+oc get rc -o yaml | sed -e 's/imagePullPolicy: .*/imagePullPolicy: IfNotPresent/' | oc replace -f -
+oc delete pods --all
+
 sed -i -e '/^assetConfig:/ a \
   metricsPublicURL: "https://hawkular-metrics.example.com/hawkular/metrics"' /etc/origin/master/master-config.yaml
 service atomic-openshift-master restart
