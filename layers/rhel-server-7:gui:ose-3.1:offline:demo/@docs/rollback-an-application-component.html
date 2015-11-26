@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<title>OpenShift 3.1.0 offline image with demo</title>
+
+<xmp style="display:none;">
+<!-- HEADER -->
+
+## Rollback an application component
+
+These steps demonstrate how a developer could rollback an unwanted
+change to an application component running on OpenShift.
+
+1. Click *Browse*, then *Deployments*, then *monster*.
+1. Scroll down, and you should see two deployments: *#2 (latest)* and *#1*.
+   Click *#1*.
+1. Click the small *Roll Back* button.
+1. Tick the *deployment trigger* option on.
+1. Click the small *Roll Back* button again.
+1. A message should appear indicating *deployment #3 is rolling back monster to
+   monster-1*.
+1. Click *Overview* to return to the overview pane.  Deployment #3 of the
+   monster pod should be shown.
+1. Navigate to the application front page, and press `CTRL + SHIFT + R` to
+   refresh it.  In due course you should find that the change you made earlier
+   has been reverted.
+
+Note: deployment rollbacks can also be achieved using the command `oc rollback`,
+e.g. `oc rollback monster-1`.
+
+[Back](index.html)
+
+<!-- FOOTER -->
+</xmp>
+
+<script src="strapdown/v/0.2/strapdown.js"></script>
+<script type="text/javascript">
+var spans = document.getElementsByTagName('span');
+for (var i = 0; i < spans.length; i++) {
+  spans[i].className = "pln"
+}
+</script>
+
+</html>

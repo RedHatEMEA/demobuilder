@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<title>OpenShift 3.1.0 offline image with demo</title>
+
+<xmp style="display:none;">
+<!-- HEADER -->
+
+## Explore an application pod (logging, metrics, terminal)
+
+These steps demonstrate how a developer can explore the logs, metrics,
+filesystem and processes of an application component running inside a container
+on OpenShift.
+
+1. Click *Browse*, then *Pods*, then click any pod hosting the Ticket monster
+   application.  This will be of the form `monster-[1-9]-[a-z0-9]{5}` and will
+   be in state `Running`.
+1. Click the *Metrics* tab.  This will show CPU and Memory usage information
+   from the pod.
+1. Click the *Terminal* tab.
+1. Type commands, e.g. `pwd`, `ls`, `id`, `exit`, etc., to explore the
+   container.
+1. Click the *Logs* tab.  This will show the stdout/stderr of the container.
+1. Click the *View Archive* button to navigate to an integrated Kibana instance
+   which securely consolidates and allows searching of logs across multiple
+   pods.
+1. Use the browser history to return to OpenShift, or navigate to
+   *https://openshift.example.com:8443/*.
+
+Note: terminal access to a container can also be achieved using the command `oc
+rsh $POD`.
+
+[Back](index.html)
+
+<!-- FOOTER -->
+</xmp>
+
+<script src="strapdown/v/0.2/strapdown.js"></script>
+<script type="text/javascript">
+var spans = document.getElementsByTagName('span');
+for (var i = 0; i < spans.length; i++) {
+  spans[i].className = "pln"
+}
+</script>
+
+</html>
