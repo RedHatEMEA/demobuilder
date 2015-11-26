@@ -60,6 +60,8 @@ service docker restart
 # proxy on git clones?
 ./install.py
 
+oc get images | grep registry.access.redhat.com | awk '{ print $1; }' | xargs oc delete image
+
 cat >>/usr/local/bin/demobuilder-cleanup.sh <<'EOF'
 docker images | grep :5000 | awk '{print $3;}' | xargs docker rmi
 docker images | grep '<none>' | awk '{print $3;}' | xargs docker rmi
