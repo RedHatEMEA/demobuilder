@@ -21,12 +21,20 @@ application running on OpenShift from their IDE.
    1. Right-click in the grey bar to the left of the text and select *Toggle
       Breakpoint* to set a breakpoint on the function.
 1. Connect to the application debugger port.
-   1. Double-click the Terminal icon on the desktop.
-   1. Type `oc get pods` and find the name of the pod hosting the Ticket Monster
-      application.  It will be of the form `monster-[1-9]-[a-z0-9]{5}` and will
-      be in state `Running`.  Call this $POD.
-   1. Port-forward the pod's debugger port locally.  Type `oc port-forward $POD
-      8787`.
+   1. Click the *OpenShift Explorer* tab in the bottom right pane.
+   1. Expand the *demo* connection.
+   1. The *Sign in to OpenShift* window will appear.  Enter your password and
+      click *Finish*.
+   1. Expand to find the pod hosting the Ticket Monster application.  This will
+      be under *demo* / *Pods*, will have a name of the form
+      `monster-[1-9]-[a-z0-9]{5}` and will be in state `Running`.
+   1. Right-click the pod and select *Port Forwarding...*.  The *Port
+      forwarding* window should show a list of ports including *debug* (*8787*).
+      Click *Start All*.
+   1. Click *OK*.
+
+   Note: port forwarding can also be achieved using the command `oc
+   port-forward`, e.g. `oc port-forward $POD 8787`.
 1. Start debugging.
    1. Return to JBoss Developer Studio.
    1. Click *Run/Debug Configurations...*.
@@ -49,8 +57,8 @@ application running on OpenShift from their IDE.
    1. Return to Firefox and click *Bookings*.  You should see that you
       successfully modified the e-mail address of your booking through the
       debugger.
-1. Return to the terminal window and press `CTRL + C` to stop port forwarding.
-1. Type `exit` and press `ENTER` to close the terminal window.
+1. Return to the monster pod in the *OpenShift Explorer* pane, right-click the
+   pod and select *Port Forwarding...*, click *Stop All* and click *OK*.
 
 [Back](index.html)
 

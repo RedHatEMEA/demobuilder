@@ -30,8 +30,11 @@ java -jar jboss-devstudio-9.0.0.GA-installer-standalone.jar InstallConfigRecord.
 cp 'Red Hat JBoss Developer Studio 9.0.0.GA.desktop' /usr/share/applications
 install -m 0755 -o demo 'Red Hat JBoss Developer Studio 9.0.0.GA.desktop' /home/demo/Desktop
 
-https_proxy=$PROXY curl -sLO https://github.com/jim-minter/eclipse-importer/raw/master/com.redhat.importer_1.0.0.201509031446.jar
-mv com.redhat.importer_1.0.0.201509031446.jar /usr/local/jbdevstudio/studio/plugins/
+http_proxy=$PROXY curl -sLO http://download.eng.brq.redhat.com/released/jbdevstudio/9.0.0/jboss-devstudio-9.0.0.GA-updatesite-core.zip
+/usr/local/jbdevstudio/jbdevstudio -application org.eclipse.equinox.p2.director -repository 'jar:file:///root/demobuilder/jboss-devstudio-9.0.0.GA-updatesite-core.zip!/' -installIU org.jboss.tools.openshift.feature.feature.group -destination /usr/local/jbdevstudio/studio -noSplash
+
+https_proxy=$PROXY curl -sLO https://github.com/jim-minter/eclipse-importer/raw/master/com.redhat.importer_1.0.0.201511271311.jar
+mv com.redhat.importer_1.0.0.201511271311.jar /usr/local/jbdevstudio/studio/plugins/
 
 yum_install xorg-x11-server-Xvfb
 
@@ -78,7 +81,7 @@ oc create -f /home/demo/git/monster/openshift/ticket-monster-prod-template.yaml 
 su - demo -c "xvfb-run /usr/local/jbdevstudio/jbdevstudio -data workspace $BUILD"
 
 yum -y history undo $(yum history list | grep -A1 ^- | tail -1 | awk '{print $1;}')
-rm /usr/local/jbdevstudio/studio/plugins/com.redhat.importer_1.0.0.201509031446.jar
+rm /usr/local/jbdevstudio/studio/plugins/com.redhat.importer_1.0.0.201511271311.jar
 
 chown -R demo:demo /home/demo
 
