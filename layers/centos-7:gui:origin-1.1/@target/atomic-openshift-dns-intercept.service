@@ -1,0 +1,10 @@
+[Unit]
+After=network-online.target
+Before=origin-master.service
+
+[Service]
+ExecStart=/usr/local/libexec/atomic-openshift-dns-intercept.py
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target

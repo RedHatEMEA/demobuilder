@@ -1,0 +1,145 @@
+#!/bin/bash -ex
+
+. vm-functions
+
+MY_HOSTNAME=openshift.example.com
+
+register_channels
+rpm -Uvh http://download.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+
+yum_install ansible bind-utils docker-io git httpd-tools lsof pyOpenSSL PyPAM python-requests PyYAML net-tools nmap-ncat strace tcpdump unzip
+
+OPENSHIFTVERSION=1.1.0.1
+
+IMAGES=(
+  openshift/origin-logging-auth-proxy:latest
+  openshift/origin-logging-deployment:latest
+  openshift/origin-logging-elasticsearch:latest
+  openshift/origin-logging-fluentd:latest
+  openshift/origin-logging-kibana:latest
+  openshift/origin-metrics-cassandra:latest
+  openshift/origin-metrics-deployer:latest
+  openshift/origin-metrics-hawkular-metrics:latest
+  openshift/origin-metrics-heapster:latest
+  openshift/origin-deployer:v$OPENSHIFTVERSION
+  openshift/origin-docker-builder:v$OPENSHIFTVERSION
+  openshift/origin-docker-registry:v$OPENSHIFTVERSION
+  openshift/origin-haproxy-router:v$OPENSHIFTVERSION
+  openshift/origin-pod:v$OPENSHIFTVERSION
+  openshift/origin-sti-builder:v$OPENSHIFTVERSION
+)
+
+for image in "${IMAGES[@]}"; do
+  docker_pull $image
+done
+
+hostname $MY_HOSTNAME
+echo $MY_HOSTNAME >/etc/hostname
+
+MY_IP=$(ifconfig eth0 | awk '/inet / { print $2; }')
+cp 99-hosts /etc/NetworkManager/dispatcher.d
+IP4_ADDRESS_0=$MY_IP /etc/NetworkManager/dispatcher.d/99-hosts eth0 up
+
+cat >/etc/ansible/hosts <<EOF
+# Create an OSEv3 group that contains the masters and nodes groups
+[OSEv3:children]
+masters
+nodes
+
+# Set variables common for all OSEv3 hosts
+[OSEv3:vars]
+# SSH user, this user should allow ssh based auth without requiring a password
+ansible_ssh_user=root
+
+# If ansible_ssh_user is not root, ansible_sudo must be set to true
+#ansible_sudo=true
+
+deployment_type=origin
+
+# uncomment the following to enable htpasswd authentication; defaults to DenyAllPasswordIdentityProvider
+#openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/htpasswd'}]
+
+# host group for masters
+[masters]
+$MY_HOSTNAME
+
+# host group for nodes, includes region info
+[nodes]
+$MY_HOSTNAME
+EOF
+
+ssh-keygen -t rsa -f /root/.ssh/id_rsa -N ''
+cat /root/.ssh/id_rsa.pub >>/root/.ssh/authorized_keys
+
+git clone https://github.com/openshift/openshift-ansible
+ANSIBLE_HOST_KEY_CHECKING=0 PYTHONUNBUFFERED=1 ansible-playbook openshift-ansible/playbooks/byo/config.yml
+
+#PYTHONUNBUFFERED=1 atomic-openshift-installer -u install
+
+./install.py
+oadm manage-node --schedulable $MY_HOSTNAME
+
+sed -i -e 's/  subdomain:.*/  subdomain: apps.example.com/' /etc/origin/master/master-config.yaml
+
+https_proxy=$PROXY curl -s https://pypi.python.org/packages/source/d/dnslib/dnslib-0.9.4.tar.gz | tar -xz
+pushd dnslib-0.9.4
+python setup.py install
+popd
+
+for svc in auth dns-intercept master-ipcfg node-ipcfg routewatcher; do
+  cp atomic-openshift-$svc.py /usr/local/libexec
+  cp atomic-openshift-$svc.service /lib/systemd/system
+  systemctl enable atomic-openshift-$svc
+done
+systemctl start atomic-openshift-dns-intercept.service
+systemctl mask docker-storage-setup.service
+
+oadm new-project demo --admin=demo
+mkdir /home/demo/.kube
+cat >/home/demo/.kube/config <<EOF
+kind: Config
+apiVersion: v1
+clusters:
+- cluster:
+    server: https://$MY_HOSTNAME:8443
+  name: ${MY_HOSTNAME//./-}:8443
+contexts:
+- context:
+    cluster: ${MY_HOSTNAME//./-}:8443
+  name: ${MY_HOSTNAME//./-}:8443
+current-context: ${MY_HOSTNAME//./-}:8443
+EOF
+chown -R demo:demo /home/demo/.kube
+
+echo '{"kind": "ServiceAccount", "apiVersion": "v1", "metadata": {"name": "infra"}}' | oc create -f -
+(oc get -o yaml scc privileged; echo - system:serviceaccount:default:infra) | oc replace scc privileged -f -
+mkdir /registry
+oadm registry --config=/etc/origin/master/admin.kubeconfig --credentials=/etc/origin/master/openshift-registry.kubeconfig --mount-host=/registry --service-account=infra --images='openshift/origin-${component}:${version}'
+
+oadm router --credentials=/etc/origin/master/openshift-router.kubeconfig --service-account=infra --images='openshift/origin-${component}:${version}'
+
+for ((i = 0; i < 12; i++)); do
+  [ $(oc get pods | grep -v -- -deploy | grep Running | wc -l) = 2 -a $(oc get pods | grep -- -deploy | wc -l) = 0 ] && break
+  sleep 10
+done
+[ $(oc get pods | grep -v -- -deploy | grep Running | wc -l) = 2 -a $(oc get pods | grep -- -deploy | wc -l) = 0 ] || exit 1
+
+cp /etc/origin/master/ca.crt /etc/pki/ca-trust/source/anchors/
+update-ca-trust
+
+firefox_set_homepage https://$MY_HOSTNAME:8443/
+
+sed -i -e '/-A FORWARD/ a\
+-A OS_FIREWALL_ALLOW -p tcp -m state --state NEW -m tcp --dport 5900 -j ACCEPT' /etc/sysconfig/iptables
+
+./install-logging.sh
+./install-metrics.sh
+
+cat >>/usr/local/bin/demobuilder-cleanup.sh <<'EOF'
+systemctl stop origin-node.service
+for ns in default logging openshift-infra; do
+  oc delete pods --all -n $ns
+done
+docker ps -aq | xargs docker rm -f
+true
+EOF

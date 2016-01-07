@@ -1,0 +1,55 @@
+#!/bin/bash -ex
+
+. vm-functions
+
+register_channels
+yum_install bash-completion evince firefox gnome-classic-session gnome-terminal man-db tigervnc-server xinetd xorg-x11-drivers
+
+ln -sf /lib/systemd/system/graphical.target /etc/systemd/system/default.target
+
+mkdir -p /etc/gnome-settings-daemon/xrandr
+cp monitors.xml /etc/gnome-settings-daemon/xrandr
+
+sed -i -e '/^\[greeter\]/ a \
+IncludeAll=false\
+Include=demo
+/^\[xdmcp\]/ a \
+Enable=true' /etc/gdm/custom.conf
+
+cp rfb /etc/xinetd.d
+
+cp 80-color-manager.rules /etc/polkit-1/rules.d
+
+firewall-cmd --permanent --zone=public --add-port=5900/tcp
+
+cp 01-fixes /etc/dconf/db/local.d
+
+dconf update
+
+useradd demo
+passwd -d demo
+passwd -e demo
+echo 'demo ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers
+
+mkdir /home/demo/Desktop
+for shortcut in firefox gnome-terminal; do
+  install -m 0755 /usr/share/applications/$shortcut.desktop /home/demo/Desktop
+done
+echo Path=/home/demo >>/home/demo/Desktop/gnome-terminal.desktop
+chown -R demo:demo /home/demo/Desktop
+
+sed -i -e '/^#PermitEmptyPasswords/ a \
+PermitEmptyPasswords yes' /etc/ssh/sshd_config
+
+for dest in password-auth system-auth; do
+  cp pam-auth-demobuilder /etc/pam.d/$dest-demobuilder
+  ln -sf $dest-demobuilder /etc/pam.d/$dest
+done
+
+sed -i -e '/load-module.*bluetooth/ s/^/#/' /etc/pulse/default.pa
+
+sed -i -e 's/"dateMenu", //' /usr/share/gnome-shell/modes/classic.json
+
+cat >>/usr/local/bin/demobuilder-cleanup.sh <<EOF
+rm -f /var/lib/NetworkManager/dhclient-*-eth0.lease
+EOF

@@ -1,0 +1,13 @@
+name: Origin 1.1 base image
+maintainers:
+- Jim Minter <jminter@redhat.com>
+description: |
+  This image provides a base instance of Origin 1.1, including the master and
+  node components, examples, GUI and web browser.  Internet connectivity is
+  required to run.
+
+  This image is vanilla, so is handy for people to replicate issues / experiment
+  with the project with Internet connectivity.
+layer:
+  cpus: 2
+  mem: 4096

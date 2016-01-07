@@ -1,0 +1,9 @@
+service rfb
+{
+        protocol = tcp
+        wait = no
+        user = nobody
+        server = /usr/bin/Xvnc
+        # the :1 below is due to bz1283925
+        server_args = :1 -inetd -query localhost -once -SecurityTypes None
+}

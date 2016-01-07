@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<title>Origin 1.1 base image</title>
+
+<xmp style="display:none;">
+## Description
+
+This image provides a base instance of Origin 1.1, including the master and
+node components, examples, GUI and web browser.  Internet connectivity is
+required to run.
+
+This image is vanilla, so is handy for people to replicate issues / experiment
+with the project with Internet connectivity.
+
+<!-- HEADER -->
+
+Run the VM and open the GUI.  Log in as *demo* and set your password.
+
+## Getting started
+
+#### Browse the OpenShift web user interface
+
+1. Double-click the *Firefox Web Browser* icon on the desktop.  The OpenShift
+   web user interface will open on the login page.
+1. Enter your username (`demo`) and the password that you set at login time, and
+   click *Log In*.
+1. Click the *demo* project workspace.
+
+#### Create an application hosted on OpenShift
+
+1. Follow the steps above.
+1. Click the *Add to Project* button.
+1. Click the cakephp-example instant app.
+1. Scroll down and click *Create*.
+1. Click *Continue to overview*.
+1. Wait for the example application to be cloned, built and deployed.  It will
+   take up to a minute or two for the build process to begin automatically and
+   then complete.
+1. `CTRL`-click the application URL
+   (*http://cakephp-example-demo.apps.example.com*) to launch the application in
+   a new tab.
+
+#### Use the OpenShift ("oc") command line tool
+
+1. Double-click the Terminal icon on the desktop.
+1. Type `oc login` and press Enter to login to OpenShift.
+1. Enter your username (`demo`) and press Enter.
+1. Enter the password that you set at login time and press Enter.
+1. Type oc commands such as `oc status` and `oc get pods` to see items which you
+   have created.
+1. Type `oc delete all --all` to reset your project.
+1. Type `exit` to close the terminal window.
+
+#### Use the OpenShift ("oc") command line tool as the system:admin user
+
+1. Double-click the Terminal icon on the desktop.
+1. Type `sudo -i` and press Enter to change to the root user.
+1. Type oc commands such as `oc status` and `oc get pods` as appropriate.
+1. Type `logout` to change back to the demo user.
+1. Type `exit` to close the terminal window.
+
+## More information
+
+- [OpenShift product documentation](https://access.redhat.com/documentation/en-US/OpenShift_Enterprise/)
+- [OpenShift Enterprise](https://enterprise.openshift.com/)
+- [OpenShift Training](https://github.com/openshift/training)
+- [OpenShift Origin](http://www.openshift.org/)
+
+<!-- FOOTER -->
+
+## VM image maintainer(s)
+
+- Jim Minter [jminter@redhat.com](mailto:jminter@redhat.com)
+
+## Please contribute to this demo!
+
+Questions, comments, bug reports, feature requests, patches, pull requests and
+cake are all welcomed on [GitHub](http://github.com/RedHatEMEA/demobuilder) or
+to [jminter@redhat.com](mailto:jminter@redhat.com).
+
+If sending a bug report, please include the contents of
+[/etc/demobuilder](/etc/demobuilder), as this will indicate the builds that were
+used to create the VM image.
+</xmp>
+
+<script src="strapdown/v/0.2/strapdown.js"></script>
+<script type="text/javascript">
+var spans = document.getElementsByTagName('span');
+for (var i = 0; i < spans.length; i++) {
+  spans[i].className = "pln"
+}
+</script>
+
+</html>
