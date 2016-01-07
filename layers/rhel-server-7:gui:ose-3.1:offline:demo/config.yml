@@ -12,3 +12,5 @@ description: |
   This image is heavily modified and additionally includes JBoss Developer
   Studio.  It is intended for SAs in order to demo the full OpenShift end-user
   experience.
+layer:
+  mem: 8192
