@@ -26,6 +26,9 @@ sudo dnf -y install git libcdio libguestfs libvirt pigz pyOpenSSL \
 
 # [NOTE] You may need to install 'backports.ssl' (http://bit.ly/1ZmoiFv), 
 # otherwise you'll face the error message "FATAL: please install python-backports.ssl".
+# $ gunzip -c backports.ssl-0.0.9.tar.gz | tar xf -
+# $ cd backports.ssl-0.0.9
+# $ sudo python setup.py install
 
 # Ensure system is up to date
 sudo dnf -y update
