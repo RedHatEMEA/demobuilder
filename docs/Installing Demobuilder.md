@@ -24,6 +24,8 @@ sudo update-ca-trust
 sudo dnf -y install git libcdio libguestfs libvirt pigz pyOpenSSL \
   python-bottle PyYAML qemu-kvm python-cherrypy python-apsw
 
+[NOTE] You may need to install 'backports.ssl' (http://bit.ly/1ZmoiFv).
+
 # Ensure system is up to date
 sudo dnf -y update
 
