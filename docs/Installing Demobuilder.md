@@ -24,7 +24,7 @@ sudo update-ca-trust
 sudo dnf -y install git libcdio libguestfs libvirt pigz pyOpenSSL \
   python-bottle PyYAML qemu-kvm python-cherrypy python-apsw
 
-# Install required packages using RHEL CSB:
+# Install required packages (using RHEL CSB):
 $ sudo yum -y install git.x86_64 libcdio.x86_64 libguestfs.x86_64 libvirt.x86_64 pigz.x86_64 pyOpenSSL.x86_64 \
   python-bottle.noarch PyYAML.x86_64 qemu-kvm.x86_64 python-cherrypy.noarch python-apsw.x86_64
 
