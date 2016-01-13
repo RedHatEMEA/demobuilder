@@ -56,7 +56,7 @@ howto: |
   vagrant init $IMAGE
 
   # Launch the image
-  vagrant up
+  vagrant up --provider=libvirt
 
   # SSH into the image to find its IP address
   vagrant ssh -c 'ip -4 address show dev eth0'
