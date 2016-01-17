@@ -72,7 +72,9 @@ for contrib in contrib/*; do
   fi
 done
 
-sudo iptables -C INPUT_ZONES -i $BUILD_BRIDGE -j IN_trusted &>/dev/null || echo "WARNING: please verify firewall configuration."
+if [ "$NO_FIREWALL_CHECK" != True ]; then
+  sudo iptables -C INPUT_ZONES -i $BUILD_BRIDGE -j IN_trusted &>/dev/null || echo "WARNING: please verify firewall configuration."
+fi
 
 mkdir -p build isos keys releases tmp
 
