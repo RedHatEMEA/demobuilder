@@ -40,7 +40,7 @@ def main():
         update(config, read_config(layer))
 
     for k in config["config"]:
-        print "%s='%s'" % (k.upper(), config["config"][k])
+        print "export %s='%s'" % (k.upper(), config["config"][k])
 
     for k in ["build", "layer"]:
         for kk in config[k]:
