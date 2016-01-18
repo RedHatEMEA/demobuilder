@@ -22,7 +22,7 @@ sudo update-ca-trust
 
 # Install required packages
 sudo dnf -y install git libcdio libguestfs libvirt pigz pyOpenSSL \
-  python-bottle PyYAML qemu-kvm python-cherrypy python-apsw
+  python-apsw python-bottle python-cherrypy python-pyasn1 PyYAML qemu-kvm
 
 # Ensure system is up to date
 sudo dnf -y update
