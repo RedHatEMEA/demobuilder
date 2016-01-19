@@ -1,8 +1,0 @@
-#!/bin/bash
-
-if [ -n "$http_proxy" ]; then
-  curl -so /tmp/ca_cert http://cacert/
-  npm config set cafile /tmp/ca_cert
-fi
-
-exec /usr/local/sti/_assemble "$@"

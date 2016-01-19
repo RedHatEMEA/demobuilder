@@ -1,5 +1,0 @@
-Host *.example.com
-  StrictHostKeyChecking no
-  UserKnownHostsFile /dev/null
-  StrictHostKeyChecking no
-  LogLevel QUIET
