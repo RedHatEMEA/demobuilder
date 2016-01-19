@@ -7,4 +7,6 @@ if [ "$1" = eth0 -a "$2" = up ]; then
 ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
 ${IP4_ADDRESS_0%%/*} $(hostname)
 EOF
+
+  sed -i -e '/^search / d' /etc/resolv.conf
 fi
