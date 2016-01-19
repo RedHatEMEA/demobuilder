@@ -1,0 +1,8 @@
+/repodata/
+^https://registry\.access\.redhat\.com:443/v1/repositories/
+^https://registry-1\.docker\.io:443/v2/[^/]+/[^/]+/manifests/
+^https://[^:]+:443/trust/official\.json$
+^http://cpanmetadb\.plackperl\.org/v1\.0/package/
+^https://(bundler\.)?rubygems\.org:443/api/v1/dependencies
+^https://pypi\.python\.org:443/simple/
+^https://registry\.npmjs\.org:443/[^/]+$
