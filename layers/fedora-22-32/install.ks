@@ -25,7 +25,7 @@ qemu-guest-agent
 %post
 exec &>/dev/console
 tput csr 0
-set -x
+set -ex
 
 eval $(tr ' ' '\n' < /proc/cmdline | grep =)
 
@@ -57,4 +57,5 @@ grubby --update-kernel=ALL --args=quiet
 grubby --update-kernel=ALL --args=net.ifnames=0
 grubby --update-kernel=ALL --remove-args=console=ttyS0,115200n8
 
+>/var/tmp/kickstart-succeeded
 %end

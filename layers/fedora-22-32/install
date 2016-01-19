@@ -43,4 +43,6 @@ utils/sigwrap $QEMUKVM -nodefaults \
   -display none \
   -serial file:/proc/self/fd/2
 
+echo 'stat /var/tmp/kickstart-succeeded' | LIBGUESTFS_BACKEND=direct guestfish --ro -a tmp/$LAYER.qcow2 -i &>/dev/null
+
 mv tmp/$LAYER.qcow2 build/$LAYER.qcow2

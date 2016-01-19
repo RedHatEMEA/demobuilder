@@ -25,7 +25,7 @@ yum-utils
 %post
 exec &>/dev/console
 tput csr 0
-set -x
+set -ex
 
 eval $(tr ' ' '\n' < /proc/cmdline | grep =)
 
@@ -56,4 +56,5 @@ grubby --update-kernel=ALL --remove-args=console=ttyS0,115200n8
 grubby --update-kernel=ALL --remove-args=crashkernel=auto
 grubby --update-kernel=DEFAULT --remove-args=systemd.debug
 
+>/var/tmp/kickstart-succeeded
 %end

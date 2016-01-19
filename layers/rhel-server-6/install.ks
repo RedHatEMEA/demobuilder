@@ -28,7 +28,7 @@ system-config-firewall-base
 
 %post
 exec &>/dev/console
-set -x
+set -ex
 
 eval $(tr ' ' '\n' < /proc/cmdline | grep =)
 
@@ -58,4 +58,5 @@ grubby --update-kernel=ALL --args=quiet
 grubby --update-kernel=ALL --remove-args=console=ttyS0,115200n8
 grubby --update-kernel=ALL --remove-args=crashkernel=auto
 
+>/var/tmp/kickstart-succeeded
 %end
