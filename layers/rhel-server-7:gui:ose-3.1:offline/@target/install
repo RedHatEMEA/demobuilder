@@ -25,14 +25,14 @@ chcon -t svirt_sandbox_file_t /image-registry
 oc create -f image-registry.yaml
 
 yum_install gcc python-devel sqlite-devel
-https_proxy=$PROXY curl -sLO https://github.com/rogerbinns/apsw/archive/3.7.17-r1.zip
+https_proxy=$PROXY curl --trace - -LO https://github.com/rogerbinns/apsw/archive/3.7.17-r1.zip
 unzip -q 3.7.17-r1.zip
 pushd apsw-3.7.17-r1
 python setup.py install
 popd
 yum -y history undo $(yum history list | grep -A1 ^- | tail -1 | awk '{print $1;}')
 
-https_proxy=$PROXY curl -sLO https://pypi.python.org/packages/source/b/backports.ssl/backports.ssl-0.0.7.tar.gz
+https_proxy=$PROXY curl --trace - -LO https://pypi.python.org/packages/source/b/backports.ssl/backports.ssl-0.0.7.tar.gz
 tar -xzf backports.ssl-0.0.7.tar.gz
 pushd backports.ssl-0.0.7
 python setup.py install
