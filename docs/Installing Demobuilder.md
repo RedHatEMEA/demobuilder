@@ -24,6 +24,22 @@ sudo update-ca-trust
 sudo dnf -y install git libcdio libguestfs libvirt pigz pyOpenSSL \
   python-apsw python-bottle python-cherrypy python-pyasn1 PyYAML qemu-kvm
 
+# Install required packages (using RHEL CSB):
+$ sudo yum -y install git.x86_64 libcdio.x86_64 libguestfs.x86_64 libvirt.x86_64 pigz.x86_64 pyOpenSSL.x86_64 \
+  python-bottle.noarch PyYAML.x86_64 qemu-kvm.x86_64 python-cherrypy.noarch python-apsw.x86_64
+
+# [WARN] The 'python-apsw' RPM may not exist and need to be downloaded 
+# and installed (http://bit.ly/1SOsJUB).
+# $ cd $HOME/Downloads
+# $ sudo yum -y install python-apsw-3.7.15.2.r1-1.el7.nux.x86_64.rpm
+
+# [NOTE] If you encounter the error message "FATAL: please install python-backports.ssl", 
+# you'll need to download and install 'backports.ssl' (http://bit.ly/1ZmoiFv).
+# $ cd $HOME/Downloads
+# $ gunzip -c backports.ssl-0.0.9.tar.gz | tar xf -
+# $ cd backports.ssl-0.0.9
+# $ sudo python setup.py install
+
 # Ensure system is up to date
 sudo dnf -y update
 
