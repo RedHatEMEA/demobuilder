@@ -104,7 +104,7 @@ def main():
     args = parse_args()
 
     config = yaml.load(open("config.yml").read())
-    dbpath = config["config"].get("dbpath", "webproxycache.db")
+    cacheport = config["config"].get("cacheport", None)
 
     for apiport in range(1024, 65536):
         try:
@@ -114,18 +114,21 @@ def main():
         except socket.error:
             pass
 
-    for cacheport in range(apiport + 1, 65536):
-        try:
-            cacheserver = webproxycache.make_server(args.ip, cacheport, dbpath)
-            break
+    cacheserver = None
+    if cacheport is None:
+        for cacheport in range(apiport + 1, 65536):
+            try:
+                cacheserver = webproxycache.make_server(args.ip, cacheport, "webproxycache.db")
+                break
 
-        except socket.error:
-            pass
+            except socket.error:
+                pass
 
     if args.debug:
-        t = threading.Thread(target=cacheserver.serve_forever)
-        t.daemon = True
-        t.start()
+        if cacheserver is not None:
+            t = threading.Thread(target=cacheserver.serve_forever)
+            t.daemon = True
+            t.start()
 
         app.run(server=apiserver)
 
@@ -137,9 +140,10 @@ def main():
             os.open("log", os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0666)
             os.open("log", os.O_WRONLY)
 
-            t = threading.Thread(target=cacheserver.serve_forever)
-            t.daemon = True
-            t.start()
+            if cacheserver is not None:
+                t = threading.Thread(target=cacheserver.serve_forever)
+                t.daemon = True
+                t.start()
 
             app.run(server=apiserver)
 
