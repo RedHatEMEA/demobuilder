@@ -2,8 +2,8 @@
 
 ### Prerequisites
 
-- Fedora 22 or RHEL7, on a physical or virtual machine (with nested
-  virtualisation enabled).
+- Fedora 22 or RHEL7, on a physical machine (at a pinch on a virtual machine
+  with nested virtualisation enabled, but builds are not very reliable).
 
 If using a virtual machine, suggested minimum specs are 8GB RAM and 50GB disk.
 
@@ -15,30 +15,29 @@ Enable hypervisor applications in this virtual machine.
 ### Installation
 
 ```bash
-# Install Red Hat CA certificates if required
-# Download the certificates from https://mojo.redhat.com/docs/DOC-1049591
-sudo mv redhat.com.crt redhat.com.engineering-services.crt /etc/pki/ca-trust/source/anchors
-sudo update-ca-trust
-
-# Install required packages
+# Install required packages (Fedora)
 sudo dnf -y install git libcdio libguestfs libvirt pigz pyOpenSSL \
-  python-apsw python-bottle python-cherrypy python-pyasn1 PyYAML qemu-kvm
+  python-apsw python-pyasn1 python-bottle python-cherrypy PyYAML qemu-kvm
 
-# Install required packages (using RHEL CSB):
-$ sudo yum -y install git.x86_64 libcdio.x86_64 libguestfs.x86_64 libvirt.x86_64 pigz.x86_64 pyOpenSSL.x86_64 \
-  python-bottle.noarch PyYAML.x86_64 qemu-kvm.x86_64 python-cherrypy.noarch python-apsw.x86_64
+# Install required packages (RHEL)
+sudo yum -y install git gcc libcdio libguestfs libvirt pigz pyOpenSSL \
+  python-pyasn1 python-bottle python-cherrypy python-devel PyYAML.x86_64 \
+  sqlite-devel qemu-kvm
 
-# [WARN] The 'python-apsw' RPM may not exist and need to be downloaded 
-# and installed (http://bit.ly/1SOsJUB).
-# $ cd $HOME/Downloads
-# $ sudo yum -y install python-apsw-3.7.15.2.r1-1.el7.nux.x86_64.rpm
+# RHEL only: python-apsw is not yet available in RPM format although work is
+# being done to add it to EPEL.
+curl -sLO https://github.com/rogerbinns/apsw/archive/3.7.17-r1.zip
+unzip -q 3.7.17-r1.zip
+pushd apsw-3.7.17-r1
+sudo python setup.py install
+popd
 
-# [NOTE] If you encounter the error message "FATAL: please install python-backports.ssl", 
-# you'll need to download and install 'backports.ssl' (http://bit.ly/1ZmoiFv).
-# $ cd $HOME/Downloads
-# $ gunzip -c backports.ssl-0.0.9.tar.gz | tar xf -
-# $ cd backports.ssl-0.0.9
-# $ sudo python setup.py install
+# RHEL only: python-backports.ssl is not available in RPM format.
+curl -sLO https://pypi.python.org/packages/source/b/backports.ssl/backports.ssl-0.0.9.tar.gz
+tar -xzf backports.ssl-0.0.9.tar.gz
+pushd backports.ssl-0.0.9
+sudo python setup.py install
+popd
 
 # Ensure system is up to date
 sudo dnf -y update
@@ -60,9 +59,12 @@ sudo firewall-cmd --reload
 cd $HOME
 git clone --recursive https://github.com/<yourgithubid>/demobuilder.git
 
-# Configure demobuilder
+# Work through demobuilder's install-time checks
 cd demobuilder
-cp config.yml.example config.yml
+utils/init.sh
+
+# Configure demobuilder
+vi config.yml
 
 # Add your RHN username and password to config.yml, and provide the UUID(s) of
 # one or more pools to which VMs should be temporarily connected using
@@ -70,8 +72,8 @@ cp config.yml.example config.yml
 
 # If building RHEL-based VMs, download appropriate ISOs to isos/.
 mkdir isos
-# download isos/rhel-server-6.7-x86_64-dvd,
-# isos/rhel-server-7.1-x86_64-dvd.iso, etc.
+# download isos/rhel-server-6.7-x86_64-dvd, isos/rhel-server-7.2-x86_64-dvd.iso,
+# etc.
 ```
 
 ### Building images
@@ -84,21 +86,27 @@ cd demobuilder
 Usage: ./build.sh layer[:target]...
 
 Valid layers:
-  fedora-21
-  fedora-21-32
-  fedora-21-32:gui
-  fedora-21-32:gui:webex
-  fedora-21:gui
+  centos-7
+  centos-7:gui
+  centos-7:gui:origin-1.1
+  fedora-22
+  fedora-22-32
+  fedora-22-32:gui
+  fedora-22-32:gui:webex
+  fedora-22:demobuilder
+  fedora-22:gui
   rhel-guest-image-6.6
   rhel-server-6
   rhel-server-6:gui
-  rhel-server-6:gui:ose-2.2
   rhel-server-7
   rhel-server-7:gui
-  rhel-server-7:gui:ose-3.0
-  rhel-server-7:gui:ose-3.0:demo-jminter
+  rhel-server-7:gui:aep-ea3
+  rhel-server-7:gui:ose-3.1
+  rhel-server-7:gui:ose-3.1:offline
+  rhel-server-7:gui:ose-3.1:offline:demo
 
 Valid targets:
+  aws
   openstack
   rhev
   vagrant-libvirt
@@ -106,5 +114,5 @@ Valid targets:
   vsphere
 
 # Build an image
-./build.sh rhel-server-7:gui:ose-3.0:vagrant-libvirt
+./build.sh rhel-server-7:vagrant-libvirt
 ```
