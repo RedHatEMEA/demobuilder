@@ -13,7 +13,7 @@ stop() {
 
 trap stop EXIT
 TMPDIR=$(mktemp -d)
-VNC=${VNC:-:0}
+VNC=${VNC:-none}
 
 utils/sigwrap $QEMUKVM -nodefaults \
   -cpu host \
