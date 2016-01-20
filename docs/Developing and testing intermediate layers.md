@@ -83,7 +83,7 @@ The following process can be used to create a temporary COW VM of a stack for te
 1. Run a temporary VM based on the temporary COW snapshot:
 
    ```bash
-   $ utils/run.sh mysnap
+   $ VNC=:0 utils/run.sh mysnap
    QEMUPID=xxxxx
    IP=192.168.122.xxx
    ```
