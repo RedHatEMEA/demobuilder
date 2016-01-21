@@ -82,8 +82,8 @@ Note that **all** demobuilder scripts must be run from the root of the demobuild
 
 ```bash
 cd demobuilder
-./build.sh
-Usage: ./build.sh layer[:target]...
+./build.py
+Usage: ./build.py layer[:target]...
 
 Valid layers:
   centos-7
@@ -114,5 +114,5 @@ Valid targets:
   vsphere
 
 # Build an image
-./build.sh rhel-server-7:vagrant-libvirt
+./build.py rhel-server-7:vagrant-libvirt
 ```

@@ -47,7 +47,7 @@ The following steps should be taken to create a new intermediate layer:
 
       ```bash
       $ rm -f build/rhel-server-6:gui:mynewlayer.qcow2
-      $ ./build.sh rhel-server-6:gui:mynewlayer
+      $ ./build.py rhel-server-6:gui:mynewlayer
       ```
 
    1. If the build succeeds, start a temporary COW VM of your new stack (see below for how to do this) to verify its functionality
@@ -71,7 +71,7 @@ The following process can be used to create a temporary COW VM of a stack for te
 1. Build the appropriate stack:
 
    ```bash
-   $ ./build.sh rhel-server-6.5:gui:mynewlayer
+   $ ./build.py rhel-server-6.5:gui:mynewlayer
    ```
 
 1. Create a temporary COW snapshot file backed by the stack disk image:
