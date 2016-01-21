@@ -2,9 +2,9 @@
 
 . vm-functions
 
-register_channels rhel-7-server-rpms rhel-7-server-optional-rpms rhel-server-rhscl-7-rpms
+register_channels rhel-7-server-rpms rhel-7-server-optional-rpms
 
-yum_install maven30
+yum_install java-1.8.0-openjdk-devel
 
 IMAGES=(
   docker.io/openshift/hello-openshift:v0.4.2
@@ -13,6 +13,11 @@ IMAGES=(
 for image in "${IMAGES[@]}"; do
   docker_pull $image
 done
+
+http_proxy=http://$HOSTNAME:8080/ curl -sO http://www.mirrorservice.org/sites/ftp.apache.org/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz
+tar -xzf apache-maven-3.3.9-bin.tar.gz
+mv apache-maven-3.3.9 /usr/local
+ln -sf /usr/local/apache-maven-3.3.9/bin/mvn /usr/local/bin
 
 oadm new-project prod --admin=demo
 oc policy add-role-to-group system:image-puller system:serviceaccounts:prod -n demo
@@ -61,7 +66,7 @@ for i in /home/demo/git/*; do
 
   if [ -e pom.xml ]; then
     BUILD="$BUILD $(basename $i) $i"
-    su - demo -c "scl enable maven30 'cd $i && mvn clean package'"
+    su - demo -c "cd $i && mvn clean package"
     rm -rf target
   fi
 
