@@ -133,10 +133,12 @@ def copy_image(repo, i):
 
     return newi
 
+
 def remove_images():
     for i in removeset:
         system("docker rmi " + i, 0)
     removeset.clear()
+
 
 def copy_git_repo(uri):
     if uri.startswith("git://openshift.example.com/"):
@@ -178,7 +180,7 @@ def download_template_images(step, steps, repo):
         t.kind = "Template"
         t.apiVersion = "v1"
         oapi.put("/namespaces/openshift/templates/" + t.metadata.name, t)
-    remove_images()
+
 
 def download_imagestream_images(step, steps, repo):
     istrs = oapi.get("/namespaces/openshift/imagestreams")._items
@@ -198,11 +200,18 @@ def download_imagestream_images(step, steps, repo):
         istr.apiVersion = "v1"
         istr.metadata = k8s.API.decode({"name": istr.metadata.name,
                                         "annotations": {"openshift.io/image.insecureRepository": "true"}})
+
+        for ii in istr.status.tags:
+            for iii in ii._items:
+                try:
+                    oapi.delete("/images/" + iii.image)
+                except:
+                    pass
+
         del istr.status
 
         oapi.delete("/namespaces/openshift/imagestreams/" + istr.metadata.name)
         oapi.post("/namespaces/openshift/imagestreams", istr)
-    remove_images()
 
 
 def download_template_git_repos(step, steps):
@@ -235,6 +244,14 @@ def download_imagestream_git_repos(step, steps):
         istr.apiVersion = "v1"
         istr.metadata = k8s.API.decode({"name": istr.metadata.name,
                                         "annotations": {"openshift.io/image.insecureRepository": "true"}})
+
+        for ii in istr.status.tags:
+            for iii in ii._items:
+                try:
+                    oapi.delete("/images/" + iii.image)
+                except:
+                    pass
+
         del istr.status
 
         oapi.delete("/namespaces/openshift/imagestreams/" + istr.metadata.name)
@@ -283,6 +300,7 @@ def do_imagestream_builds(step, steps):
 
                 do_build(bc)
 
+
 def main():
     url = "https://openshift.example.com:8443"
     cert = ("/etc/origin/master/openshift-master.crt",
@@ -299,6 +317,8 @@ def main():
     download_imagestream_git_repos(4, 6)
     do_template_builds(5, 6)
     do_imagestream_builds(6, 6)
+    remove_images()
+
 
 if __name__ == "__main__":
     main()
