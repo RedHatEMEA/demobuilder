@@ -1,5 +1,6 @@
 /repodata/
 ^https://registry\.access\.redhat\.com:443/v1/repositories/
+^https://rcm-img-docker01.build.eng.bos.redhat.com:5001/v1/repositories/
 ^https://registry-1\.docker\.io:443/v2/[^/]+/[^/]+/manifests/
 ^https://[^:]+:443/trust/official\.json$
 ^http://cpanmetadb\.plackperl\.org/v1\.0/package/

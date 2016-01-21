@@ -59,7 +59,7 @@ needs_build() {
   fi
 
   if [ "$(find $2 -newer $1)" = "" ]; then
-    echo "$0: build not needed"
+    echo "build not needed"
     return 1
   fi
 }
