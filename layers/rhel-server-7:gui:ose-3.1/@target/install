@@ -6,27 +6,31 @@ MY_HOSTNAME=openshift.example.com
 
 # rhel-7-server-extras-rpms is required for docker-io
 register_channels rhel-7-server-rpms rhel-7-server-extras-rpms rhel-7-server-ose-3.1-rpms
+#register_channels rhel-7-server-rpms rhel-7-server-extras-rpms
+#curl -o /etc/yum.repos.d/auto-RH7-RHAOS-3.1.repo http://buildvm-devops.usersys.redhat.com/puddle/build/OpenShiftEnterpriseErrata/3.1/latest/RH7-RHAOS-3.1.repo
 
 yum_install atomic-openshift-utils bind-utils docker-io git httpd-tools lsof PyPAM python-requests PyYAML net-tools nmap-ncat strace tcpdump unzip
+
+#sed -i -e 's/registry.access.redhat.com/rcm-img-docker01.build.eng.bos.redhat.com:5001/' /etc/docker.conf
 
 OPENSHIFTVERSION=$(yum info atomic-openshift-master | awk '/Version/ { print $3; }')
 
 IMAGES=(
-  registry.access.redhat.com/openshift3/logging-auth-proxy:latest
-  registry.access.redhat.com/openshift3/logging-deployment:${OPENSHIFTVERSION%.*}
-  registry.access.redhat.com/openshift3/logging-elasticsearch:latest
-  registry.access.redhat.com/openshift3/logging-fluentd:latest
-  registry.access.redhat.com/openshift3/logging-kibana:latest
-  registry.access.redhat.com/openshift3/metrics-cassandra:latest
-  registry.access.redhat.com/openshift3/metrics-deployer:latest
-  registry.access.redhat.com/openshift3/metrics-hawkular-metrics:latest
-  registry.access.redhat.com/openshift3/metrics-heapster:latest
-  registry.access.redhat.com/openshift3/ose-deployer:v$OPENSHIFTVERSION
-  registry.access.redhat.com/openshift3/ose-docker-builder:v$OPENSHIFTVERSION
-  registry.access.redhat.com/openshift3/ose-docker-registry:v$OPENSHIFTVERSION
-  registry.access.redhat.com/openshift3/ose-haproxy-router:v$OPENSHIFTVERSION
-  registry.access.redhat.com/openshift3/ose-pod:v$OPENSHIFTVERSION
-  registry.access.redhat.com/openshift3/ose-sti-builder:v$OPENSHIFTVERSION
+  openshift3/logging-auth-proxy:latest
+  openshift3/logging-deployment:${OPENSHIFTVERSION%.*}
+  openshift3/logging-elasticsearch:latest
+  openshift3/logging-fluentd:latest
+  openshift3/logging-kibana:latest
+  openshift3/metrics-cassandra:latest
+  openshift3/metrics-deployer:latest
+  openshift3/metrics-hawkular-metrics:latest
+  openshift3/metrics-heapster:latest
+  openshift3/ose-deployer:v$OPENSHIFTVERSION
+  openshift3/ose-docker-builder:v$OPENSHIFTVERSION
+  openshift3/ose-docker-registry:v$OPENSHIFTVERSION
+  openshift3/ose-haproxy-router:v$OPENSHIFTVERSION
+  openshift3/ose-pod:v$OPENSHIFTVERSION
+  openshift3/ose-sti-builder:v$OPENSHIFTVERSION
 )
 
 for image in "${IMAGES[@]}"; do
@@ -97,10 +101,10 @@ chown -R demo:demo /home/demo/.kube
 
 echo '{"kind": "ServiceAccount", "apiVersion": "v1", "metadata": {"name": "infra"}}' | oc create -f -
 (oc get -o yaml scc privileged; echo - system:serviceaccount:default:infra) | oc replace scc privileged -f -
-mkdir /registry
-oadm registry --config=/etc/origin/master/admin.kubeconfig --credentials=/etc/origin/master/openshift-registry.kubeconfig --mount-host=/registry --service-account=infra --images='registry.access.redhat.com/openshift3/ose-${component}:${version}'
+mkdir -m 0777 /registry
+oadm registry --config=/etc/origin/master/admin.kubeconfig --credentials=/etc/origin/master/openshift-registry.kubeconfig --mount-host=/registry --service-account=infra --images='openshift3/ose-${component}:${version}'
 
-oadm router --credentials=/etc/origin/master/openshift-router.kubeconfig --service-account=infra --images='registry.access.redhat.com/openshift3/ose-${component}:${version}'
+oadm router --credentials=/etc/origin/master/openshift-router.kubeconfig --service-account=infra --images='openshift3/ose-${component}:${version}'
 
 for ((i = 0; i < 12; i++)); do
   [ $(oc get pods | grep -v -- -deploy | grep Running | wc -l) = 2 -a $(oc get pods | grep -- -deploy | wc -l) = 0 ] && break
