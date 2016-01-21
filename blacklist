@@ -7,3 +7,5 @@
 ^https://(bundler\.)?rubygems\.org:443/api/v1/dependencies
 ^https://pypi\.python\.org:443/simple/
 ^https://registry\.npmjs\.org:443/[^/]+$
+^https://maven.repository.redhat.com:443/.*\.xml(\.sha1)?$
+^https://repo1.maven.org:443/.*\.xml(\.sha1)?$
