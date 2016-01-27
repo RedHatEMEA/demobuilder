@@ -35,6 +35,9 @@ class Job(object):
 
             rv = p.wait()
             if rv:
+                global success
+                success = False
+
                 print "%-25s: FAILED(%d)" % (self.name, rv)
                 return
 
@@ -52,6 +55,9 @@ def worker(q):
 
 
 def build(*args):
+    global success
+    success = True
+
     q = Queue.Queue()
 
     root = Job()
@@ -65,6 +71,8 @@ def build(*args):
         t.start()
 
     q.join()
+
+    return success
 
 
 def usage():
@@ -84,7 +92,10 @@ def main(*args):
     if not args:
         return usage()
 
-    build(*args)
+    if build(*args):
+        return 0
+    else:
+        return 1
 
 if __name__ == "__main__":
-    main(*sys.argv[1:])
+    sys.exit(main(*sys.argv[1:]))
