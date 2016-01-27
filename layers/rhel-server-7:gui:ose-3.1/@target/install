@@ -17,7 +17,7 @@ OPENSHIFTVERSION=$(yum info atomic-openshift-master | awk '/Version/ { print $3;
 
 IMAGES=(
   openshift3/logging-auth-proxy:latest
-  openshift3/logging-deployment:${OPENSHIFTVERSION%.*}
+  openshift3/logging-deployment:latest
   openshift3/logging-elasticsearch:latest
   openshift3/logging-fluentd:latest
   openshift3/logging-kibana:latest
