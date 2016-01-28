@@ -11,7 +11,7 @@ register_channels rhel-7-server-rpms rhel-7-server-extras-rpms rhel-7-server-ose
 
 yum_install atomic-openshift-utils bind-utils docker-io git httpd-tools lsof PyPAM python-requests PyYAML net-tools nmap-ncat strace tcpdump unzip
 
-#sed -i -e 's/registry.access.redhat.com/rcm-img-docker01.build.eng.bos.redhat.com:5001/' /etc/docker.conf
+#sed -i -e 's/registry.access.redhat.com/rcm-img-docker01.build.eng.bos.redhat.com:5001/' /etc/sysconfig/docker
 
 OPENSHIFTVERSION=$(yum info atomic-openshift-master | awk '/Version/ { print $3; }')
 
