@@ -150,7 +150,7 @@ docker images | grep ^fabric8/ | awk '{print $3;}' | xargs docker rmi
 oc create -f /home/demo/git/monster/openshift/ticket-monster-template.yaml -n openshift
 oc create -f /home/demo/git/monster/openshift/ticket-monster-prod-template.yaml -n openshift
 
-oc process monster -n demo | oc create -n demo -f -
+oc process monster -n openshift | oc create -n demo -f -
 for ((i=0; i<360; i++)); do
   if oc get build monster-1 -n demo | grep -q Complete; then
     oc build-logs monster-1 -n demo
