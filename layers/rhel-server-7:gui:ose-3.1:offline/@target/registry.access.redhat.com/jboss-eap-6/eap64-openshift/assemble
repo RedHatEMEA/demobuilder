@@ -1,7 +1,5 @@
 #!/bin/bash
 
-sed -i -e "s/port=8778,host=127.0.0.1/port=8778,host=0.0.0.0/" $JBOSS_HOME/bin/standalone.conf
-
 read host port <<< $(python -c "import urlparse; print ' '.join(urlparse.urlparse('$http_proxy').netloc.split(':'))")
 sed -i -e "/<proxies>/ a \
 <proxy><host>$host</host><port>$port</port></proxy>" $HOME/.m2/settings.xml
