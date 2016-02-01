@@ -14,7 +14,7 @@ function hideshow(x) {
 </script>
 
 <xmp style="display:none;">
-## Available images
+## Available <font color="#c00000">{{ mode }}</font> images
 
 % for layer in sorted(layers.values(), key=lambda l: l.yaml["name"]):
 ### <a id="{{ layer.yaml["name"].replace(" ", "_") }}"></a> {{ layer.yaml["name"] }}

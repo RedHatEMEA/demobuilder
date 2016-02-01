@@ -49,8 +49,10 @@ def splitname(f):
 def root():
     layers = {}
     root = "releases"
+    mode = ""
     if "nightly" in request.query:
         root = "nightly/" + root
+        mode = "nightly"
 
     for f in sorted(os.listdir(root)):
         if f[0] == ".":
@@ -70,7 +72,7 @@ def root():
                                       st.st_size / 1e9),
                                      "docs": "layers/%s/@docs/index.html" % f.rsplit(":", 1)[0]})
 
-    return {"layers": layers}
+    return {"layers": layers, "mode": mode}
 
 
 @route("/contrib/strapdown/<path:path>")
