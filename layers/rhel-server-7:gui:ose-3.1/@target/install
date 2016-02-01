@@ -64,6 +64,9 @@ EOF
 
 PYTHONUNBUFFERED=1 atomic-openshift-installer -u install
 
+#sed -i -e 's/registry.access.redhat.com/rcm-img-docker01.build.eng.bos.redhat.com:5001/' /etc/sysconfig/docker
+#service docker restart
+
 ./install.py
 oadm manage-node --schedulable $MY_HOSTNAME
 

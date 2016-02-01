@@ -1,0 +1,29 @@
+#!/bin/bash
+
+read host port <<< $(python -c "import urlparse; print ' '.join(urlparse.urlparse('$http_proxy').netloc.split(':'))")
+
+if [ -e /tmp/src/configuration/settings.xml ]; then
+  sed -i -e "/<\/settings>/ i \
+<proxies><proxy><host>$host</host><port>$port</port></proxy></proxies>" /tmp/src/configuration/settings.xml
+
+else
+  mkdir -p $HOME/.m2
+  cat >$HOME/.m2/settings.xml <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <proxies>
+    <proxy>
+      <host>$host</host>
+      <port>$port</port>
+    </proxy>
+  </proxies>
+</settings>
+EOF
+fi
+
+curl -so /tmp/ca_cert http://cacert/
+/usr/lib/jvm/jre-1.8.0/bin/keytool -importcert -file /tmp/ca_cert -noprompt -keystore /tmp/trust.jks -storepass password
+
+exec /usr/local/s2i/_assemble "$@"

@@ -10,6 +10,14 @@ IMAGES=(
   docker.io/openshift/hello-openshift:v0.4.2
 )
 
+sed -i -e 's!^OPTIONS='\''!OPTIONS='\''-H unix:///var/run/docker.sock -H tcp://127.0.0.1:2375 !' /etc/sysconfig/docker
+DRIP=$(oc get svc docker-registry -o template --template='{{.spec.portalIP}}')
+IRIP=$(oc get svc image-registry -o template --template='{{.spec.portalIP}}')
+
+cat >>/etc/sysconfig/docker <<EOF
+NO_PROXY=$IRIP,$DRIP
+EOF
+
 for image in "${IMAGES[@]}"; do
   docker_pull $image
 done
@@ -21,6 +29,8 @@ ln -sf /usr/local/apache-maven-3.3.9/bin/mvn /usr/local/bin
 
 oadm new-project prod --admin=demo
 oc policy add-role-to-group system:image-puller system:serviceaccounts:prod -n demo
+
+oadm new-project xpaas --admin=demo
 
 mkdir -p /home/demo/.m2
 cp settings.xml /home/demo/.m2
@@ -81,6 +91,61 @@ EOF
   chmod 0755 /var/lib/git/demo/$(basename $i)/hooks/post-receive
   chown -R nobody:nobody /var/lib/git
 done
+
+echo 'export DOCKER_HOST=tcp://localhost:2375' >>/home/demo/.bash_profile
+su - demo -c "mkdir /home/demo/git/fis-examples"
+for example in cdi-camel-http cdi-cxf cdi-camel cdi-camel-jetty java-simple-mainclass java-camel-spring karaf-cxf-rest karaf-camel-rest-sql karaf-camel-log; do
+  git init --bare /var/lib/git/demo/fis-examples/$example
+  chown -R nobody:nobody /var/lib/git
+
+  su - demo -c "cd /home/demo/git/fis-examples && mvn archetype:generate -B -DarchetypeCatalog=https://repo.fusesource.com/nexus/content/groups/public/archetype-catalog.xml -DarchetypeGroupId=io.fabric8.archetypes -DarchetypeArtifactId=$example-archetype -DarchetypeVersion=2.2.0.redhat-079 -DgroupId=com.redhat -DartifactId=$example -Dversion=1.0-SNAPSHOT"
+  sed -i -e "s!<docker.from>!<docker.from>$IRIP:5000/!" /home/demo/git/fis-examples/$example/pom.xml
+  ./install.py /home/demo/git/fis-examples/$example/quickstart-template.json GIT_REPO git://openshift.example.com/demo/fis-examples/$example
+  if [ $example = cdi-camel-jetty ]; then
+    # https://issues.jboss.org/browse/OSFUSE-190
+    ./install.py /home/demo/git/fis-examples/$example/quickstart-template.json SERVICE_NAME qs-cdi-camel-jetty
+  elif [ $example = karaf-camel-rest-sql ]; then
+    # https://issues.jboss.org/browse/OSFUSE-193
+    ./install.py /home/demo/git/fis-examples/$example/quickstart-template.json SERVICE_NAME karaf-camel-rest-sql
+  fi
+  oc create -f /home/demo/git/fis-examples/$example/quickstart-template.json -n xpaas
+
+  pushd /home/demo/git/fis-examples/$example
+  git init
+  git add -A
+  git commit -m 'Initial commit'
+  git remote add origin git://localhost/demo/fis-examples/$example
+  git push -u origin master
+
+  chown -R demo:demo /home/demo/git/fis-examples/$example
+
+  if [ -e pom.xml ]; then
+    su - demo -c "cd /home/demo/git/fis-examples/$example && mvn clean install docker:build fabric8:json"
+    su - demo -c "cd /home/demo/git/fis-examples/$example && mvn fabric8:apply || true"
+    su - demo -c "cd /home/demo/git/fis-examples/$example && git clean -fdx"
+  fi
+
+  popd
+
+  oc process s2i-quickstart-$example -n xpaas | oc create -n xpaas -f -
+  for ((i=0; i<360; i++)); do
+    if oc get build s2i-quickstart-$example-1 -n xpaas | grep -q Complete; then
+      oc build-logs s2i-quickstart-$example-1 -n xpaas
+      break
+    elif oc get build s2i-quickstart-$example-1 -n xpaas | egrep -qe 'Error|Failed'; then
+      oc build-logs s2i-quickstart-$example-1 -n xpaas
+      false
+    elif [ $i -lt 359 ]; then
+      sleep 5
+    else
+      false
+    fi
+  done
+  oc delete all --all -n xpaas
+done
+
+docker images | grep ^fabric8/ | awk '{print $3;}' | xargs docker rmi
+# build-1 image?
 
 oc create -f /home/demo/git/monster/openshift/ticket-monster-template.yaml -n openshift
 oc create -f /home/demo/git/monster/openshift/ticket-monster-prod-template.yaml -n openshift

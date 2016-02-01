@@ -91,9 +91,34 @@
         </pluginRepository>
       </pluginRepositories>
     </profile>
+    <profile>
+      <id>fusesource</id>
+      <repositories>
+        <repository>
+          <id>fusesource</id>
+          <url>http://repo.fusesource.com/nexus/content/groups/public</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>fusesource</id>
+          <url>http://repo.fusesource.com/nexus/content/groups/public</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
   </profiles>
   <activeProfiles>
     <activeProfile>securecentral</activeProfile>
     <activeProfile>jboss-eap-repository</activeProfile>
+    <activeProfile>fusesource</activeProfile>
   </activeProfiles>
 </settings>
