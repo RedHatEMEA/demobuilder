@@ -48,8 +48,11 @@ def splitname(f):
 @view("ui/index.html.tpl")
 def root():
     layers = {}
+    root = "releases"
+    if "nightly" in request.query:
+        root = "nightly/" + root
 
-    for f in sorted(os.listdir("releases")):
+    for f in sorted(os.listdir(root)):
         if f[0] == ".":
             continue
 
@@ -58,10 +61,10 @@ def root():
         if not layer in layers:
             layers[layer] = Layer(layer)
 
-        st = os.stat("releases/" + f)
+        st = os.stat(root + "/" + f)
 
         layers[layer].images.append({"target": Target(f),
-                                     "link": "releases/" + f,
+                                     "link": root + "/" + f,
                                      "size": "built %s, size %0.2fGB" %
                                      (time.strftime("%d/%m/%Y %H:%M:%S UTC", time.gmtime(st.st_mtime)),
                                       st.st_size / 1e9),
@@ -88,6 +91,11 @@ def download(path):
 @route("/releases/<path:path>")
 def download(path):
     return static_file(path, "releases")
+
+
+@route("/nightly/releases/<path:path>")
+def download(path):
+    return static_file(path, "nightly/releases")
 
 
 @hook('after_request')
