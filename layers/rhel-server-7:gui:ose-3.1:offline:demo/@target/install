@@ -150,6 +150,22 @@ docker images | grep ^fabric8/ | awk '{print $3;}' | xargs docker rmi
 oc create -f /home/demo/git/monster/openshift/ticket-monster-template.yaml -n openshift
 oc create -f /home/demo/git/monster/openshift/ticket-monster-prod-template.yaml -n openshift
 
+oc process monster -n demo | oc create -n demo -f -
+for ((i=0; i<360; i++)); do
+  if oc get build monster-1 -n demo | grep -q Complete; then
+    oc build-logs monster-1 -n demo
+    break
+  elif oc get build monster-1 -n demo | egrep -qe 'Error|Failed'; then
+    oc build-logs monster-1 -n demo
+    false
+  elif [ $i -lt 359 ]; then
+    sleep 5
+  else
+    false
+  fi
+done
+oc delete all --all -n demo
+
 su - demo -c "xvfb-run /usr/local/jbdevstudio/jbdevstudio -data workspace $BUILD"
 
 yum -y history undo $(yum history list | grep -A1 ^- | tail -1 | awk '{print $1;}')
