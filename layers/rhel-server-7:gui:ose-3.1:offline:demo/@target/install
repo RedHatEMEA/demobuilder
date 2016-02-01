@@ -134,7 +134,9 @@ for example in cdi-camel-http cdi-cxf cdi-camel cdi-camel-jetty java-simple-main
       break
     elif oc get build s2i-quickstart-$example-1 -n xpaas | egrep -qe 'Error|Failed'; then
       oc build-logs s2i-quickstart-$example-1 -n xpaas
-      false
+      echo "BIG WARNING"
+      oc get build s2i-quickstart-$example-1 -n xpaas
+      #false # TODO
     elif [ $i -lt 359 ]; then
       sleep 5
     else
@@ -157,7 +159,9 @@ for ((i=0; i<360; i++)); do
     break
   elif oc get build monster-1 -n demo | egrep -qe 'Error|Failed'; then
     oc build-logs monster-1 -n demo
-    false
+    echo "BIG WARNING"
+    oc get build monster-1 -n demo
+    #false # TODO
   elif [ $i -lt 359 ]; then
     sleep 5
   else
