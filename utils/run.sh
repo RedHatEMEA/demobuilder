@@ -26,6 +26,7 @@ utils/sigwrap $QEMUKVM -nodefaults \
   -device virtio-net-pci,netdev=net0,mac=$(utils/random-mac.py) \
   -chardev socket,id=chan0,path=$TMPDIR/rhev.sock,server,nowait \
   -chardev socket,id=chan1,path=$TMPDIR/qemu.sock,server,nowait \
+  -monitor unix:tmp/$1.sock,server,nowait \
   -device virtio-serial-pci \
   -device virtserialport,chardev=chan0,name=com.redhat.rhevm.vdsm \
   -device virtserialport,chardev=chan1,name=org.qemu.guest_agent.0 \
