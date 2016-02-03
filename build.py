@@ -27,7 +27,11 @@ class Job(object):
 
     def build(self, q):
         if self.name:
-            p = subprocess.Popen(["utils/build.sh", self.name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            p = subprocess.Popen(["utils/build.sh", self.name],
+                                 stdout=subprocess.PIPE,
+                                 stderr=subprocess.STDOUT,
+                                 close_fds=True)
+
             while True:
                 line = p.stdout.readline()
                 if line == "":
