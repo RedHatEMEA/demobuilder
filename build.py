@@ -5,6 +5,7 @@ import Queue
 import subprocess
 import sys
 import threading
+import time
 
 
 class Job(object):
@@ -30,15 +31,16 @@ class Job(object):
             while True:
                 line = p.stdout.readline()
                 if line == "":
+                    print "%s: %-25s: OUTPUT ENDS" % (time.ctime(), self.name)
                     break
-                print "%-25s: %s" % (self.name, line),
+                print "%s: %-25s: %s" % (time.ctime(), self.name, line),
 
             rv = p.wait()
             if rv:
                 global success
                 success = False
 
-                print "%-25s: FAILED(%d)" % (self.name, rv)
+                print "%s: %-25s: FAILED(%d)" % (time.ctime(), self.name, rv)
                 return
 
         for child in self.children.values():
