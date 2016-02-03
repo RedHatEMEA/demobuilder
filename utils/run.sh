@@ -33,7 +33,7 @@ utils/sigwrap $QEMUKVM -nodefaults \
   -device cirrus-vga \
   -vnc $VNC \
   -usbdevice tablet \
-  &>/dev/null &
+  &>tmp/$(basename $1 .qcow2).log &
 
 QEMUPID=$!
 echo QEMUPID=$QEMUPID
