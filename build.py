@@ -2,6 +2,7 @@
 
 import os
 import Queue
+import re
 import subprocess
 import sys
 import threading
@@ -9,6 +10,8 @@ import time
 
 
 class Job(object):
+    ansi = re.compile("\x1b\[[^A-Za-z]*[A-Za-z]")
+
     def __init__(self, name=None):
         self.name = name
         self.children = {}
@@ -37,6 +40,7 @@ class Job(object):
                 if line == "":
                     print "%s: %-25s: OUTPUT ENDS" % (time.ctime(), self.name)
                     break
+                line = self.ansi.sub("", line)
                 print "%s: %-25s: %s" % (time.ctime(), self.name, line),
 
             rv = p.wait()
