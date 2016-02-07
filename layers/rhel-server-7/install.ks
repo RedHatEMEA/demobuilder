@@ -50,7 +50,7 @@ cleanup
 
 rm vm-functions
 
-grubby --update-kernel=ALL --args=quiet
+# grubby --update-kernel=ALL --args=quiet
 grubby --update-kernel=ALL --args=net.ifnames=0
 # grubby --update-kernel=ALL --remove-args=console=ttyS0,115200n8
 grubby --update-kernel=ALL --remove-args=crashkernel=auto
