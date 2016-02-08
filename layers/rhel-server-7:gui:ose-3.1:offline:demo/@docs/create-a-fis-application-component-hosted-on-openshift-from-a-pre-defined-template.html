@@ -5,20 +5,21 @@
 <xmp style="display:none;">
 <!-- HEADER -->
 
-## Create an application hosted on OpenShift from a pre-defined template
+## Create a FIS application component hosted on OpenShift from a pre-defined
+   template
 
-These steps demonstrate how OpenShift can build and deploy a (possibly
-multi-component) traditional or modern application from a pre-defined template.
+These steps demonstrate how OpenShift can build and deploy a simple Fuse
+Integration Services-based application component from a pre-defined template.
 This might be done by a developer, tester or operator to quickly set up a
-dedicated application instance according to its template, using OpenShift's
-self-service portal.
+dedicated application comonent instance according to its template, using
+OpenShift's self-service portal.
 
-1. **IMPORTANT**: in the *Projects* list, select the *demo* project.  You must
-   use the *demo* project at this point for the rest of the walk-through to
+1. **IMPORTANT**: in the *Projects* list, select the *xpaas* project.  You must
+   use the *xpaas* project at this point for the rest of the walk-through to
    proceed!
 1. Click the *Add to Project* button.
-1. Type `monster` in the *Filter by keyword* box.
-1. Under *Instant Apps*, click *monster*.
+1. Type `s2i-quickstart-cdi-camel-http` in the *Filter by keyword* box.
+1. Under *Instant Apps*, click *s2i-quickstart-cdi-camel-http*.
 1. Scroll down and click *Create*.
 1. Click *Continue to overview*.
 1. Wait for the example application to be cloned, built and deployed.  It will
@@ -26,10 +27,7 @@ self-service portal.
    then complete.
 1. Optional: to follow the build, click *View Log*.  Later, click *Overview* to
    return to the overview pane.  Alternatively use the command `oc logs --follow
-   build/monster-1` to follow the build process.
-1. When the monster deployment shows as running, `CTRL`-click the application
-   URL (*http://monster-demo.apps.example.com*) to launch the application in a
-   new tab.
+   build/s2i-quickstart-cdi-camel-http-1` to follow the build process.
 
 [Back](index.html)
 
