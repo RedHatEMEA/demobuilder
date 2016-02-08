@@ -8,11 +8,15 @@ import yaml
 
 def sn():
     try:
-        sn = int(open("/etc/origin/master/ca.serial.txt").read())
+        sn = int(open("/etc/origin/master/ca.serial.txt").read(), 16)
     except IOError:
         sn = 1
 
-    open("/etc/origin/master/ca.serial.txt", "w").write("%u" % (sn + 1))
+    sntext = "%X" % (sn + 1)
+    if len(sntext) % 2:
+        sntext = "0" + sntext
+
+    open("/etc/origin/master/ca.serial.txt", "w").write(sntext)
     return sn
 
 
