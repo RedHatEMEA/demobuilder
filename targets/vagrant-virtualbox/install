@@ -22,7 +22,7 @@ convert_qcow2 tmp/$BASE:$TARGET.qcow2 vmdk
 TMPDIR=$(mktemp -d)
 envsubst <targets/$TARGET/box.ovf >$TMPDIR/box.ovf
 
-tar -c --transform='s!.*/!!' --transform="s/$BASE:$TARGET.vmdk/box-disk1.vmdk/" targets/$TARGET/metadata.json tmp/$BASE:$TARGET.vmdk targets/$TARGET/Vagrantfile $TMPDIR/box.ovf | pigz >tmp/$BASE:$TARGET.box
+tar -c --transform='s!.*/!!' --transform="s/$BASE:$TARGET.vmdk/box-disk1.vmdk/" targets/$TARGET/metadata.json tmp/$BASE:$TARGET.vmdk targets/$TARGET/Vagrantfile $TMPDIR/box.ovf | nice pigz >tmp/$BASE:$TARGET.box
 rm -rf tmp/$BASE:$TARGET.qcow2 tmp/$BASE:$TARGET.vmdk $TMPDIR
 
 mv tmp/$BASE:$TARGET.box releases/$BASE:$TARGET.box

@@ -26,7 +26,7 @@ TMPDIR=$(mktemp -d)
 envsubst <targets/$TARGET/Vagrantfile >$TMPDIR/Vagrantfile
 envsubst <targets/$TARGET/metadata.json >$TMPDIR/metadata.json
 
-tar -c --transform='s!.*/!!' --transform="s/$BASE:$TARGET.qcow2/box.img/" $TMPDIR/metadata.json tmp/$BASE:$TARGET.qcow2 $TMPDIR/Vagrantfile | pigz >tmp/$BASE:$TARGET.box
+tar -c --transform='s!.*/!!' --transform="s/$BASE:$TARGET.qcow2/box.img/" $TMPDIR/metadata.json tmp/$BASE:$TARGET.qcow2 $TMPDIR/Vagrantfile | nice pigz >tmp/$BASE:$TARGET.box
 rm -rf tmp/$BASE:$TARGET.qcow2 $TMPDIR
 
 mv tmp/$BASE:$TARGET.box releases/$BASE:$TARGET.box

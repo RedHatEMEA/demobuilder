@@ -19,9 +19,9 @@ compress_qcow2() {
   BACKINGFILE=$(qemu-img info $1 | sed -n -e '/^backing file: / { s/.*: //; p; }')
 
   if [ -z $BACKINGFILE ]; then
-    qemu-img convert -c -O qcow2 -o compat=0.10 $1 $1.tmp
+    nice qemu-img convert -c -O qcow2 -o compat=0.10 $1 $1.tmp
   else
-    qemu-img convert -c -O qcow2 -o compat=0.10 -B $BACKINGFILE $1 $1.tmp
+    nice qemu-img convert -c -O qcow2 -o compat=0.10 -B $BACKINGFILE $1 $1.tmp
   fi
 
   mv $1.tmp $1
@@ -29,9 +29,9 @@ compress_qcow2() {
 
 convert_qcow2() {
   if [ $2 = qcow2 ]; then
-    qemu-img convert -O $2 -o compat=0.10 $1 $1.tmp
+    nice qemu-img convert -O $2 -o compat=0.10 $1 $1.tmp
   else
-    qemu-img convert -O $2 $1 $1.tmp
+    nice qemu-img convert -O $2 $1 $1.tmp
   fi
 
   mv $1.tmp $(echo $1 | sed -e 's/\.[^.]*$//').$2

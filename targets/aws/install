@@ -21,7 +21,7 @@ export BASE
 utils/addlayer.sh build/$BASE.qcow2 targets/$TARGET tmp/$BASE:$TARGET.qcow2
 convert_qcow2 tmp/$BASE:$TARGET.qcow2 raw
 
-utils/VMDKstream.py tmp/$BASE:$TARGET.raw tmp/$BASE:$TARGET.vmdk
+nice utils/VMDKstream.py tmp/$BASE:$TARGET.raw tmp/$BASE:$TARGET.vmdk
 
 rm -rf tmp/$BASE:$TARGET.qcow2 tmp/$BASE:$TARGET.raw
 
