@@ -3,8 +3,10 @@
 . vm-functions
 
 register_channels rhel-7-server-rpms rhel-7-server-rh-common-rpms
+rpm -Uvh http://download.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
 
-yum_install cloud-init
+yum_install cloud-init fio
+rpm -e epel-release
 
 systemctl enable cloud-init.service
 
