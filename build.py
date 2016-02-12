@@ -75,7 +75,7 @@ def build(*args):
         root.add(arg.split(":"))
     root.build(q)
 
-    for i in range(4):
+    for i in range(int(os.environ.get("DEMOBUILDER_WORKERS", "4"))):
         t = threading.Thread(target=worker, args=(q, ))
         t.daemon = True
         t.start()
