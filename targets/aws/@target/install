@@ -3,10 +3,13 @@
 . vm-functions
 
 register_channels rhel-7-server-rpms rhel-7-server-rh-common-rpms
-rpm -Uvh http://download.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+yum_install cloud-init
 
-yum_install cloud-init fio
-rpm -e epel-release
+yum_install $MIRROR_FEDORA/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+sed -i -e "s!^#baseurl=http://download.fedoraproject.org/!baseurl=$MIRROR_FEDORA/!; s/^mirrorlist=/#mirrorlist=/" /etc/yum.repos.d/epel.repo
+yum_install fio
+yum_remove epel-release-7-5
+rm /etc/yum.repos.d/epel.repo.rpmsave
 
 systemctl enable cloud-init.service
 
