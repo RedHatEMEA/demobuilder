@@ -118,7 +118,7 @@ def main():
     if cacheport is None:
         for cacheport in range(apiport + 1, 65536):
             try:
-                cacheserver = webproxycache.make_server(args.ip, cacheport, "webproxycache.db")
+                cacheserver = webproxycache.make_server(args.ip, cacheport)
                 break
 
             except socket.error:
