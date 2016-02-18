@@ -16,8 +16,8 @@ application running on OpenShift from their IDE.
       `BookingService.java` to select
       *monster/src/main/java/org/jboss/examples/ticketmonster/rest/BookingService.java*.
       Click *Open*.
-   1. Press `CTRL + L` or scroll down to line 124,
-      `public Response createBooking...`.
+   1. Press `CTRL + L`, enter `124` and click `OK`, or just scroll down to line
+      124, (`public Response createBooking...`).
    1. Right-click in the grey bar to the left of the text and select *Toggle
       Breakpoint* to set a breakpoint on the function.
 1. Connect to the application debugger port.
@@ -39,7 +39,7 @@ application running on OpenShift from their IDE.
    1. Return to JBoss Developer Studio.
    1. Click *Run/Debug Configurations...*.
    1. Double-click *Remote Java Application* in the list on the left.
-   1. Change the port number on the right from `8000` to `8787` and click
+   1. Change the *Port* number on the right from `8000` to `8787` and click
       *Debug*.
 1. Trigger the breakpoint.
    1. Return to Firefox and the Ticket Monster application.
@@ -57,6 +57,13 @@ application running on OpenShift from their IDE.
    1. Return to Firefox and click *Bookings*.  You should see that you
       successfully modified the e-mail address of your booking through the
       debugger.
+
+   Note: there is currently a known bug in Ticket Monster whereby if the REST
+   call triggering the debugger takes too long to return, a second REST call
+   is erroneously issued by the browser.  This manifests in the breakpoint
+   being hit twice and two bookings being made.  If this occurs, note that this
+   is a bug in Ticket Monster, not in OpenShift!  To see the modified e-mail
+   address in Ticket Monster, click the *Bookings* tab.
 1. Return to the the *JBoss* perspective in JBoss Developer Studio.  Find the
    monster pod in the *OpenShift Explorer* pane, right-click the pod and select
    *Port Forwarding...*, click *Stop All* and click *OK*.

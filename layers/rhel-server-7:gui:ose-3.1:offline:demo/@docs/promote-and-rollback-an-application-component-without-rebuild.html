@@ -19,24 +19,27 @@ necessary.
    1. Under *Instant Apps*, click *monster-prod*.
    1. Scroll down and click *Create*.
    1. Click *Continue to overview*.
-   1. **IMPORTANT**: wait for the database pod to be deployed.  It will take up
-      to a minute or two to complete.
 1. Tag the the oldest version of the application component in order to deploy it
    into the *prod* project.
    1. Double-click the Terminal icon on the desktop.
    1. Type `oc describe imagestream monster` and press `ENTER`.
    1. Choose the oldest of the built docker images (it'll look like
-      *monster@sha256:[0-9a-f]{64}*).  Call this $TAG.
+      *monster@sha256:[0-9a-f]{64}*).  Call this $TAG.  Ignore the leading
+      `172.30.x.y:5000/demo/` text.
    1. Type `oc tag $TAG monster:prod` and press `ENTER`.
    1. Return to Firefox and wait for OpenShift to deploy the application into
       the prod project.  Note that the application manifest has been set to
-      deploy three application pods.
+      deploy three application pods: after successfully deploying the first pod,
+      OpenShift will scale it up to three pods.
    1. `CTRL`-click the application URL
       (*http://monster-prod.apps.example.com*) to launch the application in a
       new tab.
-1. Repeat the process with a newer version of the application component.  Watch
-   the Firefox window to see OpenShift automatically carrying out rolling
-   upgrade of the application component in the *prod* project.
+1. ~~Repeat the process with a newer version of the application component.
+   Watch the Firefox window to see OpenShift automatically carrying out rolling
+   upgrade of the application component in the *prod* project.~~
+
+   Note: the above step does not work in OpenShift 3.1.1.  This is a known issue
+   which will be resolved shortly in a hotfix release.
 1. Return to the terminal window and type `exit` and press `ENTER` to close the
    window.
 

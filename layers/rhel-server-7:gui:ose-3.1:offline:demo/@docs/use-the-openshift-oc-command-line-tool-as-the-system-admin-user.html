@@ -9,9 +9,10 @@
 
 1. Double-click the Terminal icon on the desktop.
 1. Type `sudo -i` and press `ENTER` to change to the root user.
-1. Type oc commands such as `oc status` and `oc get pods` as appropriate.
-1. **IMPORTANT**: take care not to inadvertently delete objects in the *default*
-   project!
+1. Type oc commands such as `oc status` and `oc get pods --all-namespaces` as
+   appropriate.
+1. **IMPORTANT**: take care not to inadvertently delete objects in the
+   *default*, *logging* or *openshift-infra* projects!
 1. Type `logout` and press `ENTER` to change back to the demo user.
 1. Type `exit` and press `ENTER` to close the terminal window.
 

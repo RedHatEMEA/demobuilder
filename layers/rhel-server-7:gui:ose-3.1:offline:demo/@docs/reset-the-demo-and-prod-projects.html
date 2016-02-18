@@ -8,10 +8,10 @@
 ## Reset the demo and prod projects
 
 1. Double-click the Terminal icon on the desktop.
-1. Type `oc project prod` and press `ENTER`.
-1. Type `oc delete all --all` and press `ENTER` to reset your project.
-1. Type `oc project demo` and press `ENTER`.
-1. Type `oc delete all --all` and press `ENTER` to reset your project.
+1. Type `oc delete all --all -n prod` and press `ENTER` to reset the prod
+   project.
+1. Type `oc delete all --all -n demo` and press `ENTER` to reset the demo
+   project.
 1. Type `exit` and press `ENTER` to close the terminal window.
 
 [Back](index.html)
