@@ -46,6 +46,10 @@ howto: |
   sudo firewall-cmd --permanent --add-interface=virbr1 --zone=trusted
   sudo firewall-cmd --reload
 
+  # Add yourself to the libvirt group to avoid incessant password prompts
+  sudo gpasswd -a $USER libvirt
+  newgrp libvirt
+
   # Download and install the box image
   vagrant box add $IMAGE \
     $URL
