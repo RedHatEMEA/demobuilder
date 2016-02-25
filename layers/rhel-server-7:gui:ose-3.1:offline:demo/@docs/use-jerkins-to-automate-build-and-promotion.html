@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+<html>
+<title>OpenShift 3.1.1 offline image with demo</title>
+
+<xmp style="display:none;">
+<!-- HEADER -->
+
+## Use Jenkins to automate build and promotion across the projects
+
+Prerequisites are populated demo + prod projects
+
+1. In the demo project, instantiate the "jenkins-ephemeral" template
+1. Open the jenkins web ui (default username/password are admin/password)
+1. On the left-hand menu, click on "Manage Jenkins"
+1. On the right-hand pane, click on "Manage Plugins"
+1. On the "Updates" pane, mark the check box next to the "Openshift Pipeline Jenkins Plugin"
+1. On the very bottom, click the "Download now and install after restart" button
+1. On the next screen, check the "Restart Jenkins when installation is complete and no jobs are running" checkbox
+1. (wait for the installation & restart to complete)
+1. If necessary, log into the jenkins web ui again
+1. Click on the "OpenShift Sample" project
+1. On the left-hand menu, click on "Configure"
+1. Delete the first two build steps ("Scale Deployments in OpenShift" and "Check Deployment Success in OpenShift")
+1. In the "Perform builds in OpenShift" step, change the BuildConfig name to "monster" and the project name to "demo"
+1. In the "Check deployment success in OpenShift" step, change the DeploymentConfig name to "monster" and the project name to "demo"
+1. Delete the next two steps ("Scale Deployments in OpenShift" and "Check Deployment Success in OpenShift")
+1. In the "Verify a service is up in OpenShift" step, change the service name to "monster" and the project name to "demo"
+1. In the "Tag an Image in OpenShift" step, change the current image tag name to "latest", change the current ImageStream name to "monster", change the new image tag to "prod", change the new ImageStream name to "monster" and change the project name to demo
+1. Save the configuration
+1. On the left-hand menu, click on "Build now"
+
+[Back](index.html)
+
+<!-- FOOTER -->
+</xmp>
+
+<script src="strapdown/v/0.2/strapdown.js"></script>
+<script type="text/javascript">
+var spans = document.getElementsByTagName('span');
+for (var i = 0; i < spans.length; i++) {
+  spans[i].className = "pln"
+}
+</script>
+
+</html>
