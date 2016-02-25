@@ -50,6 +50,11 @@ howto: |
   sudo gpasswd -a $USER libvirt
   newgrp libvirt
 
+  # Remove old versions of the box image (work around
+  # https://github.com/pradels/vagrant-libvirt/issues/85).  If this step fails,
+  # don't worry - you probably didn't have an old version there.
+  virsh <<<'vol-delete --pool default $IMAGE_vagrant_box_image_0.img'
+
   # Download and install the box image
   vagrant box add $IMAGE \
     $URL
