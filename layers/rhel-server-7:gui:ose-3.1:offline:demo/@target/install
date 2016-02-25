@@ -30,6 +30,9 @@ ln -sf /usr/local/apache-maven-3.3.9/bin/mvn /usr/local/bin
 oadm new-project prod --admin=demo
 oc policy add-role-to-group system:image-puller system:serviceaccounts:prod -n demo
 
+# allow Jenkins to play around in the demo project
+oc policy add-role-to-user edit system:serviceaccount:demo:default -n demo
+
 oadm new-project xpaas --admin=demo
 
 mkdir -p /home/demo/.m2
