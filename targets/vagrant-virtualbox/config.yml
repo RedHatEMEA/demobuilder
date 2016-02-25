@@ -13,7 +13,7 @@ howto: |
   # proceeding
 
   # Download and install the box image
-  vagrant box add $IMAGE \
+  vagrant box add --force $IMAGE \
     $URL
 
   # Create a clean working directory for the image
