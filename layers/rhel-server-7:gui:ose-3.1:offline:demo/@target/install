@@ -32,6 +32,8 @@ oc policy add-role-to-group system:image-puller system:serviceaccounts:prod -n d
 
 # allow Jenkins to play around in the demo project
 oc policy add-role-to-user edit system:serviceaccount:demo:default -n demo
+# allow Jenkins to play around in the prod project
+oc policy add-role-to-user edit system:serviceaccount:demo:default -n prod
 
 oadm new-project xpaas --admin=demo
 
