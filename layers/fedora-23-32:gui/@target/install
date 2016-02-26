@@ -1,0 +1,50 @@
+#!/bin/bash -ex
+
+. vm-functions
+
+register_channels
+yum_install bash-completion control-center evince firefox gdm gnome-session gnome-terminal nautilus tigervnc-server xinetd xorg-x11-drivers xorg-x11-server-Xorg
+
+ln -sf /lib/systemd/system/graphical.target /etc/systemd/system/default.target
+
+sed -i -e '/^\[greeter\]/ a \
+IncludeAll=false\
+Include=demo
+/^\[xdmcp\]/ a \
+Enable=true
+/^\[daemon\]/ a \
+WaylandEnable=false' /etc/gdm/custom.conf
+
+cp rfb /etc/xinetd.d
+
+firewall-cmd --permanent --zone=public --add-port=5900/tcp
+
+cp user /etc/dconf/profile
+
+mkdir /etc/dconf/db/local.d
+cp 01-fixes /etc/dconf/db/local.d
+
+dconf update
+
+cp 80-color-manager.rules /etc/polkit-1/rules.d
+
+useradd demo
+passwd -d demo
+passwd -e demo
+echo 'demo ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers
+
+mkdir -p /var/lib/gdm/.config
+cp monitors.xml /var/lib/gdm/.config
+chown -R gdm:gdm /var/lib/gdm
+
+mkdir /home/demo/.config
+cp /var/lib/gdm/.config/monitors.xml /home/demo/.config/monitors.xml
+chown -R demo:demo /home/demo/.config
+
+sed -i -e '/^#PermitEmptyPasswords/ a \
+PermitEmptyPasswords yes' /etc/ssh/sshd_config
+
+for dest in password-auth system-auth; do
+  cp pam-auth-demobuilder /etc/pam.d/$dest-demobuilder
+  ln -sf $dest-demobuilder /etc/pam.d/$dest
+done

@@ -1,0 +1,48 @@
+#!/bin/bash -e
+
+. utils/functions
+
+LAYER=$(basename $(dirname $0))
+
+if ! needs_build build/$LAYER.qcow2 $(dirname $0); then
+  exit 0
+fi
+
+ISO=isos/Fedora-Server-DVD-i386-23.iso
+if [ ! -e $ISO ]; then
+  curl -o $ISO $MIRROR_FEDORA/pub/fedora/linux/releases/23/Server/i386/iso/$(basename $ISO)
+fi
+
+read_config $LAYER
+
+stop() {
+  rm -rf $TEMPDIR
+}
+
+trap stop EXIT
+TEMPDIR=$(mktemp -d)
+
+for FILE in initrd.img vmlinuz; do
+  iso-read -i $ISO -e isolinux/$FILE -o $TEMPDIR/$FILE
+done
+
+qemu-img create -q -f qcow2 -o compat=0.10 tmp/$LAYER.qcow2 ${LAYER_DISK}G
+utils/sigwrap $QEMUKVM -nodefaults \
+  -cpu host \
+  -smp $BUILD_CPUS \
+  -m $BUILD_MEM \
+  -kernel $TEMPDIR/vmlinuz \
+  -initrd $TEMPDIR/initrd.img \
+  -append "ks=http://$APILISTENER/static/$(dirname $0)/install.ks APILISTENER=$APILISTENER LAYER=$LAYER console=ttyS0,115200n8 net.ifnames=0" \
+  -device virtio-scsi-pci \
+  -drive discard=unmap,file=tmp/$LAYER.qcow2,id=disk1,if=none,cache=unsafe \
+  -device scsi-disk,drive=disk1 \
+  -net bridge,br=$BUILD_BRIDGE \
+  -net nic,model=virtio,macaddr=$(utils/random-mac.py) \
+  -cdrom $ISO \
+  -display none \
+  -serial file:/proc/self/fd/2
+
+echo 'stat /var/tmp/kickstart-succeeded' | LIBGUESTFS_BACKEND=direct guestfish --ro -a tmp/$LAYER.qcow2 -i &>/dev/null
+
+mv tmp/$LAYER.qcow2 build/$LAYER.qcow2

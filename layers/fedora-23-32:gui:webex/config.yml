@@ -1,0 +1,6 @@
+name: WebEx image
+maintainers:
+- Jim Minter <jminter@redhat.com>
+description: |
+  This image provides a 32-bit Linux environment suitable for joining WebEx
+  conferences, seeing remotely shared desktops, and sharing your VM desktop.

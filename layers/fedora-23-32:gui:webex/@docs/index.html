@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<title>WebEx image</title>
+
+<xmp style="display:none;">
+## Description
+
+This image provides a 32-bit Linux environment suitable for joining WebEx
+conferences, seeing remotely shared desktops, and sharing your VM desktop.
+
+<!-- HEADER -->
+
+Run the VM and open the GUI.  Log in as *demo* and set your password.
+
+## Getting started
+
+This VM image includes Firefox, TigerVNC Viewer (for VNCing to other systems)
+and Document Viewer (for showing PDF presentations).
+
+#### Launch Firefox
+
+1. Click *Activities* in the top left-hand corner of the screen.
+1. Click the Firefox icon.
+1. Navigate to your WebEx URL.
+1. Unfortunately, expect to have to click through several security warnings.
+   - If you see a security bar requesting permission to run "IcedTea-Web", click
+     *Allow...*, followed by *Allow and Remember*.
+   - If you see a security warning indicating that the application's digital
+     signature cannot be verified, click *Always trust content from this
+     publisher*, followed by *Run*.
+   - If you see a security warning mentioning JAR File Manifest Attributes,
+     click *Yes*.
+
+#### Change screen resolution
+
+1. Right-click the desktop and click *Settings*.
+1. Double-click *Displays*.
+1. Click the display in the list.
+1. Select the desired resolution in the *Resolution* drop-down.
+1. Click *Apply*.
+1. Click *Keep Changes*.
+1. Close the *Displays* window.
+
+<!-- FOOTER -->
+
+## VM image maintainer(s)
+
+- Jim Minter [jminter@redhat.com](mailto:jminter@redhat.com)
+
+## Please contribute to this demo!
+
+Questions, comments, bug reports, feature requests, patches, pull requests and
+cake are all welcomed on [GitHub](http://github.com/RedHatEMEA/demobuilder) or
+to [jminter@redhat.com](mailto:jminter@redhat.com).
+
+If sending a bug report, please include the contents of
+[/etc/demobuilder](/etc/demobuilder), as this will indicate the builds that were
+used to create the VM image.
+</xmp>
+
+<script src="strapdown/v/0.2/strapdown.js"></script>
+<script type="text/javascript">
+var spans = document.getElementsByTagName('span');
+for (var i = 0; i < spans.length; i++) {
+  spans[i].className = "pln"
+}
+</script>
+
+</html>

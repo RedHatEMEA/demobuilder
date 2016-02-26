@@ -46,25 +46,25 @@ register_channels() {
 
 yum_update() {
   if [ -x /usr/bin/dnf ]; then
-    /usr/bin/python -u /usr/bin/dnf -y update
+    PYTHONUNBUFFERED=1 /usr/bin/dnf -y update
   else
-    /usr/bin/python -u /usr/bin/yum -y update
+    PYTHONUNBUFFERED=1 /usr/bin/yum -y update
   fi
 }
 
 yum_remove() {
   if [ -x /usr/bin/dnf ]; then
-    /usr/bin/python -u /usr/bin/dnf -y remove "$@"
+    PYTHONUNBUFFERED=1 /usr/bin/dnf -y remove "$@"
   else
-    /usr/bin/python -u /usr/bin/yum -y remove "$@"
+    PYTHONUNBUFFERED=1 /usr/bin/yum -y remove "$@"
   fi
 }
 
 yum_install() {
   if [ -x /usr/bin/dnf ]; then
-    /usr/bin/python -u /usr/bin/dnf -y install "$@"
+    PYTHONUNBUFFERED=1 /usr/bin/dnf -y install "$@"
   else
-    /usr/bin/python -u /usr/bin/yum -y install "$@"
+    PYTHONUNBUFFERED=1 /usr/bin/yum -y install "$@"
   fi
 }
 
@@ -89,9 +89,9 @@ cleanup() {
   [ -n "$(rpm -q kernel --last | tail -n +2 | cut -d' ' -f1)" ] && rpm -e $(rpm -q kernel --last | tail -n +2 | cut -d' ' -f1)
 
   if [ -x /usr/bin/dnf ]; then
-    /usr/bin/python -u /usr/bin/dnf clean all || true
+    PYTHONUNBUFFERED=1 /usr/bin/dnf clean all || true
   else
-    /usr/bin/python -u /usr/bin/yum clean all || true
+    PYTHONUNBUFFERED=1 /usr/bin/yum clean all || true
   fi
   rm -rf /var/cache/yum/*
   rm -f /etc/yum.repos.d/auto-*.repo
@@ -114,7 +114,7 @@ cleanup() {
   fi
 
   rm -f /etc/ssh/ssh_host_*
-  rm -f /var/lib/dhclient/dhclient-*-eth0.lease
+  rm -f /var/lib/dhclient/dhclient-*-eth0.lease /var/lib/NetworkManager/dhclient-*-eth0.lease
 
   if [ -e /etc/pki/ca-trust/source/anchors/demobuilder-insecure-CA.crt ]; then
     rm -f /etc/pki/ca-trust/source/anchors/demobuilder-insecure-CA.crt
