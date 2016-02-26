@@ -11,7 +11,8 @@ sed -i -e '/^\[greeter\]/ a \
 IncludeAll=false\
 Include=demo
 /^\[xdmcp\]/ a \
-Enable=true' /etc/gdm/custom.conf
+Enable=true\
+PingIntervalSeconds=0' /etc/gdm/custom.conf
 
 cp rfb /etc/xinetd.d
 
@@ -37,6 +38,8 @@ chown -R gdm:gdm /var/lib/gdm
 mkdir /home/demo/.config
 cp /var/lib/gdm/.config/monitors.xml /home/demo/.config/monitors.xml
 chown -R demo:demo /home/demo/.config
+
+cp 80-color-manager.rules /etc/polkit-1/rules.d
 
 sed -i -e '/^#PermitEmptyPasswords/ a \
 PermitEmptyPasswords yes' /etc/ssh/sshd_config

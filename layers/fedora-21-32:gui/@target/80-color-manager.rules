@@ -1,0 +1,5 @@
+polkit.addRule(function(action, subject) {
+  if(action.id == "org.freedesktop.color-manager.create-device") {
+    return polkit.Result.YES;
+  }
+});

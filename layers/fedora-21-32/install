@@ -8,9 +8,9 @@ if ! needs_build build/$LAYER.qcow2 $(dirname $0); then
   exit 0
 fi
 
-ISO=isos/Fedora-Server-DVD-i386-22.iso
+ISO=isos/Fedora-Server-DVD-i386-21.iso
 if [ ! -e $ISO ]; then
-  curl -o $ISO $MIRROR_FEDORA/pub/fedora/linux/releases/22/Server/i386/iso/$(basename $ISO)
+  curl -o $ISO $MIRROR_FEDORA/pub/fedora/linux/releases/21/Server/i386/iso/$(basename $ISO)
 fi
 
 read_config $LAYER
