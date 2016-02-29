@@ -2,6 +2,17 @@ Vagrant::Config.run("2") do |config|
   config.vm.provider :libvirt do |libvirt|
     libvirt.memory = $LAYER_MEM
     libvirt.cpus = $LAYER_CPUS
+
+    # workaround for bz1274403 for fedora-*-32:gui, and may improve performance
+    # elsewhere
+    libvirt.cpu_mode = "host-passthrough"
+
+    # on vagrant-libvirt <= 0.0.30, need to set nested for cpu_mode to take
+    # effect
+    plugin = Vagrant::Plugin::Manager.instance.installed_specs.find {|p| p.name == "vagrant-libvirt"}
+    if plugin && plugin.version <= Gem::Version.new("0.0.30")
+      libvirt.nested = true
+    end
   end
 end
 
