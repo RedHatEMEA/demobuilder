@@ -1,0 +1,22 @@
+[Desktop Entry]
+Categories=Applications;Development;
+Comment=Runs the Red Hat JBoss Developer Studio 8.1.0.GA
+Comment[en]=Runs the Red Hat JBoss Developer Studio 8.1.0.GA
+Encoding=UTF-8
+Exec=/usr/local/jbdevstudio/studio/jbdevstudio
+GenericName=
+GenericName[en]=
+Icon=/usr/local/jbdevstudio/studio/48-jbds_icon.png
+MimeType=
+Name=Red Hat JBoss Developer Studio 8.1.0.GA
+Name[en]=Red Hat JBoss Developer Studio 8.1.0.GA
+Path=/usr/local/jbdevstudio/studio
+ServiceTypes=
+SwallowExec=
+SwallowTitle=
+Terminal=false
+TerminalOptions=
+Type=Application
+URL=
+X-KDE-SubstituteUID=false
+X-KDE-Username=root
