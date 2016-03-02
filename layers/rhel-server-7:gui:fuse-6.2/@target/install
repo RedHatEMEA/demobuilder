@@ -47,8 +47,15 @@ $FUSE_PATH/bin/client <<EOF
 osgi:shutdown -f
 EOF
 
-while [ -n "$(pidof java)" ]; do
-  sleep 1
+for ((i = 0; i < 6; i++)); do
+  if [ -z "$(pidof java)" ]; then
+    break
+  fi
+  if [ $i -lt 5 ]; then
+    sleep 10
+  else
+    false
+  fi
 done
 
 sed -i -e 's/^#RUN_AS_USER=/RUN_AS_USER=demo/' $FUSE_PATH/bin/fuse-service
@@ -59,13 +66,31 @@ chkconfig --add fuse-service
 chkconfig fuse-service on
 service fuse-service start
 
-while ! $FUSE_PATH/bin/client </dev/null &>/dev/null; do
-  sleep 10
+for ((i = 0; i < 30; i++)); do
+  if $FUSE_PATH/bin/client </dev/null &>/dev/null; then
+    break
+  fi
+  if [ $i -lt 29 ]; then
+    sleep 10
+  else
+    false
+  fi
 done
 
 $FUSE_PATH/bin/client <<EOF
 fabric:create --clean --wait-for-provisioning -m 127.0.0.1 -g manualip -r manualip
 EOF
+
+for ((i = 0; i < 30; i++)); do
+  if $FUSE_PATH/bin/client </dev/null &>/dev/null; then
+    break
+  fi
+  if [ $i -lt 29 ]; then
+    sleep 10
+  else
+    false
+  fi
+done
 
 $FUSE_PATH/bin/client <<EOF
 fabric:container-create-child --profile example-camel-loanbroker-mq.loanBroker root loanbroker
