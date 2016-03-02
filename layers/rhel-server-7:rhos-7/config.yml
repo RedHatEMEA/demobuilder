@@ -1,0 +1,5 @@
+name: Red Hat OpenStack 7 image
+maintainers:
+- Pat Carey <pcarey@redhat.com>
+description: |
+  An 'all in one' deployment of Red Hat OpenStack platform. Designed to run on RHEL 7.2.

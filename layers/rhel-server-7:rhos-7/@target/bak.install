@@ -1,0 +1,34 @@
+#!/bin/bash -ex
+
+. vm-functions
+
+# register_channels channel1 channel2
+# yum_install myrpm1 myrpm2
+
+# do more stuff...
+register_channels rhel-7-server-rpms rhel-7-server-rh-common-rpms rhel-7-server-openstack-7.0-rpms
+yum install -y openstack-packstack vim wget telnet mlocate elinks iptables-services net-tools
+useradd demo
+passwd -d demo
+passwd -e demo
+echo 'demo ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers
+mkdir /home/demo/Desktop
+chown -R demo:demo /home/demo/Desktop
+
+systemctl stop NetworkManager.service
+systemctl disable NetworkManager.service
+systemctl start network.service
+systemctl enable network.service
+systemctl disable firewalld.service
+systemctl stop firewalld.service; systemctl start iptables.service; systemctl start ip6tables.service
+systemctl enable iptables.service
+systemctl enable ip6tables.service
+
+MY_Eth0=$(ifconfig eth0 | awk '/inet / { print $2; }')
+MY_Eth1=$(ifconfig eth1 | awk '/inet / { print $2; }')
+
+cp ifcfg-br-ex /etc/sysconfig/network-scripts/
+mv /etc/sysconfig/network-scripts/ifcfg-eth0 /etc/sysconfig/network-scripts/ifcfg-eth0.bak
+cp ifcfg-eth0 /etc/sysconfig/network-scripts/
+sed -i "s/VAR_IP/$MY_Eth0/g" /etc/sysconfig/network-scripts/ifcfg-br-ex
+packstack --allinone --default-password=redhat --ntp-servers=clock.redhat.com --cinder-volumes-create=y --cinder-volumes-size=10G
