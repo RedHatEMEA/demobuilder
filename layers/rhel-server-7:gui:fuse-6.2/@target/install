@@ -41,6 +41,9 @@ done
 $FUSE_PATH/bin/client <<EOF
 features:install wrapper
 wrapper:install -n fuse
+EOF
+
+$FUSE_PATH/bin/client <<EOF
 osgi:shutdown -f
 EOF
 
