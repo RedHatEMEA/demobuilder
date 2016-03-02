@@ -6,7 +6,7 @@ register_channels rhel-7-server-rpms
 
 yum_install java-1.8.0-openjdk-devel unzip
 
-http_proxy=http://$HOSTNAME:8080/ curl -sO http://www.mirrorservice.org/sites/ftp.apache.org/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz
+http_proxy=$PROXY curl -sO http://www.mirrorservice.org/sites/ftp.apache.org/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz
 tar -xzf apache-maven-3.3.9-bin.tar.gz
 mv apache-maven-3.3.9 /usr/local
 ln -sf /usr/local/apache-maven-3.3.9/bin/mvn /usr/local/bin
