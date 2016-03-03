@@ -1,0 +1,29 @@
+#!/bin/bash -ex
+
+. vm-functions
+
+register_channels rhel-7-server-rpms rhel-7-server-rh-common-rpms rhel-7-server-openstack-7.0-rpms
+yum install -y iptables-services openstack-packstack
+
+for svc in NetworkManager firewalld; do
+  systemctl disable $svc.service
+  systemctl stop $svc.service
+done
+
+for svc in iptables ip6tables network; do
+  systemctl enable $svc.service
+  systemctl start $svc.service
+done
+
+packstack --cinder-volumes-size=10G --install-hosts=127.0.0.1 --keystone-admin-passwd=admin --keystone-demo-passwd=demo --nagios-install=n --novacompute-privif=lo --novanetwork-privif=lo --os-heat-install=y --provision-all-in-one-ovs-bridge=y
+
+cp ifcfg-{br-ex,eth0} /etc/sysconfig/network-scripts/
+
+cp demobuilder-openstack-netconf.sh /usr/local/libexec
+cp demobuilder-openstack-netconf.service /lib/systemd/system
+systemctl enable demobuilder-openstack-netconf
+
+cp /root/keystonerc_* /home/demo
+chown -R demo:demo /home/demo
+
+firefox_set_homepage http://localhost/

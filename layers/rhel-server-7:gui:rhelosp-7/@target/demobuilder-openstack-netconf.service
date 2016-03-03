@@ -1,0 +1,9 @@
+[Unit]
+After=network-online.target neutron-server.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/libexec/demobuilder-openstack-netconf.sh
+
+[Install]
+WantedBy=multi-user.target
