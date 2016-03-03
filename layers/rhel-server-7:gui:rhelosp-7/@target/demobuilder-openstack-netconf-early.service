@@ -1,0 +1,9 @@
+[Unit]
+Before=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/libexec/demobuilder-openstack-netconf-early.sh
+
+[Install]
+WantedBy=multi-user.target

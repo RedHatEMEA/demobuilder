@@ -19,9 +19,11 @@ packstack --cinder-volumes-size=10G --install-hosts=127.0.0.1 --keystone-admin-p
 
 cp ifcfg-{br-ex,eth0} /etc/sysconfig/network-scripts
 
-cp demobuilder-openstack-netconf.sh /usr/local/libexec
-cp demobuilder-openstack-netconf.service /lib/systemd/system
-systemctl enable demobuilder-openstack-netconf
+for svc in demobuilder-openstack-netconf-early demobuilder-openstack-netconf; do
+  cp $svc.sh /usr/local/libexec
+  cp $svc.service /lib/systemd/system
+  systemctl enable $svc
+done
 
 cp /root/keystonerc_* /home/demo
 chown -R demo:demo /home/demo

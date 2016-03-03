@@ -114,7 +114,7 @@ cleanup() {
   fi
 
   rm -f /etc/ssh/ssh_host_*
-  rm -f /var/lib/dhclient/dhclient-*-eth0.lease /var/lib/NetworkManager/dhclient-*-eth0.lease
+  rm -f /var/lib/dhclient/*.lease /var/lib/NetworkManager/dhclient-*.lease
 
   if [ -e /etc/pki/ca-trust/source/anchors/demobuilder-insecure-CA.crt ]; then
     rm -f /etc/pki/ca-trust/source/anchors/demobuilder-insecure-CA.crt
