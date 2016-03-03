@@ -26,4 +26,6 @@ systemctl enable demobuilder-openstack-netconf
 cp /root/keystonerc_* /home/demo
 chown -R demo:demo /home/demo
 
+sed -i -e 's/^virt_type=.*/virt_type=kvm/' /etc/nova/nova.conf
+
 firefox_set_homepage http://localhost/
