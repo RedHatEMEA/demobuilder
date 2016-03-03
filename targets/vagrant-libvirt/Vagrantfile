@@ -2,6 +2,7 @@ Vagrant::Config.run("2") do |config|
   config.vm.provider :libvirt do |libvirt|
     libvirt.memory = $LAYER_MEM
     libvirt.cpus = $LAYER_CPUS
+    libvirt.nested = $LAYER_NESTED
 
     # workaround for bz1274403 for fedora-*-32:gui, and may improve performance
     # elsewhere
