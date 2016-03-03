@@ -5,5 +5,5 @@ description: |
   This image provides an all-in-one instance of Red Hat OpenStack Platform 7.
 layer:
   cpus: 2
-  mem: 4096
+  mem: 8192
   nested: "true"
