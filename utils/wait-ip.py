@@ -31,7 +31,7 @@ def pid_thread(p):
     while True:
         if not os.path.exists("/proc/%s" % p):
             q.put(None)
-        
+
         time.sleep(1)
 
 def rhev_thread(p):
@@ -49,19 +49,17 @@ def qemu_thread(p):
     s = connect(socket.AF_UNIX, p)
 
     while True:
-        try:
-            s.sendall(json.dumps({"execute": "guest-network-get-interfaces"}))
-            r = json.loads(s.recv(4096))
+        s.sendall(json.dumps({"execute": "guest-network-get-interfaces"}))
+        r = json.loads(s.recv(4096))
 
-            eth = [eth for eth in r["return"] if eth["name"] == "eth0"][0]
-            ip = [ip for ip in eth["ip-addresses"]
-                  if ip["ip-address-type"] == "ipv4"][0]
+        for eth in r["return"]:
+            if eth["name"] in ["br-ex", "eth0"] and "ip-addresses" in eth:
+                for ip in eth["ip-addresses"]:
+                    if ip["ip-address-type"] == "ipv4":
+                        q.put(ip["ip-address"])
+                        return
 
-            q.put(ip["ip-address"])
-            return
-
-        except (IndexError, KeyError):
-            time.sleep(1)
+        time.sleep(1)
 
 
 def main():
