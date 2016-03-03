@@ -31,6 +31,6 @@ rm -rf tmp/$BASE:$TARGET.qcow2 $TMPDIR
 
 mv tmp/$BASE:$TARGET.box releases/$BASE:$TARGET.box
 
-echo \$ vagrant box add $BASE releases/$BASE:$TARGET.box
-echo \$ vagrant init $BASE
+echo \$ vagrant box add $BASE:$TARGET releases/$BASE:$TARGET.box
+echo \$ vagrant init $BASE:$TARGET
 echo \$ vagrant up

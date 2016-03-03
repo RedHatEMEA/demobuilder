@@ -17,7 +17,7 @@ done
 
 packstack --cinder-volumes-size=10G --install-hosts=127.0.0.1 --keystone-admin-passwd=admin --keystone-demo-passwd=demo --nagios-install=n --novacompute-privif=lo --novanetwork-privif=lo --os-heat-install=y --provision-all-in-one-ovs-bridge=y
 
-cp ifcfg-{br-ex,eth0} /etc/sysconfig/network-scripts/
+cp ifcfg-{br-ex,eth0} /etc/sysconfig/network-scripts
 
 cp demobuilder-openstack-netconf.sh /usr/local/libexec
 cp demobuilder-openstack-netconf.service /lib/systemd/system
