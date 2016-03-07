@@ -6,3 +6,6 @@ description: |
   Developer Studio with the Integration Stack plugins installed.  A root Fabric
   has also been created with the LoanBroker example deployed to four child
   containers.
+layer:
+  cpus: 2
+  mem: 4096
