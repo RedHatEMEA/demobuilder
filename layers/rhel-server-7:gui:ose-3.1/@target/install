@@ -126,6 +126,33 @@ sed -i -e '/-A FORWARD/ a\
 ./install-logging.sh
 ./install-metrics.sh
 
+mkdir /export
+for ((i=1; i<=10; i++)); do
+  mkdir -m 0777 /export/vol$i
+  echo "/export/vol$i *(rw,root_squash)" >>/etc/exports
+
+  oc create -f - <<EOF
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: vol$i
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+  - ReadOnlyMany
+  - ReadWriteOnce
+  - ReadWriteMany
+  nfs:
+    path: /export/vol$i
+    server: openshift.example.com
+  persistentVolumeReclaimPolicy: Recycle
+EOF
+done
+
+# bz1293805, should be fixed in 3.2
+oadm policy add-scc-to-user hostmount-anyuid system:serviceaccount:openshift-infra:pv-recycler-controller
+
 cat >>/usr/local/bin/demobuilder-cleanup.sh <<'EOF'
 systemctl stop atomic-openshift-node.service
 for ns in default logging openshift-infra; do
