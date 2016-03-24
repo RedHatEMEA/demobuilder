@@ -2,6 +2,7 @@
 
 import glob
 import re
+import readconfig
 import yaml
 
 header_start = '''<!DOCTYPE html>
@@ -14,6 +15,8 @@ header_start = '''<!DOCTYPE html>
 header_mid = '''## Description
 
 %(description)s
+
+By default this image requires %(cpus)d CPU(s) and %(mem)dMB RAM.
 
 '''
 
@@ -55,11 +58,14 @@ def main():
     for path in glob.glob("layers/*/@docs/*.html"):
         layer = path.split("/")[1]
 
-        config = yaml.load(open("layers/%s/config.yml" % layer).read())
-        maintainers = "\n".join([re.sub("(.*?) <(.*)>", r"- \1 [\2](mailto:\2)", m) for m in config["maintainers"]])
+        config = readconfig.read_config(".")
+        for l in readconfig.layers(layer):
+            readconfig.update(config, readconfig.read_config(l))
+
+        maintainers = "\n".join([re.sub("(.*?) <(.*)>", r"- \1 &lt;[\2](mailto:\2)&gt;", m) for m in config["maintainers"]])
 
         if path.endswith("/index.html"):
-            head = (header_start + header_mid + header_end) % {"title": config["name"], "description": config["description"].strip()}
+            head = (header_start + header_mid + header_end) % {"title": config["name"], "description": config["description"].strip(), "cpus": config["layer"]["cpus"], "mem": config["layer"]["mem"]}
             foot = (footer_start + footer_mid + footer_end) % {"maintainers": maintainers}
         else:
             head = (header_start + header_end) % {"title": config["name"], "description": config["description"].strip()}

@@ -10,7 +10,7 @@ def parse_args():
 
     return parser.parse_args()
 
-def layers(layer, target):
+def layers(layer, target=None):
     if layer:
         layers = layer.split(":")
         for i in range(len(layers)):
