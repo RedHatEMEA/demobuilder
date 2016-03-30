@@ -17,7 +17,7 @@ class Layer(object):
 
 
 class Target(object):
-    def __init__(self, f):
+    def __init__(self, f, nightly):
         (self.layer, self.target, self.ext) = splitname(f)
 
         with open("targets/%s/config.yml" % self.target) as configf:
@@ -32,7 +32,10 @@ class Target(object):
             x = self.yaml["howto"]
             x = x.replace("$IMAGE-SHORT", self.layer.rsplit(":", 1)[1])
             x = x.replace("$IMAGE", self.layer + ":" + self.target)
-            x = x.replace("$URL", "http://%s/releases/%s" % (socket.gethostname(), f))
+            if nightly:
+                x = x.replace("$URL", "http://%s/nightly/releases/%s" % (socket.gethostname(), f))
+            else:
+                x = x.replace("$URL", "http://%s/releases/%s" % (socket.gethostname(), f))
             x = x.replace("\n", "\n  ").strip()
             self.yaml["howto"] = x
 
@@ -65,7 +68,7 @@ def root():
 
         st = os.stat(root + "/" + f)
 
-        layers[layer].images.append({"target": Target(f),
+        layers[layer].images.append({"target": Target(f, "nightly" in request.query),
                                      "link": root + "/" + f,
                                      "size": "built %s, size %0.2fGB" %
                                      (time.strftime("%d/%m/%Y %H:%M:%S UTC", time.gmtime(st.st_mtime)),
