@@ -5,8 +5,8 @@ interface_ip() {
 }
 
 register_channels() {
-  if [ -n "$RHN_USER" -a -x /sbin/subscription-manager -a ! -e /etc/pki/consumer/cert.pem ]; then
-    cp /etc/os-release /etc/os-release-
+  if [ -n "$RHN_USER" -a -x /usr/sbin/subscription-manager -a ! -e /etc/pki/consumer/cert.pem ]; then
+    [ -e /etc/os-release ] && cp /etc/os-release /etc/os-release-
 
     unsetx
     subscription-manager register --username "$RHN_USER" --password "$RHN_PASS"
@@ -36,7 +36,7 @@ register_channels() {
   fi
 
   for CHANNEL in "$@"; do
-    if [ -n "$RHN_USER" -a -x /sbin/subscription-manager ]; then
+    if [ -n "$RHN_USER" -a -x /usr/sbin/subscription-manager ]; then
       subscription-manager repos --enable=$CHANNEL
     else
       curl -so /etc/yum.repos.d/auto-$CHANNEL.repo $MIRROR_RHN/$CHANNEL.repo
@@ -101,10 +101,10 @@ cleanup() {
     sed -i -e '/^proxy=/ d;' /etc/yum.conf
   fi
 
-  if [ -n "$RHN_USER" -a -x /sbin/subscription-manager -a -e /etc/pki/consumer/cert.pem ]; then
+  if [ -n "$RHN_USER" -a -x /usr/sbin/subscription-manager -a -e /etc/pki/consumer/cert.pem ]; then
     subscription-manager unregister || true
     rm /var/lib/rhsm/branded_name
-    mv /etc/os-release- /etc/os-release
+    [ -e /etc/os-release- ] && mv /etc/os-release- /etc/os-release
   fi
 
   if [ -e /etc/fedora-release ]; then

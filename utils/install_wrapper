@@ -10,7 +10,7 @@ if ! [ -e /usr/local/bin/demobuilder-cleanup.sh ]; then
 fi
 
 if ! ./install; then
-  if [ -n "$RHN_USER" -a -x /sbin/subscription-manager -a -e /etc/pki/consumer/cert.pem ]; then
+  if [ -n "$RHN_USER" -a -x /usr/sbin/subscription-manager -a -e /etc/pki/consumer/cert.pem ]; then
     subscription-manager unregister
   fi
 

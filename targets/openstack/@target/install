@@ -2,9 +2,9 @@
 
 . vm-functions
 
-if grep -q 'release 6' /etc/redhat-release; then
+if grep -q 'Red Hat Enterprise Linux Server release 6' /etc/redhat-release; then
   register_channels rhel-6-server-rh-common-rpms rhel-6-server-rpms
-elif grep -q 'release 7' /etc/redhat-release; then
+elif grep -q 'Red Hat Enterprise Linux Server release 7' /etc/redhat-release; then
   register_channels rhel-7-server-rh-common-rpms rhel-7-server-rpms
 else
   register_channels
