@@ -20,6 +20,7 @@ utils/addlayer.sh build/$BASE.qcow2 targets/$TARGET tmp/$BASE:$TARGET.qcow2
 convert_qcow2 tmp/$BASE:$TARGET.qcow2 vmdk
 
 TMPDIR=$(mktemp -d)
+export LAYER_DISK_BYTES=$(($LAYER_DISK * 2**30))
 envsubst <targets/$TARGET/box.ovf >$TMPDIR/box.ovf
 
 tar -c --transform='s!.*/!!' --transform="s/$BASE:$TARGET.vmdk/box-disk1.vmdk/" targets/$TARGET/metadata.json tmp/$BASE:$TARGET.vmdk targets/$TARGET/Vagrantfile $TMPDIR/box.ovf | nice pigz >tmp/$BASE:$TARGET.box
