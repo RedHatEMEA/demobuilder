@@ -4,12 +4,12 @@
 
 MY_HOSTNAME=openshift.example.com
 
-# rhel-7-server-extras-rpms is required for docker-io
+# rhel-7-server-extras-rpms is required for docker
 register_channels rhel-7-server-rpms rhel-7-server-extras-rpms rhel-7-server-ose-3.1-rpms
 #register_channels rhel-7-server-rpms rhel-7-server-extras-rpms
 #curl -o /etc/yum.repos.d/auto-RH7-RHAOS-3.1.repo http://buildvm-devops.usersys.redhat.com/puddle/build/OpenShiftEnterpriseErrata/3.1/latest/RH7-RHAOS-3.1.repo
 
-yum_install atomic-openshift-utils bind-utils docker-io git httpd-tools lsof PyPAM python-requests PyYAML net-tools nmap-ncat strace tcpdump unzip
+yum_install atomic-openshift-utils bind-utils docker-1.8.2 git httpd-tools lsof PyPAM python-requests PyYAML net-tools nmap-ncat strace tcpdump unzip
 
 #sed -i -e 's/registry.access.redhat.com/rcm-img-docker01.build.eng.bos.redhat.com:5001/' /etc/sysconfig/docker
 
