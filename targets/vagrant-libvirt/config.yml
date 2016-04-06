@@ -67,8 +67,8 @@ howto: |
   # Launch the image
   vagrant up --provider=libvirt
 
-  # SSH into the image to find its IP address
-  vagrant ssh -c 'ip -4 address show dev eth0'
+  # Find the image's IP address
+  vagrant ssh-config | grep HostName
 
   # VNC to your vagrant box IP address
   vncviewer 192.168.121.xxx
