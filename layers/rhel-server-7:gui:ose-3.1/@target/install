@@ -120,7 +120,7 @@ update-ca-trust
 
 firefox_set_homepage https://$MY_HOSTNAME:8443/
 
-sed -i -e '/-A FORWARD/ a\
+sed -i -e '/^:OS_FIREWALL_ALLOW / a\
 -A OS_FIREWALL_ALLOW -p tcp -m state --state NEW -m tcp --dport 5900 -j ACCEPT' /etc/sysconfig/iptables
 
 ./install-logging.sh
