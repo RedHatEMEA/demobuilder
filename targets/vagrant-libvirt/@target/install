@@ -38,9 +38,12 @@ mkinitrd --with=virtio_blk --force /boot/initramfs-$(uname -r).img $(uname -r)
 # https://github.com/pradels/vagrant-libvirt/issues/544
 
 if grep -q 'release 7' /etc/redhat-release; then
-  if -e /etc/sysconfig/iptables && grep -q OS_FIREWALL_ALLOW /etc/sysconfig/iptables; then
+  if [ -e /etc/sysconfig/iptables ] && grep -q OS_FIREWALL_ALLOW /etc/sysconfig/iptables; then
     sed -i -e '/^:OS_FIREWALL_ALLOW / a\
 -A OS_FIREWALL_ALLOW -p tcp -m state --state NEW -m tcp --dport 7 -j ACCEPT' /etc/sysconfig/iptables
+  elif [ -e /etc/sysconfig/iptables ] && grep -q nova-filter-top /etc/sysconfig/iptables; then
+    sed -i -e '/^:nova-filter-top / a\
+-A INPUT -p tcp -m state --state NEW -m tcp --dport 7 -j ACCEPT' /etc/sysconfig/iptables
   else
     firewall-cmd --add-port 7/tcp
   fi
