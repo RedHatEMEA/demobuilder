@@ -1,6 +1,9 @@
 [org/gnome/settings-daemon/plugins/xrandr]
 default-monitors-setup='do-nothing'
 
+[org/gnome/desktop/interface]
+monospace-font-name='FreeMono 12'
+
 [org/gnome/desktop/session]
 idle-delay=uint32 0
 
