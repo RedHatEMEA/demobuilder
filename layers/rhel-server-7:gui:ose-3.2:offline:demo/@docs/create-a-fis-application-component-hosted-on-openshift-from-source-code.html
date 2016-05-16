@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<title>OpenShift 3.1.1 offline image with demo</title>
+
+<xmp style="display:none;">
+<!-- HEADER -->
+
+## Create a FIS application component hosted on OpenShift from source code
+
+These steps demonstrate how OpenShift can build and deploy a simple Fuse
+Integration Services-based application component from source code.  This would
+typically be done by a developer.
+
+1. Create the application component.
+   1. Double-click the Terminal icon on the desktop.
+   1. Type `oc project xpaas` and press `ENTER`.  You must use the *xpaas*
+      project at this point for the rest of the walk-through to proceed!
+   1. Type `cd git/fis-examples/cdi-camel-jetty` and press `ENTER`.
+   1. Type `mvn -Pf8-local-deploy` and press `ENTER`.  Maven will
+      compile the project, package it in a Docker image as a flat Java
+      classpath application, and deploy an instance of it to OpenShift.
+   1. Type `exit` and press `ENTER` to close the terminal window.
+1. Test that the application component is up and running.
+   1. Return to Firefox and wait for OpenShift to deploy the application into
+      the xpaas project.
+   1. Press `CTRL + T` to open a new tab.
+   1. Navigate to http://qs-cdi-camel-jetty-xpaas.apps.example.com/camel/hello .
+   1. You may see a 503 error while the container is starting: if so, wait a
+      moment and retry.
+   1. Navigate to http://qs-cdi-camel-jetty-xpaas.apps.example.com/camel/hello?name=yourname .
+
+[Back](index.html)
+
+<!-- FOOTER -->
+</xmp>
+
+<script src="strapdown/v/0.2/strapdown.js"></script>
+<script type="text/javascript">
+var spans = document.getElementsByTagName('span');
+for (var i = 0; i < spans.length; i++) {
+  spans[i].className = "pln"
+}
+</script>
+
+</html>

@@ -1,0 +1,71 @@
+#!/bin/bash -ex
+
+. vm-functions
+
+register_channels rhel-7-server-rpms rhel-7-server-optional-rpms
+
+yum_install git-daemon
+
+semodule -i gitdaemon-rw-net.pp
+cp gitconfig /etc
+
+systemctl enable git.socket
+systemctl start git.socket
+
+IMAGES=(
+  docker.io/registry:latest
+)
+
+for image in "${IMAGES[@]}"; do
+  docker_pull $image
+done
+
+mkdir /image-registry
+chcon -t svirt_sandbox_file_t /image-registry
+oc create -f image-registry.yaml
+
+yum_install gcc python-devel sqlite-devel
+https_proxy=$PROXY curl -sLO https://github.com/rogerbinns/apsw/archive/3.7.17-r1.zip
+unzip -q 3.7.17-r1.zip
+pushd apsw-3.7.17-r1
+python setup.py install
+popd
+yum -y history undo $(yum history list | grep -A1 ^- | tail -1 | awk '{print $1;}')
+
+https_proxy=$PROXY curl -sLO https://pypi.python.org/packages/source/b/backports.ssl/backports.ssl-0.0.9.tar.gz
+tar -xzf backports.ssl-0.0.9.tar.gz
+pushd backports.ssl-0.0.9
+python setup.py install
+popd
+
+COMMIT=a9f1dd1fa7763e9bbc3cbced85b2616fb7488184
+https_proxy=$PROXY curl -sLO https://github.com/RedHatEMEA/webproxycache/archive/$COMMIT.zip
+unzip -q $COMMIT.zip
+mv webproxycache-$COMMIT /usr/local/webproxycache
+mv /usr/local/webproxycache/webproxycache.service /lib/systemd/system
+sed -i -e "/^\[Service\]\$/ a\
+Environment=http_proxy=$PROXY https_proxy=$PROXY" /lib/systemd/system/webproxycache.service
+mkdir /var/cache/webproxycache
+systemctl enable webproxycache.service
+systemctl start webproxycache.service
+
+DRIP=$(oc get svc docker-registry -o template --template='{{.spec.portalIP}}')
+IRIP=$(oc get svc image-registry -o template --template='{{.spec.portalIP}}')
+
+cat >>/etc/sysconfig/docker <<EOF
+NO_PROXY=$IRIP,$DRIP
+EOF
+service docker restart
+
+# proxy on git clones?
+./install.py
+
+oc get images | grep registry.access.redhat.com | awk '{ print $1; }' | xargs oc delete image
+
+cat >>/usr/local/bin/demobuilder-cleanup.sh <<'EOF'
+docker images | grep :5000 | awk '{print $3;}' | xargs docker rmi
+docker images | grep '<none>' | awk '{print $3;}' | xargs docker rmi
+rm -rf /registry/*
+EOF
+
+# clear /var/log?

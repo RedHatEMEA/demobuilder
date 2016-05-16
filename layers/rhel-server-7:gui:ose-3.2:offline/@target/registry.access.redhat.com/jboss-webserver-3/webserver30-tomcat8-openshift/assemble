@@ -1,0 +1,10 @@
+#!/bin/bash
+
+read host port <<< $(python -c "import urlparse; print ' '.join(urlparse.urlparse('$http_proxy').netloc.split(':'))")
+sed -i -e "/<proxies>/ a \
+<proxy><host>$host</host><port>$port</port></proxy>" $HOME/.m2/settings.xml
+
+curl -so /tmp/ca_cert http://cacert/
+/usr/lib/jvm/jre-1.8.0/bin/keytool -importcert -file /tmp/ca_cert -noprompt -keystore /tmp/trust.jks -storepass password
+
+exec /usr/local/s2i/_assemble "$@"

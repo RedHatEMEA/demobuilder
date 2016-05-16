@@ -1,0 +1,126 @@
+#!/bin/bash -ex
+
+. vm-functions
+
+MY_HOSTNAME=openshift.example.com
+
+register_channels rhel-7-server-rpms rhel-7-server-extras-rpms
+register_channels rhel-7-server-ose-3.2-rpms
+# curl -so /etc/yum.repos.d/auto-puddle.repo http://download.eng.bos.redhat.com/rcm-guest/puddles/RHAOS/AtomicOpenShift/3.2/2016-05-10.1/puddle.repo
+
+yum_install atomic-openshift bind-utils docker lsof openshift-ansible-playbooks PyPAM net-tools nmap-ncat strace tcpdump unzip
+
+# sed -i -e 's/^ADD_REGISTRY=.*/ADD_REGISTRY='"'"'--add-registry brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888 --add-registry registry.access.redhat.com'"'"'/' /etc/sysconfig/docker
+# sed -i -e 's/^# INSECURE_REGISTRY=.*/INSECURE_REGISTRY='"'"'--insecure-registry brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888'"'"'/' /etc/sysconfig/docker
+
+OPENSHIFTVERSION=$(yum info atomic-openshift | awk '/Version/ { print $3; }')
+
+IMAGES=(
+  openshift3/logging-auth-proxy:latest
+  openshift3/logging-deployment:latest
+  openshift3/logging-elasticsearch:latest
+  openshift3/logging-fluentd:latest
+  openshift3/logging-kibana:latest
+  openshift3/metrics-cassandra:latest
+  openshift3/metrics-deployer:latest
+  openshift3/metrics-hawkular-metrics:latest
+  openshift3/metrics-heapster:latest
+  openshift3/ose-deployer:v$OPENSHIFTVERSION
+  openshift3/ose-docker-builder:v$OPENSHIFTVERSION
+  openshift3/ose-docker-registry:v$OPENSHIFTVERSION
+  openshift3/ose-haproxy-router:v$OPENSHIFTVERSION
+  openshift3/ose-pod:v$OPENSHIFTVERSION
+  openshift3/ose-sti-builder:v$OPENSHIFTVERSION
+)
+
+for image in "${IMAGES[@]}"; do
+  docker_pull $image
+done
+
+hostname $MY_HOSTNAME
+echo $MY_HOSTNAME >/etc/hostname
+
+cp 99-hosts /etc/NetworkManager/dispatcher.d
+IP4_ADDRESS_0=$(ifconfig eth0 | awk '/inet / { print $2; }') /etc/NetworkManager/dispatcher.d/99-hosts eth0 up
+
+cp hosts /etc/ansible/hosts
+PYTHONUNBUFFERED=1 ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/byo/config.yml
+
+https_proxy=$PROXY curl -s https://pypi.python.org/packages/source/d/dnslib/dnslib-0.9.4.tar.gz | tar -xz
+pushd dnslib-0.9.4
+python setup.py install
+popd
+
+for svc in auth dns-intercept master-ipcfg node-ipcfg routewatcher; do
+  cp atomic-openshift-$svc.py /usr/local/libexec
+  cp atomic-openshift-$svc.service /lib/systemd/system
+  systemctl enable atomic-openshift-$svc
+done
+systemctl start atomic-openshift-dns-intercept.service
+systemctl mask docker-storage-setup.service
+
+oadm new-project demo --admin=demo
+mkdir /home/demo/.kube
+cat >/home/demo/.kube/config <<EOF
+kind: Config
+apiVersion: v1
+clusters:
+- cluster:
+    server: https://$MY_HOSTNAME:8443
+  name: ${MY_HOSTNAME//./-}:8443
+contexts:
+- context:
+    cluster: ${MY_HOSTNAME//./-}:8443
+  name: ${MY_HOSTNAME//./-}:8443
+current-context: ${MY_HOSTNAME//./-}:8443
+EOF
+chown -R demo:demo /home/demo/.kube
+
+for ((i = 0; i < 12; i++)); do
+  [ $(oc get pods | grep -v -- -deploy | grep Running | wc -l) = 2 ] && break
+  sleep 10
+done
+[ $(oc get pods | grep -v -- -deploy | grep Running | wc -l) = 2 ] || exit 1
+
+cp /etc/origin/master/ca.crt /etc/pki/ca-trust/source/anchors/
+update-ca-trust
+
+firefox_set_homepage https://$MY_HOSTNAME:8443/
+
+sed -i -e '/^:OS_FIREWALL_ALLOW / a\
+-A OS_FIREWALL_ALLOW -p tcp -m state --state NEW -m tcp --dport 5900 -j ACCEPT' /etc/sysconfig/iptables
+
+./install-logging.sh
+./install-metrics.sh
+
+for ((i=1; i<=10; i++)); do
+  mkdir -m 0777 /exports/vol$i
+  echo "/exports/vol$i *(rw,root_squash)" >>/etc/exports
+
+  oc create -f - <<EOF
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: vol$i
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+  - ReadOnlyMany
+  - ReadWriteOnce
+  - ReadWriteMany
+  nfs:
+    path: /exports/vol$i
+    server: openshift.example.com
+  persistentVolumeReclaimPolicy: Recycle
+EOF
+done
+
+cat >>/usr/local/bin/demobuilder-cleanup.sh <<'EOF'
+systemctl stop atomic-openshift-node.service
+for ns in default logging openshift-infra; do
+  oc delete pods --all -n $ns
+done
+docker ps -aq | xargs docker rm -f
+true
+EOF

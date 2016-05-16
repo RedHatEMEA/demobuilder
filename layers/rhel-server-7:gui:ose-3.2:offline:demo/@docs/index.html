@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<title>OpenShift 3.1.1 offline image with demo</title>
+
+<xmp style="display:none;">
+## Description
+
+This image provides an all-in-one instance of OpenShift 3.1.1, including the
+master and node components, examples, GUI and web browser.  All S2I builder
+images are also included, and source code and dependencies for all examples
+apps is pre-downloaded, so no nothing extra is needed and the image can be
+run disconnected from the internet.  This image also includes all the
+components necessary for an OpenShift 3.1.1 demo.
+
+This image is heavily modified and additionally includes JBoss Developer
+Studio.  It is intended for SAs in order to demo the full OpenShift end-user
+experience.
+
+By default this image requires 2 CPU(s) and 8192MB RAM.
+
+<!-- HEADER -->
+
+Run the VM and open the GUI.  Log in as *demo* and set your password.
+
+## OpenShift walk-through
+
+Follow the steps below in order to walk through some basic capabilities of
+OpenShift.
+
+##### Preparation / Introduction
+
+1. Optional: [Configure screen resolution](configure-screen-resolution.html)
+1. [Browse the OpenShift web user interface](browse-the-openshift-web-user-interface.html)
+1. Optional: [Log in to OpenShift via the CLI](log-in-to-openshift-via-the-cli.html)
+1. Optional: [Create an application hosted on OpenShift from source code](create-an-application-hosted-on-openshift-from-source-code.html)
+1. [Create an application hosted on OpenShift from a pre-defined template](create-an-application-hosted-on-openshift-from-a-pre-defined-template.html)
+
+##### "Developer"-focused capabilities
+
+Carry out all the non-optional steps in 'Preparation / Introduction' before
+proceeding.
+
+1. [Commit a source code change to an application hosted on OpenShift](commit-a-source-code-change-to-an-application-hosted-on-openshift.html)
+1. Optional: [Debug an application hosted on OpenShift](debug-an-application-hosted-on-openshift.html)
+1. Optional: [Rollback an application component](rollback-an-application-component.html)
+1. Optional: [Explore an application pod (logging, metrics, terminal)](explore-an-application-pod.html)
+1. Optional: [Scale an application component](scale-an-application-component.html)
+1. Close JBoss Developer Studio
+
+##### "Operator"-focused capabilities
+
+Carry out all the non-optional steps in 'Preparation / Introduction' and
+'"Developer"-focused capabilities' before proceeding.
+
+1. Optional: [Promote and rollback an application component without rebuild](promote-and-rollback-an-application-component-without-rebuild.html)
+1. Optional: [Explore an application pod (logging, metrics, terminal)](explore-an-application-pod.html)
+1. Optional: [Scale an application component](scale-an-application-component.html)
+1. Optional: [Use Jenkins to automate build and promotion](use-jenkins-to-automate-build-and-promotion.html)
+1. Recommended: [Reset the demo and prod projects](reset-the-demo-and-prod-projects.html)
+
+##### "xPaaS" capabilities
+
+Carry out all the non-optional steps in 'Preparation / Introduction' before
+proceeding.
+
+1. [Create a FIS application component hosted on OpenShift from source code](create-a-fis-application-component-hosted-on-openshift-from-source-code.html)
+1. Optional: [Explore a FIS application component pod (Hawtio, logs)](explore-a-fis-application-component-pod.html)
+1. Optional: [Scale a FIS application component](scale-a-fis-application-component.html)
+1. [Create a FIS application component hosted on OpenShift from a pre-defined template](create-a-fis-application-component-hosted-on-openshift-from-a-pre-defined-template.html)
+1. [Explore a FIS application component pod (Hawtio)](explore-a-fis-application-component-pod.html)
+
+##### Cleanup / Advanced
+
+1. Optional: [Reset the demo and prod projects](reset-the-demo-and-prod-projects.html)
+1. Optional: [Use the OpenShift ("oc") command line tool as the system:admin user](use-the-openshift-oc-command-line-tool-as-the-system-admin-user.html)
+
+## More information
+
+- [OpenShift product documentation](https://access.redhat.com/documentation/en-US/OpenShift_Enterprise/)
+- [OpenShift Enterprise](https://enterprise.openshift.com/)
+- [OpenShift Training](https://github.com/openshift/training)
+- [OpenShift Origin](http://www.openshift.org/)
+
+<!-- FOOTER -->
+
+## VM image maintainer(s)
+
+- Jim Minter &lt;[jminter@redhat.com](mailto:jminter@redhat.com)&gt;
+
+## Please contribute to this demo!
+
+Questions, comments, bug reports, feature requests, patches, pull requests and
+cake are all welcomed on [GitHub](http://github.com/RedHatEMEA/demobuilder) or
+to [jminter@redhat.com](mailto:jminter@redhat.com).
+
+If sending a bug report, please include the contents of
+[/etc/demobuilder](/etc/demobuilder), as this will indicate the builds that were
+used to create the VM image.
+</xmp>
+
+<script src="strapdown/v/0.2/strapdown.js"></script>
+<script type="text/javascript">
+var spans = document.getElementsByTagName('span');
+for (var i = 0; i < spans.length; i++) {
+  spans[i].className = "pln"
+}
+</script>
+
+</html>

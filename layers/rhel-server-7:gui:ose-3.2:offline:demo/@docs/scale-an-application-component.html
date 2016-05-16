@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<title>OpenShift 3.1.1 offline image with demo</title>
+
+<xmp style="display:none;">
+<!-- HEADER -->
+
+## Scale an application component
+
+These steps demonstrate how an operator could manually scale up or down the
+number of instances of an application component running on OpenShift.
+
+1. Click the *Scale up* (up) and *Scale down* (down) arrows in the deployment
+   box.  You should see the number of pods change.
+
+Note: pod scaling can also be achieved using the command `oc scale`,
+e.g. `oc scale --replicas=2 dc $DEPLOYMENT`.
+
+[Back](index.html)
+
+<!-- FOOTER -->
+</xmp>
+
+<script src="strapdown/v/0.2/strapdown.js"></script>
+<script type="text/javascript">
+var spans = document.getElementsByTagName('span');
+for (var i = 0; i < spans.length; i++) {
+  spans[i].className = "pln"
+}
+</script>
+
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<title>OpenShift 3.1.1 offline image with demo</title>
+
+<xmp style="display:none;">
+<!-- HEADER -->
+
+## Promote and rollback an application component without rebuild
+
+These steps demonstrate how an operator could promote an application component
+into a subsequent environment (e.g. production) for deployment/upgrade without
+rebuilding the component, as well as rolling back an unwanted change if
+necessary.
+
+1. Prepare the *prod* project to host the application component.
+   1. In Firefox, select the *prod* project.
+   1. Click the *Add to Project* button.
+   1. Type `monster-prod` in the *Filter by keyword* box.
+   1. Under *Instant Apps*, click *monster-prod*.
+   1. Scroll down and click *Create*.
+   1. Click *Continue to overview*.
+1. Tag the the oldest version of the application component in order to deploy it
+   into the *prod* project.
+   1. Double-click the Terminal icon on the desktop.
+   1. Type `oc describe imagestream monster` and press `ENTER`.
+   1. Choose the oldest of the built docker images (it'll look like
+      *monster@sha256:[0-9a-f]{64}*).  Call this $TAG.  Ignore the leading
+      `172.30.x.y:5000/demo/` text.
+   1. Type `oc tag $TAG monster:prod` and press `ENTER`.
+   1. Return to Firefox and wait for OpenShift to deploy the application into
+      the prod project.  Note that the application manifest has been set to
+      deploy three application pods: after successfully deploying the first pod,
+      OpenShift will scale it up to three pods.
+   1. `CTRL`-click the application URL
+      (*http://monster-prod.apps.example.com*) to launch the application in a
+      new tab.
+1. Repeat the process with a newer version of the application component.
+   Watch the Firefox window to see OpenShift automatically carrying out rolling
+   upgrade of the application component in the *prod* project.
+1. Return to the terminal window and type `exit` and press `ENTER` to close the
+   window.
+
+[Back](index.html)
+
+<!-- FOOTER -->
+</xmp>
+
+<script src="strapdown/v/0.2/strapdown.js"></script>
+<script type="text/javascript">
+var spans = document.getElementsByTagName('span');
+for (var i = 0; i < spans.length; i++) {
+  spans[i].className = "pln"
+}
+</script>
+
+</html>

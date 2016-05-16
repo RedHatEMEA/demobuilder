@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<title>OpenShift 3.1.1 offline image with demo</title>
+
+<xmp style="display:none;">
+<!-- HEADER -->
+
+## Explore a FIS application component pod (Hawtio, logs)
+
+These steps demonstrate how a developer can explore the hawtio console of a
+Fuse Integration Services-based application component running inside a container
+on OpenShift.
+
+1. Click *Browse*, then *Pods*, then click any pod hosting a FIS application
+   component.
+1. Click the small blue *Connect* link.  This will take you to the application
+   component Hawtio console.
+1. Click *route1* in the tree view, followed by the *Route Diagram* tab to show
+   the camel route graphically.
+1. Click other tabs, e.g. *Source* and *Debug* to view the Hawtio functionality.
+1. While browsing the Hawtio console, you may wish to have another browser tab
+   open on http://qs-cdi-camel-jetty-xpaas.apps.example.com/camel/hello?name=yourname
+   and refresh it to update the Hawtio statistics.
+1. Click the blue *Back* link to return to OpenShift.
+1. Click the *Logs* tab.  This will show the stdout/stderr of the container.
+
+[Back](index.html)
+
+<!-- FOOTER -->
+</xmp>
+
+<script src="strapdown/v/0.2/strapdown.js"></script>
+<script type="text/javascript">
+var spans = document.getElementsByTagName('span');
+for (var i = 0; i < spans.length; i++) {
+  spans[i].className = "pln"
+}
+</script>
+
+</html>

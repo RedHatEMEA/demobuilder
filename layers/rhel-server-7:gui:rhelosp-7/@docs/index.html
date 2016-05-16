@@ -5,17 +5,71 @@
 <xmp style="display:none;">
 ## Description
 
-This image provides an all-in-one instance of Red Hat OpenStack Platform 7.
+This image provides a vanilla instance of Red Hat OpenStack Platform 7, with
+the following components installed in an 'all-in-one' deployment:
+
+Nova, Glance, Swift, Horizon, Keystone, Neutron, Cinder, Ceilometer and Heat.
+
+This image is vanilla, so it is handy for SAs and Consultants to replicate
+issues and experiment with the product.
 
 By default this image requires 2 CPU(s) and 8192MB RAM.
 
 <!-- HEADER -->
 
+Run the VM and open the GUI.  Log in as the *demo* user and set your password.
+
 ## Getting started
 
-#### TODO
+#### Browse the OpenStack Horizon web user interface
 
-TODO
+1. Double-click the *Firefox Web Browser* icon on the desktop.  The OpenStack
+   web user interface will open on the login page.
+1. Enter the *User Name* `demo` and *Password* `demo` and click *Log In*.
+
+Note: The *admin* project is available via the *User Name* `admin` and
+*Password* `admin`.
+
+#### Create a new Cirros instance hosted in OpenStack
+
+1. Select the *Compute* / *Images* tab.
+1. In the *cirros* image *Actions* drop-down, select *Launch Instance*.
+1. Enter a name of your choice in the *Instance Name* text box.
+1. Click `Launch`.
+1. Wait for the new instance to show *Power State* *Running*.
+
+### Associate a floating IP to your instance
+
+1. In  your instance *Actions* drop-down, select *Associate Floating IP*.
+1. Click *+*.
+1. Click *Allocate IP*.
+1. Note down the IP Address (probably in the 192.168.121.0/24 range) and click
+   *Associate*.
+
+#### Configure the default security group for ping and SSH
+
+1. Select the *Compute* / *Access & Security* tab.
+1. In the *default* security group *Actions* column, select *Manage Rules*.
+1. Click *+ Add Rule*.
+1. From the *Rule* drop-down, select *ALL ICMP*.
+1. Click `Add`.
+1. Click *+ Add Rule*.
+1. From the *Rule* drop-down, select *SSH*.
+1. Click `Add`.
+
+#### Ping and SSH to your instance
+
+1. Select the *Compute* / *Instances* tab.
+1. Double-click the Terminal icon on the desktop.
+1. Type `ping -c 1 $IPADDR` and press `ENTER`, where $IPADDR is the floating IP
+   of your instance.
+1. Type `ssh cirros@$IPADDR` and press `ENTER`, where $IPADDR is the floating IP
+   of your instance.
+1. Type `exit` and press `ENTER` to close the terminal window.
+
+## More information
+
+- [OpenStack product documentation](https://access.redhat.com/documentation/en/red-hat-enterprise-linux-openstack-platform/)
 
 <!-- FOOTER -->
 

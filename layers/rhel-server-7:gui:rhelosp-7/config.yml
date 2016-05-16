@@ -2,7 +2,13 @@ name: Red Hat OpenStack Platform 7 image
 maintainers:
 - Pat Carey <pcarey@redhat.com>
 description: |
-  This image provides an all-in-one instance of Red Hat OpenStack Platform 7.
+  This image provides a vanilla instance of Red Hat OpenStack Platform 7, with
+  the following components installed in an 'all-in-one' deployment:
+
+  Nova, Glance, Swift, Horizon, Keystone, Neutron, Cinder, Ceilometer and Heat.
+
+  This image is vanilla, so it is handy for SAs and Consultants to replicate
+  issues and experiment with the product.
 layer:
   cpus: 2
   mem: 8192

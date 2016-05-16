@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<title>OpenShift 3.1.1 offline image with demo</title>
+
+<xmp style="display:none;">
+<!-- HEADER -->
+
+## Create a FIS application component hosted on OpenShift from a pre-defined
+   template
+
+These steps demonstrate how OpenShift can build and deploy a simple Fuse
+Integration Services-based application component from a pre-defined template.
+This might be done by a developer, tester or operator to quickly set up a
+dedicated application comonent instance according to its template, using
+OpenShift's self-service portal.
+
+1. **IMPORTANT**: in the *Projects* list, select the *xpaas* project.  You must
+   use the *xpaas* project at this point for the rest of the walk-through to
+   proceed!
+1. Click the *Add to Project* button.
+1. Type `s2i-quickstart-cdi-camel-http` in the *Filter by keyword* box.
+1. Under *Instant Apps*, click *s2i-quickstart-cdi-camel-http*.
+1. Scroll down and click *Create*.
+1. Click *Continue to overview*.
+1. Wait for the example application to be cloned, built and deployed.  It will
+   take up to a minute or two for the build process to begin automatically and
+   then complete.
+1. Optional: to follow the build, click *View Log*.  Later, click *Overview* to
+   return to the overview pane.  Alternatively use the command `oc logs --follow
+   build/s2i-quickstart-cdi-camel-http-1` to follow the build process.
+
+[Back](index.html)
+
+<!-- FOOTER -->
+</xmp>
+
+<script src="strapdown/v/0.2/strapdown.js"></script>
+<script type="text/javascript">
+var spans = document.getElementsByTagName('span');
+for (var i = 0; i < spans.length; i++) {
+  spans[i].className = "pln"
+}
+</script>
+
+</html>

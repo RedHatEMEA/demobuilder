@@ -1,0 +1,13 @@
+name: OpenShift 3.2 base image
+maintainers:
+- Jim Minter <jminter@redhat.com>
+description: |
+  This image provides a base instance of OpenShift 3.2, including the
+  master and node components, examples, GUI and web browser.  Internet
+  connectivity is required to run.
+
+  This image is vanilla, so is handy for SAs and consultants to replicate issues
+  / experiment with the product with Internet connectivity.
+layer:
+  cpus: 2
+  mem: 4096

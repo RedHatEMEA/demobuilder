@@ -1,0 +1,21 @@
+[OSEv3:children]
+masters
+nodes
+nfs
+
+[OSEv3:vars]
+ansible_connection=local
+deployment_type=openshift-enterprise
+osm_default_subdomain=apps.example.com
+openshift_master_identity_providers=[{'name': 'basicauthpassword', 'login': 'true', 'challenge': 'true', 'kind': 'BasicAuthPasswordIdentityProvider', 'url': 'http://localhost:2305/'}]
+# openshift_docker_additional_registries=brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888
+# openshift_docker_insecure_registries=brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888
+
+[masters]
+openshift.example.com
+
+[nodes]
+openshift.example.com openshift_node_labels="{'region':'infra'}" openshift_schedulable=True
+
+[nfs]
+openshift.example.com

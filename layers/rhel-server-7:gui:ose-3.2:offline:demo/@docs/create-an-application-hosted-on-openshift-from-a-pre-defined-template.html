@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<title>OpenShift 3.1.1 offline image with demo</title>
+
+<xmp style="display:none;">
+<!-- HEADER -->
+
+## Create an application hosted on OpenShift from a pre-defined template
+
+These steps demonstrate how OpenShift can build and deploy a (possibly
+multi-component) traditional or modern application from a pre-defined template.
+This might be done by a developer, tester or operator to quickly set up a
+dedicated application instance according to its template, using OpenShift's
+self-service portal.
+
+1. **IMPORTANT**: in the *Projects* list, select the *demo* project.  You must
+   use the *demo* project at this point for the rest of the walk-through to
+   proceed!
+1. Click the *Add to Project* button.
+1. Type `monster` in the *Filter by keyword* box.
+1. Under *Instant Apps*, click *monster*.
+1. Scroll down and click *Create*.
+1. Click *Continue to overview*.
+1. Wait for the example application to be cloned, built and deployed.  It will
+   take up to a minute or two for the build process to begin automatically and
+   then complete.
+1. Optional: to follow the build, click *View Log*.  Later, click *Overview* to
+   return to the overview pane.  Alternatively use the command `oc logs --follow
+   build/monster-1` in a terminal to follow the build process.
+1. When the monster deployment shows as running, `CTRL`-click the application
+   URL (*http://monster-demo.apps.example.com*) to launch the application in a
+   new tab.
+
+[Back](index.html)
+
+<!-- FOOTER -->
+</xmp>
+
+<script src="strapdown/v/0.2/strapdown.js"></script>
+<script type="text/javascript">
+var spans = document.getElementsByTagName('span');
+for (var i = 0; i < spans.length; i++) {
+  spans[i].className = "pln"
+}
+</script>
+
+</html>

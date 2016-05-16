@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<title>OpenShift 3.1.1 offline image with demo</title>
+
+<xmp style="display:none;">
+<!-- HEADER -->
+
+## Use Jenkins to automate build and promotion
+
+These steps give a brief introduction to using the Jenkins container shipped
+with OpenShift to automate OpenShift builds, deployments and image promotions.
+More complex Jenkins workflows still are possible, and the *OpenShift Pipeline
+Jenkins Plugin* can also be used in external Jenkins instances.
+
+1. Navigate to the OpenShift UI.  Select the *demo* project and instantiate the
+   *jenkins-ephemeral* template.
+1. Open the Jenkins web UI at https://jenkins-demo.apps.example.com/.  Log in
+   with the user `admin` and default password `password`.
+1. Click the *OpenShift Sample* job and click *Configure*.
+1. Scroll down to the *Build* section.
+1. Delete the first two build steps (*Scale deployments in OpenShift* and *Check
+   Deployment Success in OpenShift*).
+1. In the *Perform builds in OpenShift* build step, change the *name of the
+   BuildConfig to trigger* to `monster` and the *name of the project the
+   BuildConfig is stored in* to `demo`.
+1. In the following *Check Deployment Success in OpenShift* build step, change
+   the *name of the DeploymentConfig to trigger* to `monster` and the *name of
+   the project the DeploymentConfig is stored in* to `demo`.
+1. Delete the next two build steps (*Scale deployments in OpenShift* and *Check
+   Deployment Success in OpenShift*).
+1. In the following *Verify a service is up in OpenShift* step, change the *name
+   of the Service to verify* to `monster` and the *name of the project the
+   DeploymentConfig is stored in* to `demo`.
+1. In the following *Tag an image in OpenShift* build step, change the *name of
+   the current image tag* to `monster:latest`, the *name of the new image tag*
+   to `monster:prod`, and the *name of the project the image is stored in* to
+   `demo`.
+1. Delete the final build step (*Check Deployment Success in OpenShift*).
+1. Click *Save*.
+1. Click *Build Now*.
+1. Wait a moment for the Jenkins build to schedule.  Click *#1*, then click
+   *Console Output* to follow the Jenkins build process.
+1. When the Jenkins build has completed, you should find that a new build of
+   *Ticket Monster* has been made in the demo project, then deployed to the
+   *prod* project.
+
+[Back](index.html)
+
+<!-- FOOTER -->
+</xmp>
+
+<script src="strapdown/v/0.2/strapdown.js"></script>
+<script type="text/javascript">
+var spans = document.getElementsByTagName('span');
+for (var i = 0; i < spans.length; i++) {
+  spans[i].className = "pln"
+}
+</script>
+
+</html>

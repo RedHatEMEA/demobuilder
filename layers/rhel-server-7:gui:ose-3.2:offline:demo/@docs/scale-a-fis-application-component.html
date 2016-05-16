@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<title>OpenShift 3.1.1 offline image with demo</title>
+
+<xmp style="display:none;">
+<!-- HEADER -->
+
+## Scale a FIS application component
+
+These steps demonstrate how an operator could manually scale up or down the
+number of instances of an application component running on OpenShift.
+
+1. Click the *Scale up* (up) arrow in the deployment box.  You should see the
+   number of pods change.
+1. Double-click the Terminal icon on the desktop.
+1. Repeatedly type `curl -s 'http://qs-cdi-camel-jetty-xpaas.apps.example.com/camel/hello?name=yourname'`
+   and press `ENTER`.  When the new pod is up, you should see multiple
+   hostnames respond to the HTTP GET request.
+1. Type `exit` and press `ENTER` to close the terminal window.
+
+[Back](index.html)
+
+<!-- FOOTER -->
+</xmp>
+
+<script src="strapdown/v/0.2/strapdown.js"></script>
+<script type="text/javascript">
+var spans = document.getElementsByTagName('span');
+for (var i = 0; i < spans.length; i++) {
+  spans[i].className = "pln"
+}
+</script>
+
+</html>
