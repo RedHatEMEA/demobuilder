@@ -40,7 +40,7 @@ if grep -q 'Red Hat Enterprise Linux' /etc/redhat-release ; then
     fi
   done
 else
-  for pkg in git libcdio libguestfs libvirt pigz pyOpenSSL python-apsw python-bottle python-cherrypy PyYAML qemu-kvm sqlite; do
+  for pkg in git libcdio libguestfs libvirt pigz pyOpenSSL python2-apsw python-bottle python-cherrypy PyYAML qemu-kvm sqlite; do
     if ! rpm -q $pkg &>/dev/null; then
       echo "FATAL: please install $pkg.  You probably need to run:"
       echo "sudo dnf -y install $pkg"
